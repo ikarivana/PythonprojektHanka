@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   {{ pedikura.name }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ pedikura.name }}</h1>
+    <div>{{ pedikura.time }}</div>
+    <div>{{ pedikura.description }}</div>
+    <div>{{ pedikura.price }}</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+      Pedikura
+{% endblock %}
+
+{% block content %}
+<h1>Výběr procedůry</h1>
+<a href="/pedikura/add">Přidat</a>
+<ul>
+    {% for pedicure in pedicures %}
+    <li>
+        <a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a>
+        <a href="{% url 'pedicure_update' pedicure.id %}"></a>
+        <a href="{% url 'pedicure_delete' pedicure.id %}"></a>
+        <a href="{% url 'pedicure_create' %}"></a>
+    </li>
+    {% endfor %}
+
+</ul>
+
+<div>
+    <p class="text-justify">{{ pedikura.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ pedikura.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava: {{ pedikura.update }}</small></p>
+</div>
+{% endblock %}

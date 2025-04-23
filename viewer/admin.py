@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from viewer.models import Pedikura
+
+admin.site.register(Pedikura)

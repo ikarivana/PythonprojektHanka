@@ -17,6 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from viewer.views import *
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', Home, name="home"),
+    path('pedicure/', PedicureListView.as_view(), name="pedicure"),
+    path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
+    path('pedikure/', PedicureCreateView.as_view(), name="pedicure_create"),
+    path('pedicure/update/<int:pk>/', PedicureUpdateView.as_view(), name="pedicure_update"),
+    path('pedicure/delete/<int:pk>/', PedicureDeleteView.as_view(), name="pedicure_delete"),
+
 ]

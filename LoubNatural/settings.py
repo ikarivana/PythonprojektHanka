@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
-SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-gl-)z0l8z+q-3!l7l0&g*e!n6z7hk@@7u1e2x04&#4a!r3=2l^7p72)')
+SECRET_KEY = os.getenv('SECRET_KEY' , default='django-insecure-gl-)z0l8z+q-3!l7l0&g*e!n6z7hk@@7u1e2x04&#4a!r3=2l^7p72)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_dump_load_utf8',
     'viewer',
+
 
 ]
 
@@ -117,7 +119,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static zaloha (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
