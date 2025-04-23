@@ -29,4 +29,10 @@ urlpatterns = [
     path('pedicure/update/<int:pk>/', PedicureUpdateView.as_view(), name="pedicure_update"),
     path('pedicure/delete/<int:pk>/', PedicureDeleteView.as_view(), name="pedicure_delete"),
 
+    path('eyelash/', EyelashListView.as_view(), name="eyelash"),
+    path('eyelash/<int:pk>/', EyelashDetailView.as_view(), name="eyelash_detail"),
+    path('eyelash/', EyelashCreateView.as_view(), name="eyelash_create"),
+    path('eyelash/update/<int:pk>/', EyelashUpdateView.as_view(), name="eyelash_update"),
+    path('eyelash/delete/<int:pk>/', EyelashDeleteView.as_view(), name="eyelash_delete"),
+
 ]

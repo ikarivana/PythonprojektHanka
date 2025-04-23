@@ -21,6 +21,7 @@ class Pedikura(Model):
 
 class Rasy(Model):
     name = CharField(max_length=30, null=False, blank=False, unique=True)
+    procedure_time = IntegerField(null=False, blank=False, default=0)
     descripton = TextField(max_length=1000, null=True, blank=True)
     price = IntegerField(null=False, blank=False)
 

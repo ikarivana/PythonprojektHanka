@@ -21,9 +21,9 @@ class PedicureDetailView(ListView):
 
 
 class PedicureCreateView(ListView):
-    templates_name = 'pedikura.html'
+    templates_name = 'pedicure.html'
     model = Pedikura
-    context_object_name = 'pedicure_create'
+    context_object_name = 'pedikura_create'
 
 
 class PedicureUpdateView(ListView):
@@ -36,3 +36,36 @@ class PedicureDeleteView(ListView):
     templates_name = 'pedikura.html'
     model = Pedikura
     context_object_name = 'pedicure_delete'
+
+
+
+
+class EyelashListView(ListView):
+    template_name = 'rasy.html'
+    model = Rasy
+    context_object_name = 'eyelashs'
+
+
+class EyelashDetailView(ListView):
+    template_name = 'rasy.html'
+    model = Rasy
+    context_object_name = 'eyelash_detail'
+
+
+class EyelashCreateView(ListView):
+    templates_name = 'eyelash.html'
+    model = Rasy
+    context_object_name = 'eyelash_create'
+
+
+class EyelashUpdateView(ListView):
+    templates_name = 'eyelash.html'
+    model = Rasy
+    context_object_name = 'eyelash_update'
+
+
+class EyelashDeleteView(ListView):
+    templates_name = 'eyelash.html'
+    model = Rasy
+    context_object_name = 'eyelash_delete'
+
