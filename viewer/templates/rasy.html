@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+      Řasy
+{% endblock %}
+
+{% block content %}
+<h1>Výběr procedůry</h1>
+<a href="/rasy/add">Přidat</a>
+<ul>
+    {% for eyelash in eyelashs %}
+    <li>
+        <a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a>
+        <a href="{% url 'eyelash_update' eyelash.id %}"></a>
+        <a href="{% url 'eyelash_delete' eyelash.id %}"></a>
+        <a href="{% url 'eyelash_create' %}"></a>
+    </li>
+    {% endfor %}
+
+</ul>
+
+<div>
+    <p class="text-justify">{{ eyelash.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ pedikura.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava: {{ pedikura.update }}</small></p>
+</div>
+{% endblock %}

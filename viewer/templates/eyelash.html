@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   {{ rasy.name }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ rasy.name }}</h1>
+    <div>{{ rasy.time }}</div>
+    <div>{{ rasy.description }}</div>
+    <div>{{ rasy.price }}</div>
+{% endblock %}

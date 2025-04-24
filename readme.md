@@ -8,9 +8,10 @@
 ## Popis projektu
  -[ ] Pedikúra
    - Název ošetření + popis
-     - Pedikúra basic : (do 60min.)
-     - Pedikúra plus : (70 min.)
-     - Pedikúra lady : (90 min.)
+     - Pedikúra basic 
+     - Pedikúra plus
+     - Pedikúra lady
+     - Pedikúra pánská
  -[ ] Řasy
    - Název ošetření
     - Volume 3D-4D 
@@ -22,12 +23,12 @@
   - Diochi
 
 -[ ] Kontakt
+  - Název
   - Adresa 
   - Telefon
   - Email
-  - IČO
-  - Mapa
-  - 
+  - popis
+  
 ## Databáze
 -[ ] 1 Jméno příjmení
 -[ ] 2 Datum narození
@@ -70,16 +71,20 @@
  ````
 ### DUMP/LOAD databaze
  ```bash
-   pip django-dump-load-utf8==0.0.5
+   pip django-dump-load-utf8==0.0.4 
  ```
-- Přidáme ' django-dump-load-utf8 ' do seznamu
+- Přidáme ' django_dump_load_utf8 ' do seznamu
 nainstalovaných aplikací v ' settings.py - INSTALLED_APPS '
 taky přidame do seznamu ' requirements.txt '
 
 # Dump
 ```bash
-  pip python manage.py dumpdatautf8 viewer --output .\zaloha\fixtures.json'
+ python manage.py dumpdatautf8 viewer --output .\zaloha\fixtures.json'
  ```
+# Load
+```bash 
+ python manage.py loaddata .\zaloha\fixtures.json
+```
 
  # Struktura projektu
  - ' __init__.py ' - složka projektu (základní informace)

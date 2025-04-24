@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+      Contact
+{% endblock %}
+
+{% block content %}
+<h1>Kontaktní údaje</h1>
+<a href="/contact/add">Přidat</a>
+<ul>
+    {% for contact in contacte %}
+    <li>
+        <a href="{% url 'contact_detail' contacte.id %}">{{ contact }}</a>
+        <a href="{% url 'contact_update' contact.id %}"></a>
+        <a href="{% url 'contact_delete' contact.id %}"></a>
+        <a href="{% url 'contact_create' %}"></a>
+    </li>
+    {% endfor %}
+
+</ul>
+
+<div>
+    <p class="text-justify">{{ pedikura.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ pedikura.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava: {{ pedikura.update }}</small></p>
+</div>
+{% endblock %}
