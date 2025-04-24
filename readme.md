@@ -8,9 +8,10 @@
 ## Popis projektu
  -[ ] Pedikúra
    - Název ošetření + popis
-     - Pedikúra basic : (do 60min.)
-     - Pedikúra plus : (70 min.)
-     - Pedikúra lady : (90 min.)
+     - Pedikúra basic 
+     - Pedikúra plus
+     - Pedikúra lady
+     - Pedikúra pánská
  -[ ] Řasy
    - Název ošetření
     - Volume 3D-4D 
@@ -22,12 +23,12 @@
   - Diochi
 
 -[ ] Kontakt
+  - Název
   - Adresa 
   - Telefon
   - Email
-  - IČO
-  - Mapa
-  - 
+  - popis
+  
 ## Databáze
 -[ ] 1 Jméno příjmení
 -[ ] 2 Datum narození

@@ -35,4 +35,16 @@ urlpatterns = [
     path('eyelash/update/<int:pk>/', EyelashUpdateView.as_view(), name="eyelash_update"),
     path('eyelash/delete/<int:pk>/', EyelashDeleteView.as_view(), name="eyelash_delete"),
 
+    path('health/', HealthListView.as_view(), name="health"),
+    path('health/<int:pk>/', HealthDetailView.as_view(), name="health_detail"),
+    path('health/', HealthCreateView.as_view(), name="health_create"),
+    path('health/update/<int:pk>/', HealthUpdateView.as_view(), name="health_update"),
+    path('health/delete/<int:pk>/', HealthDeleteView.as_view(), name="health_delete"),
+
+    path('contact/', ContactListView.as_view(), name="contact"),
+    path('contact/<int:pk>/', ContactDetailView.as_view(), name="contact_detail"),
+    path('contact/', ContactCreateView.as_view(), name="contact_create"),
+    path('contact/update/<int:pk>/', ContactUpdateView.as_view(), name="contact_update"),
+    path('contact/delete/<int:pk>/', ContactDeleteView.as_view(), name="contact_delete"),
 ]
+

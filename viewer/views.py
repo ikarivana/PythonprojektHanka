@@ -69,3 +69,63 @@ class EyelashDeleteView(ListView):
     model = Rasy
     context_object_name = 'eyelash_delete'
 
+
+
+class HealthListView(ListView):
+    template_name = 'zdravi.html'
+    model = Zdravi
+    context_object_name = 'health'
+
+
+class HealthDetailView(ListView):
+    template_name = 'zdravi.html'
+    model = Zdravi
+    context_object_name = 'health_detail'
+
+
+class HealthCreateView(ListView):
+    templates_name = 'health.html'
+    model = Zdravi
+    context_object_name = 'health_create'
+
+
+class HealthUpdateView(ListView):
+    templates_name = 'health.html'
+    model = Zdravi
+    context_object_name = 'health_update'
+
+
+class HealthDeleteView(ListView):
+    templates_name = 'health.html'
+    model = Zdravi
+    context_object_name = 'health_delete'
+
+
+class ContactListView(ListView):
+    template_name = 'contact.html'
+    model = Contact
+    context_object_name = 'contact'
+
+
+class ContactDetailView(ListView):
+    template_name = 'contact.html'
+    model = Contact
+    context_object_name = 'contact_detail'
+
+
+class ContactCreateView(ListView):
+    templates_name = 'contact.html'
+    model = Contact
+    context_object_name = 'contact_create'
+
+
+class ContactUpdateView(ListView):
+    templates_name = 'contact.html'
+    model = Contact
+    context_object_name = 'contact_update'
+
+
+class ContactDeleteView(ListView):
+    templates_name = 'contact.html'
+    model = Contact
+    context_object_name = 'contact_delete'
