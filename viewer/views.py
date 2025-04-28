@@ -1,10 +1,12 @@
 from django.views.generic import *
 from django.shortcuts import render
+
+from viewer.forms import PedikuraModelForm, RasyModelForm, ContactModelForm, ZdraviModelForm
 from viewer.models import *
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 
-
-def Home(request):
+def home(request):
     return render(request, 'home.html')
 
 
@@ -13,29 +15,34 @@ class PedicureListView(ListView):
     model = Pedikura
     context_object_name = 'pedicures'
 
-
-class PedicureDetailView(ListView):
-    template_name = 'pedikura.html'
+class PedicureDetailView(DetailView):
+    template_name = 'pedicure.html'
     model = Pedikura
     context_object_name = 'pedicure_detail'
 
+class PedicureCreateView(CreateView):
+    templates_name = 'form.html'
+    form_class = PedikuraModelForm
+    success_url = reverse_lazy('pedicure')
 
-class PedicureCreateView(ListView):
-    templates_name = 'pedicure.html'
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class PedicureUpdateView(UpdateView):
+    templates_name = 'form.html'
+    form_class = PedikuraModelForm
+    model = PedikuraModelForm
+    success_url = reverse_lazy('pedicure')
+
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class PedicureDeleteView(DeleteView):
+    templates_name = 'confirm_delete.html'
     model = Pedikura
-    context_object_name = 'pedikura_create'
-
-
-class PedicureUpdateView(ListView):
-    templates_name = 'pedikura.html'
-    model = Pedikura
-    context_object_name = 'pedicure_update'
-
-
-class PedicureDeleteView(ListView):
-    templates_name = 'pedikura.html'
-    model = Pedikura
-    context_object_name = 'pedicure_delete'
+    success_url = reverse_lazy('pedicure')
 
 
 
@@ -45,87 +52,101 @@ class EyelashListView(ListView):
     model = Rasy
     context_object_name = 'eyelashs'
 
-
-class EyelashDetailView(ListView):
-    template_name = 'rasy.html'
+class EyelashDetailView(DetailView):
+    template_name = 'eyelash.html'
     model = Rasy
     context_object_name = 'eyelash_detail'
 
+class EyelashCreateView(CreateView):
+    templates_name = 'form.html'
+    model = RasyModelForm
+    success_url = reverse_lazy('eyelash')
 
-class EyelashCreateView(ListView):
-    templates_name = 'eyelash.html'
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class EyelashUpdateView(UpdateView):
+    form_class = RasyModelForm
+    templates_name = 'form.html'
+    model = RasyModelForm
+    success_url = reverse_lazy('eyelash')
+
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class EyelashDeleteView(DeleteView):
+    templates_name = 'confirm_delete.html'
     model = Rasy
-    context_object_name = 'eyelash_create'
-
-
-class EyelashUpdateView(ListView):
-    templates_name = 'eyelash.html'
-    model = Rasy
-    context_object_name = 'eyelash_update'
-
-
-class EyelashDeleteView(ListView):
-    templates_name = 'eyelash.html'
-    model = Rasy
-    context_object_name = 'eyelash_delete'
+    success_url = reverse_lazy('eyelash')
 
 
 
 class HealthListView(ListView):
     template_name = 'zdravi.html'
     model = Zdravi
-    context_object_name = 'health'
+    context_object_name = 'healths'
 
-
-class HealthDetailView(ListView):
-    template_name = 'zdravi.html'
+class HealthDetailView(DetailView):
+    template_name = 'health.html'
     model = Zdravi
     context_object_name = 'health_detail'
 
+class HealthCreateView(CreateView):
+    templates_name = 'form.html'
+    model = ZdraviModelForm
+    success_url = reverse_lazy('heatlh')
 
-class HealthCreateView(ListView):
-    templates_name = 'health.html'
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class HealthUpdateView(UpdateView):
+    templates_name = 'form.html'
+    model = ZdraviModelForm
+    success_url = reverse_lazy('health')
+
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class HealthDeleteView(DeleteView):
+    templates_name = 'confirm_delete.html'
     model = Zdravi
-    context_object_name = 'health_create'
+    success_url = reverse_lazy('health')
 
-
-class HealthUpdateView(ListView):
-    templates_name = 'health.html'
-    model = Zdravi
-    context_object_name = 'health_update'
-
-
-class HealthDeleteView(ListView):
-    templates_name = 'health.html'
-    model = Zdravi
-    context_object_name = 'health_delete'
 
 
 class ContactListView(ListView):
     template_name = 'contact.html'
     model = Contact
-    context_object_name = 'contact'
+    context_object_name = 'contacts'
 
-
-class ContactDetailView(ListView):
-    template_name = 'contact.html'
+class ContactDetailView(DetailView):
+    template_name = 'contacte.html'
     model = Contact
     context_object_name = 'contact_detail'
 
+class ContactCreateView(CreateView):
+    templates_name = 'form.html'
+    model = ContactModelForm
+    success_url = reverse_lazy('contact')
 
-class ContactCreateView(ListView):
-    templates_name = 'contact.html'
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class ContactUpdateView(UpdateView):
+    templates_name = 'form.html'
+    model = ContactModelForm
+    success_url = reverse_lazy('contact')
+
+    def form_invalid(self, form):
+        print("form není validní")
+        return super().form_invalid(form)
+
+class ContactDeleteView(DeleteView):
+    templates_name = 'confirm_delete.html'
     model = Contact
-    context_object_name = 'contact_create'
-
-
-class ContactUpdateView(ListView):
-    templates_name = 'contact.html'
-    model = Contact
-    context_object_name = 'contact_update'
-
-
-class ContactDeleteView(ListView):
-    templates_name = 'contact.html'
-    model = Contact
-    context_object_name = 'contact_delete'
+    success_url = reverse_lazy('contact')

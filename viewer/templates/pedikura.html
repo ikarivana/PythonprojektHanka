@@ -1,27 +1,25 @@
 {% extends 'base.html' %}
 
 {% block title %}
-      Pedikura
+   Pedikúra
 {% endblock %}
+
 
 {% block content %}
 <h1>Výběr procedůry</h1>
-<a href="/pedikura/add">Přidat</a>
+<a href="{% url 'pedicure_create' %}">Přidat</a>
 <ul>
     {% for pedicure in pedicures %}
     <li>
-        <a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a>
-        <a href="{% url 'pedicure_update' pedicure.id %}"></a>
-        <a href="{% url 'pedicure_delete' pedicure.id %}"></a>
-        <a href="{% url 'pedicure_create' %}"></a>
+        <a href="{% url 'pedicure_detail' pedicure.id %}" >{{ pedicure }}</a>
+        <a href="{% url 'pedicure_update' pedicure.id %}" class="btn btn-primary">✔</a>
+        <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn btn-danger">🗑️</a>
     </li>
     {% endfor %}
-
 </ul>
-
 <div>
     <p class="text-justify">{{ pedikura.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ pedikura.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava: {{ pedikura.update }}</small></p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure.update }}</small></p>
 </div>
 {% endblock %}

@@ -13,7 +13,7 @@ class Pedikura(Model):
         verbose_name_plural = "Pedikúra"
 
     def __repr__(self):
-        return f"Pedikura(name={self.name} procedure_time={self.procedure_time} descripton={self.descripton} price={self.price} )"
+        return f"Pedikura(name={self.name} procedure_time={self.procedure_time} description={self.description} price={self.price} )"
 
     def __str__(self):
         return self.name
@@ -30,7 +30,7 @@ class Rasy(Model):
         verbose_name_plural = "Řasy"
 
     def __repr__(self):
-        return f"Rasy(name={self.name} descripton={self.descripton} price={self.price})"
+        return f"Rasy(name={self.name} description={self.description} price={self.price} procedure_time={self.procedure_time})"
 
     def __str__(self):
         return self.name
@@ -45,7 +45,7 @@ class Zdravi(Model):
         verbose_name_plural = "Zdraví"
 
     def __repr__(self):
-        return f"Zdravi(name={self.name} descripton={self.descripton})"
+        return f"Zdravi(name={self.name} description={self.description})"
 
     def __str__(self):
         return self.name
@@ -59,7 +59,7 @@ class Contact(Model):
     description = TextField(max_length=5000, null=True, blank=True)
 
     def __repr__(self):
-        return f"Contacte(name={self.name} phone={self.phone} email={self.email} descripton={self.descripton})"
+        return f"Contacte(name={self.name} phone={self.phone} email={self.email} description={self.description}) address={self.address}"
 
     def __str__(self):
         return self.name

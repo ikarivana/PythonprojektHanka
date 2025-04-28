@@ -16,34 +16,35 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from viewer.views import home, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
 
-from viewer.views import *
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', Home, name="home"),
+    path('', home, name="home"),
     path('pedicure/', PedicureListView.as_view(), name="pedicure"),
     path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
-    path('pedikure/', PedicureCreateView.as_view(), name="pedicure_create"),
+    path('pedicure/create', PedicureCreateView.as_view(), name="pedicure_create"),
     path('pedicure/update/<int:pk>/', PedicureUpdateView.as_view(), name="pedicure_update"),
     path('pedicure/delete/<int:pk>/', PedicureDeleteView.as_view(), name="pedicure_delete"),
 
     path('eyelash/', EyelashListView.as_view(), name="eyelash"),
     path('eyelash/<int:pk>/', EyelashDetailView.as_view(), name="eyelash_detail"),
-    path('eyelash/', EyelashCreateView.as_view(), name="eyelash_create"),
+    path('eyelash/create', EyelashCreateView.as_view(), name="eyelash_create"),
     path('eyelash/update/<int:pk>/', EyelashUpdateView.as_view(), name="eyelash_update"),
     path('eyelash/delete/<int:pk>/', EyelashDeleteView.as_view(), name="eyelash_delete"),
 
     path('health/', HealthListView.as_view(), name="health"),
     path('health/<int:pk>/', HealthDetailView.as_view(), name="health_detail"),
-    path('health/', HealthCreateView.as_view(), name="health_create"),
+    path('health/create', HealthCreateView.as_view(), name="health_create"),
     path('health/update/<int:pk>/', HealthUpdateView.as_view(), name="health_update"),
     path('health/delete/<int:pk>/', HealthDeleteView.as_view(), name="health_delete"),
 
     path('contact/', ContactListView.as_view(), name="contact"),
     path('contact/<int:pk>/', ContactDetailView.as_view(), name="contact_detail"),
-    path('contact/', ContactCreateView.as_view(), name="contact_create"),
+    path('contact/create', ContactCreateView.as_view(), name="contact_create"),
     path('contact/update/<int:pk>/', ContactUpdateView.as_view(), name="contact_update"),
     path('contact/delete/<int:pk>/', ContactDeleteView.as_view(), name="contact_delete"),
 ]
