@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-   {{ rasy.name }}
+{{ eyelash_detail.name }}
 {% endblock %}
 
 {% block content %}
-    <h1>{{ rasy.name }}</h1>
-    <div>{{ rasy.time }}</div>
-    <div>{{ rasy.description }}</div>
-    <div>{{ rasy.price }}</div>
-{% endblock %}
+<h1 class="display-5">{{ eyelash_detail.name }}</h1>
+    <hr class="row">
+<div class="col-md-16">
+    <p><strong>Čas procedůry: </strong> {{ eyelash_detail.procedure_time }} min.
+    <p><strong>Cena: </strong> {{ eyelash_detail.price }}kč</p>
+    <hr class="row">
+    <div>{{eyelash_detail.description }}</div>
+</div>
+    {% endblock %}

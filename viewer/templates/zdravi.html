@@ -6,14 +6,13 @@
 
 {% block content %}
 <h1>Čistíme tělo</h1>
-<a href="/zdravi/add">Přidat</a>
+<a href="{% url 'health_create' %}">Přidat</a>
 <ul>
     {% for health in healths %}
     <li>
         <a href="{% url 'health_detail' health.id %}">{{ health }}</a>
-        <a href="{% url 'healt_update' health.id %}"></a>
-        <a href="{% url 'health_delete' health.id %}"></a>
-        <a href="{% url 'health_create' %}"></a>
+        <a href="{% url 'health_update' health.id %}" class="btn btn-primary">✔</a>
+        <a href="{% url 'health_delete' health.id %}" class="btn btn-danger">🗑️</a>
     </li>
     {% endfor %}
 
@@ -21,7 +20,7 @@
 
 <div>
     <p class="text-justify">{{ eyelash.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ health.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava: {{ health.update }}</small></p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ health.update }}</small></p>
 </div>
 {% endblock %}

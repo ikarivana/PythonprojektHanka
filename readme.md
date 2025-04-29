@@ -100,7 +100,7 @@ taky přidame do seznamu ' requirements.txt '
 
 ### Spuštění servru
 ```bash
-  python manage.py runserver
+  
 ```
  - lze spustit ručně pod nějakým číslem, stopnutí servru Ctrl+c
 

@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 
 {% block title %}
-   {{ health.name }}
+{{ health_detail.name }}
 {% endblock %}
 
 {% block content %}
-    <h1>{{ health.name }}</h1>
-    <div>{{ health.description }}</div>
+<h1 class="display-5">{{ health_detail.name }}</h1>
+    <hr class="row">
+<div class="col-md-16">
+    <div>{{ health_detail.description }}</div>
+</div>
 {% endblock %}
