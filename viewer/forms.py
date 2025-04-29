@@ -1,7 +1,7 @@
 from typing import re
 
 from django.core.exceptions import ValidationError
-from django.forms import Form, Textarea, CharField, IntegerField, ModelForm, TextInput
+from django.forms import CharField, ModelForm, TextInput
 
 from viewer.models import Pedikura, Rasy, Zdravi, Contact
 
@@ -28,7 +28,8 @@ class PedikuraModelForm(ModelForm):
             }
         }
 
-    name = CharField(max_length=60, required=True, widget=TextInput(attrs={'class': 'bg-info'}))
+    name = CharField(max_length=60, required=True, widget=TextInput(attrs={'class': 'bg-info'}),
+                     label="Název procedůry")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,10 +42,14 @@ class PedikuraModelForm(ModelForm):
 
     def clean_procedure_time(self):
         initial = self.cleaned_data['procedure_time']
-        if initial and initial <= 0:
+        if initial and initial <= 1:
             raise ValidationError('Délka musí být kladné číslo')
+        return initial
 
-
+    def clean_description(self):
+        initial = self.cleaned_data['description']
+        sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
+        return '.'.join(sentence.capitalize() for sentence in sentences)
 
 class RasyModelForm(ModelForm):
     class Meta:
@@ -68,7 +73,8 @@ class RasyModelForm(ModelForm):
             }
         }
 
-    name = CharField(max_length=60, required=True, widget=TextInput(attrs={'class': 'bg-info'}))
+    name = CharField(max_length=60, required=True, widget=TextInput(attrs={'class': 'bg-info'}),
+                     label="Název procedůry")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -83,6 +89,13 @@ class RasyModelForm(ModelForm):
         initial = self.cleaned_data['procedure_time']
         if initial and initial <= 0:
             raise ValidationError('Délka musí být kladné číslo')
+        return initial
+
+    def clean_description(self):
+        initial = self.cleaned_data['description']
+        sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
+        return '.'.join(sentence.capitalize() for sentence in sentences)
+
 
 
 class ZdraviModelForm(ModelForm):
@@ -152,14 +165,3 @@ class ContactModelForm(ModelForm):
     def clean_name(self):
         initial = self.cleaned_data['name']
         return initial.capitalize()
-
-    def clean_email(email):
-        email = email.strip() #odstranění bílých znaků
-        email = email.strip('\'"()[]{}<>:;,') #odstranění béžných speciálních znaků
-        email = email.relace('%20', '') #odstranění mezery v kodování URL
-        return email
-
-    def is_valid_email(email):
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+\.[a-zA-Z]{2,}$'
-        return re.match(pattern, email) is not None
-

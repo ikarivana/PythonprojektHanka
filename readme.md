@@ -29,6 +29,8 @@
   - Email
   - popis
   
+![ER diagram](./zaloha/er-1.png)
+  
 ## Databáze
 -[ ] 1 Jméno příjmení
 -[ ] 2 Datum narození

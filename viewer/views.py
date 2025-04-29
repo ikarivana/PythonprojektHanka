@@ -1,6 +1,7 @@
 from django.views.generic import *
 from django.shortcuts import render
 
+
 from viewer.forms import PedikuraModelForm, RasyModelForm, ContactModelForm, ZdraviModelForm
 from viewer.models import *
 from django.http import HttpResponse
@@ -21,7 +22,7 @@ class PedicureDetailView(DetailView):
     context_object_name = 'pedicure_detail'
 
 class PedicureCreateView(CreateView):
-    templates_name = 'form.html'
+    template_name = 'form.html'
     form_class = PedikuraModelForm
     success_url = reverse_lazy('pedicure')
 
@@ -30,9 +31,9 @@ class PedicureCreateView(CreateView):
         return super().form_invalid(form)
 
 class PedicureUpdateView(UpdateView):
-    templates_name = 'form.html'
+    template_name = 'form.html'
     form_class = PedikuraModelForm
-    model = PedikuraModelForm
+    model = Pedikura
     success_url = reverse_lazy('pedicure')
 
     def form_invalid(self, form):
@@ -40,7 +41,7 @@ class PedicureUpdateView(UpdateView):
         return super().form_invalid(form)
 
 class PedicureDeleteView(DeleteView):
-    templates_name = 'confirm_delete.html'
+    template_name = 'confirm_delete.html'
     model = Pedikura
     success_url = reverse_lazy('pedicure')
 
@@ -58,8 +59,8 @@ class EyelashDetailView(DetailView):
     context_object_name = 'eyelash_detail'
 
 class EyelashCreateView(CreateView):
-    templates_name = 'form.html'
-    model = RasyModelForm
+    template_name = 'form.html'
+    form_class = RasyModelForm
     success_url = reverse_lazy('eyelash')
 
     def form_invalid(self, form):
@@ -68,8 +69,8 @@ class EyelashCreateView(CreateView):
 
 class EyelashUpdateView(UpdateView):
     form_class = RasyModelForm
-    templates_name = 'form.html'
-    model = RasyModelForm
+    template_name = 'form.html'
+    model = Rasy
     success_url = reverse_lazy('eyelash')
 
     def form_invalid(self, form):
@@ -94,8 +95,8 @@ class HealthDetailView(DetailView):
     context_object_name = 'health_detail'
 
 class HealthCreateView(CreateView):
-    templates_name = 'form.html'
-    model = ZdraviModelForm
+    template_name = 'form.html'
+    form_class = ZdraviModelForm
     success_url = reverse_lazy('heatlh')
 
     def form_invalid(self, form):
@@ -103,8 +104,8 @@ class HealthCreateView(CreateView):
         return super().form_invalid(form)
 
 class HealthUpdateView(UpdateView):
-    templates_name = 'form.html'
-    model = ZdraviModelForm
+    template_name = 'form.html'
+    model = Zdravi
     success_url = reverse_lazy('health')
 
     def form_invalid(self, form):
@@ -112,7 +113,7 @@ class HealthUpdateView(UpdateView):
         return super().form_invalid(form)
 
 class HealthDeleteView(DeleteView):
-    templates_name = 'confirm_delete.html'
+    template_name = 'confirm_delete.html'
     model = Zdravi
     success_url = reverse_lazy('health')
 
@@ -129,8 +130,8 @@ class ContactDetailView(DetailView):
     context_object_name = 'contact_detail'
 
 class ContactCreateView(CreateView):
-    templates_name = 'form.html'
-    model = ContactModelForm
+    template_name = 'form.html'
+    form_class = ContactModelForm
     success_url = reverse_lazy('contact')
 
     def form_invalid(self, form):
@@ -138,8 +139,8 @@ class ContactCreateView(CreateView):
         return super().form_invalid(form)
 
 class ContactUpdateView(UpdateView):
-    templates_name = 'form.html'
-    model = ContactModelForm
+    template_name = 'form.html'
+    model = Contact
     success_url = reverse_lazy('contact')
 
     def form_invalid(self, form):
@@ -147,6 +148,6 @@ class ContactUpdateView(UpdateView):
         return super().form_invalid(form)
 
 class ContactDeleteView(DeleteView):
-    templates_name = 'confirm_delete.html'
+    template_name = 'confirm_delete.html'
     model = Contact
     success_url = reverse_lazy('contact')

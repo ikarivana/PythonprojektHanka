@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block title %}
-      Contact
+Contact
 {% endblock %}
 
 {% block content %}
 <h1>Kontaktní údaje</h1>
-<a href="{% url 'contact_create' %}">Přidat</a>
+<a href="{% url 'contact_create' %}" class="btn btn-primary">Přidat</a>
 <ul>
     {% for contact in contacts %}
     <li>
         <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
-        <a href="{% url 'contact_update' contact.id %}" class="btn btn-primary">✔</a>
-        <a href="{% url 'contact_delete' contact.id %}" class="btn btn-danger">🗑️</a>
+        <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
+        <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
     </li>
     {% endfor %}
 
@@ -23,4 +23,7 @@
     <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ contact.created }}</small></p>
     <p class="mt2"><small class="text-muted">Poslední úprava : {{ contact.update }}</small></p>
 </div>
+
+
+
 {% endblock %}
