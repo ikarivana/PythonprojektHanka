@@ -6,11 +6,15 @@
 
 {% block content %}
 <h1 class="display-5">{{ eyelash_detail.name }}</h1>
-    <hr class="row">
+<hr class="row">
 <div class="col-md-16">
     <p><strong>Čas procedůry: </strong> {{ eyelash_detail.procedure_time }} min.
     <p><strong>Cena: </strong> {{ eyelash_detail.price }}kč</p>
     <hr class="row">
     <div>{{eyelash_detail.description }}</div>
 </div>
-    {% endblock %}
+
+<hr>
+  <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">✔</a>
+  <a href="{% url 'eyelash_delete' eyelash.id %}" class="btn">🗑️</a>
+{% endblock %}

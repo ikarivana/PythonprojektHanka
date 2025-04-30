@@ -151,3 +151,26 @@ class ContactDeleteView(DeleteView):
     template_name = 'confirm_delete.html'
     model = Contact
     success_url = reverse_lazy('contact')
+
+
+def search(request):
+    if request.method == 'POST':
+        search_string = request.POST.get('search', '').strip()
+        if search_string:
+            pedicures_name = Pedikura.objects.filter(pedicure_name__contains=search_string)
+            pedicures_description = Pedikura.objects.filter(pedicure_description__contains=search_string)
+
+            eyelash_name = Rasy.objects.filter(eyelash_name__contains=search_string)
+            eyelash_description = Rasy.objects.filter(eyelash_description__contains=search_string)
+
+            context = {
+                'search': search_string,
+                'pedicures_name': pedicures_name,
+                'pedicures_description': pedicures_description,
+                'eyelash_name': eyelash_name,
+                'eyelash_description': eyelash_description
+            }
+
+
+            return render(request, 'search.html', context)
+        return render(request, 'home.html')

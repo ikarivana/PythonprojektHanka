@@ -11,8 +11,6 @@ Contact
     {% for contact in contacts %}
     <li>
         <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
-        <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
-        <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
     </li>
     {% endfor %}
 

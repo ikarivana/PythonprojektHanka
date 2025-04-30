@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
 
 {% block title %}
-   {{ pedicure_detail.name }}
+{{ pedicure_detail.name }}
 {% endblock %}
 
 {% block content %}
 <h1 class=display-5">{{ pedicure_detail.name }}</h1>
-    <hr class="row">
+<hr class="row">
 <div class="col-md-16">
     <p><strong>Čas procedůry: </strong> {{ pedicure_detail.procedure_time }} min.
     <p><strong>Cena: </strong> {{ pedicure_detail.price }}kč</p>
     <hr class="row">
     <div>{{ pedicure_detail.description }}</div>
 </div>
-    {% endblock %}
+
+<hr>
+  <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">✔</a>
+  <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn">🗑️</a>
+
+{% endblock %}
 

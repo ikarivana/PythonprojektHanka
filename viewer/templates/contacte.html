@@ -16,5 +16,9 @@
 <div>{{ contact_detail.description }}</div>
 </div>
 
+<hr>
+  <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
+  <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
+
 {% endblock %}
 

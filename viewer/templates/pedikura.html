@@ -12,15 +12,13 @@
     {% for pedicure in pedicures %}
     <li>
         <a href="{% url 'pedicure_detail' pedicure.id %}" >{{ pedicure }}</a>
-        <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">✔</a>
-        <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn">🗑️</a>
     </li>
     {% endfor %}
 </ul>
 <div>
     <p class="text-justify">{{ pedikura.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure.update }}</small></p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure.created|date:"j.n.Y G:i" }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure.update|date:"j.n.Y G:i"  }}</small></p>
 </div>
 
 

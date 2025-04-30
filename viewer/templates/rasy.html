@@ -11,8 +11,6 @@
     {% for eyelash in eyelashs %}
     <li>
         <a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a>
-        <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">✔</a>
-        <a href="{% url 'eyelash_delete' eyelash.id %}" class="btn">🗑️</a>
     </li>
     {% endfor %}
 </ul>

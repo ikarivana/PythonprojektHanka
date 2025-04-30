@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   Vyhledávání '{{ search }}'
+{% endblock %}
+
+{% block content %}
+   <h1>Výsledky vyhledávání dotazu '{{ search }}</h1>
+
+   <h2>Výsledek pro hledání pedikúra</h2>
+   <ul>
+       {% for pedicure in pedicures_name %}
+           <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a></li>
+       {% empty %}
+           Nic nalezeno
+       {% endfor %}
+   </ul>
+
+       <h2>Výsledek pro hledání pedikúra</h2>
+   <ul>
+       {% for pedicure in pedicures_description %}
+           <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a></li>
+       {% empty %}
+           Nic nalezeno
+       {% endfor %}
+   </ul>
+
+   <hr>
+   <h2>Výsledek pro hledání řasy</h2>
+   <ul>
+       {% for eyelash in eyelash_name %}
+           <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a></li>
+       {% empty %}
+           Nic nalezeno
+       {% endfor %}
+   </ul>
+       <h2>Výsledek pro hledání řasy</h2>
+   <ul>
+       {% for eyelash in eyelash_description %}
+           <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a></li>
+       {% empty %}
+           Nic nalezeno
+       {% endfor %}
+   </ul>
+
+{% endblock %}

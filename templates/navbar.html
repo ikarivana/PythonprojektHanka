@@ -15,6 +15,15 @@
                 <a class="nav-item nav-link active" href="{% url 'health' %}">Zdraví</a>
                 <a class="nav-item nav-link active" href="{% url 'contact' %}">Kontakt</a>
             </div>
+
+            <div class="navbar-nav ml-auto">
+                <div class="search-div">
+                    <form method="post" action="/search/">
+                        {% csrf_token %}
+                        <input type="text" id="search" placeholder="👁Najít ....">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
