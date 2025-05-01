@@ -6,11 +6,17 @@
 
 {% block content %}
 <h1>Čistíme tělo</h1>
+{% if user.is_authenticated %}
 <a href="{% url 'health_create' %}" class="btn btn-primary">Přidat</a>
+{% endif %}
 <ul>
     {% for health in healths %}
     <li>
         <a href="{% url 'health_detail' health.id %}">{{ health }}</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'health_update' health.id %}" class="btn">✔</a>
+        <a href="{% url 'health_delete' health.id %}" class="btn">🗑️</a>
+        {% endif %}
     </li>
     {% endfor %}
 

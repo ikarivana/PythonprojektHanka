@@ -6,11 +6,17 @@ Contact
 
 {% block content %}
 <h1>Kontaktní údaje</h1>
+{% if user.is_authenticated %}
 <a href="{% url 'contact_create' %}" class="btn btn-primary">Přidat</a>
+{% endif %}
 <ul>
     {% for contact in contacts %}
     <li>
         <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
+        <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
+        {% endif %}
     </li>
     {% endfor %}
 

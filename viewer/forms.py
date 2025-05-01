@@ -1,8 +1,6 @@
-from typing import re
-
+import re
 from django.core.exceptions import ValidationError
 from django.forms import CharField, ModelForm, TextInput
-
 from viewer.models import Pedikura, Rasy, Zdravi, Contact
 
 
@@ -24,7 +22,7 @@ class PedikuraModelForm(ModelForm):
 
         error_messages = {
             'name': {
-                'Tento údaj je povinný.'
+                'required': 'Tento údaj je povinný.',
             }
         }
 
@@ -49,7 +47,8 @@ class PedikuraModelForm(ModelForm):
     def clean_description(self):
         initial = self.cleaned_data['description']
         sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
-        return '.'.join(sentence.capitalize() for sentence in sentences)
+        return '.'.join(sentence.capitalize()
+                        for sentence in sentences if sentence).strip()
 
 class RasyModelForm(ModelForm):
     class Meta:
@@ -69,7 +68,7 @@ class RasyModelForm(ModelForm):
 
         error_messages = {
             'name': {
-                'Tento údaj je povinný.'
+                'required': 'Tento údaj je povinný.',
             }
         }
 
@@ -94,9 +93,8 @@ class RasyModelForm(ModelForm):
     def clean_description(self):
         initial = self.cleaned_data['description']
         sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
-        return '.'.join(sentence.capitalize() for sentence in sentences)
-
-
+        return '.'.join(sentence.capitalize()
+                        for sentence in sentences if sentence).strip()
 
 class ZdraviModelForm(ModelForm):
     class Meta:
@@ -114,7 +112,7 @@ class ZdraviModelForm(ModelForm):
 
         error_messages = {
             'name': {
-                'Tento údaj je povinný.'
+                'required': 'Tento údaj je povinný.',
             }
         }
 
@@ -151,7 +149,7 @@ class ContactModelForm(ModelForm):
 
         error_messages = {
             'name': {
-                'Tento údaj je povinný.'
+                'required': 'Tento údaj je povinný.',
             }
         }
 

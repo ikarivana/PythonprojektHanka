@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 
 {% block title %}
-      Řasy
+Řasy
 {% endblock %}
 
 {% block content %}
 <h1>Výběr procedůry</h1>
+{% if user.is_authenticated %}
 <a href="{% url 'eyelash_create' %}" class="btn btn-primary">Přidat</a>
+{% endif %}
 <ul>
     {% for eyelash in eyelashs %}
     <li>
         <a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">✔</a>
+        <a href="{% url 'eyelash_delete' eyelash.id %}" class="btn">🗑️</a>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

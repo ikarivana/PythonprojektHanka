@@ -5,7 +5,7 @@
   Vítejte v repozitáři závěrečného projektu v kurzu programování v Pythnu od SDA.
   Tato webová aplikace je navržená pro kamarádku kosmetičku, aby měla o svých zakaznicích a jejich požadavcích přehled.
 
-## Popis projektu
+## Popis projektu - databáze
  -[ ] Pedikúra
    - Název ošetření + popis
      - Pedikúra basic 
@@ -31,7 +31,7 @@
   
 ![ER diagram](./zaloha/er-1.png)
   
-## Databáze
+## Profil
 -[ ] 1 Jméno příjmení
 -[ ] 2 Datum narození
 -[ ] 3 Telefon (int)

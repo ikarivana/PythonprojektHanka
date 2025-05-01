@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import *
 from django.shortcuts import render
 
@@ -21,7 +22,7 @@ class PedicureDetailView(DetailView):
     model = Pedikura
     context_object_name = 'pedicure_detail'
 
-class PedicureCreateView(CreateView):
+class PedicureCreateView(LoginRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = PedikuraModelForm
     success_url = reverse_lazy('pedicure')
@@ -30,7 +31,7 @@ class PedicureCreateView(CreateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class PedicureUpdateView(UpdateView):
+class PedicureUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'form.html'
     form_class = PedikuraModelForm
     model = Pedikura
@@ -40,7 +41,7 @@ class PedicureUpdateView(UpdateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class PedicureDeleteView(DeleteView):
+class PedicureDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Pedikura
     success_url = reverse_lazy('pedicure')
@@ -58,7 +59,7 @@ class EyelashDetailView(DetailView):
     model = Rasy
     context_object_name = 'eyelash_detail'
 
-class EyelashCreateView(CreateView):
+class EyelashCreateView(LoginRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = RasyModelForm
     success_url = reverse_lazy('eyelash')
@@ -67,7 +68,7 @@ class EyelashCreateView(CreateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class EyelashUpdateView(UpdateView):
+class EyelashUpdateView(LoginRequiredMixin, UpdateView):
     form_class = RasyModelForm
     template_name = 'form.html'
     model = Rasy
@@ -77,8 +78,8 @@ class EyelashUpdateView(UpdateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class EyelashDeleteView(DeleteView):
-    templates_name = 'confirm_delete.html'
+class EyelashDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'confirm_delete.html'
     model = Rasy
     success_url = reverse_lazy('eyelash')
 
@@ -94,7 +95,7 @@ class HealthDetailView(DetailView):
     model = Zdravi
     context_object_name = 'health_detail'
 
-class HealthCreateView(CreateView):
+class HealthCreateView(LoginRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = ZdraviModelForm
     success_url = reverse_lazy('heatlh')
@@ -103,7 +104,7 @@ class HealthCreateView(CreateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class HealthUpdateView(UpdateView):
+class HealthUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Zdravi
     success_url = reverse_lazy('health')
@@ -112,7 +113,7 @@ class HealthUpdateView(UpdateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class HealthDeleteView(DeleteView):
+class HealthDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Zdravi
     success_url = reverse_lazy('health')
@@ -129,7 +130,7 @@ class ContactDetailView(DetailView):
     model = Contact
     context_object_name = 'contact_detail'
 
-class ContactCreateView(CreateView):
+class ContactCreateView(LoginRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = ContactModelForm
     success_url = reverse_lazy('contact')
@@ -138,7 +139,7 @@ class ContactCreateView(CreateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class ContactUpdateView(UpdateView):
+class ContactUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Contact
     success_url = reverse_lazy('contact')
@@ -147,7 +148,7 @@ class ContactUpdateView(UpdateView):
         print("form není validní")
         return super().form_invalid(form)
 
-class ContactDeleteView(DeleteView):
+class ContactDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Contact
     success_url = reverse_lazy('contact')

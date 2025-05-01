@@ -3,8 +3,7 @@
         <a class="navbar-brand" href="/">Loub-Natural</a>
         <button
                 class="navbar-toggler" type="button"
-                data-toggle="collapse" data-target="#navbarNavAltMarkup"
-        >
+                data-toggle="collapse" data-target="#navbarNavAltMarkup">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -22,6 +21,26 @@
                         {% csrf_token %}
                         <input type="text" id="search" placeholder="👁Najít ....">
                     </form>
+                </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+                <div class="nav-item ml-auto">
+                    <div class="nav-item dropdown">
+                        {% if user.is_authenticated %}
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ user.username}}</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'logout' %}">Odhlásit</a>
+                                <a class="dropdown-item" href="{% url 'password_change' %}">Změna hesla</a>
+                            </div>
+                        {% else %}
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Nepřihlášený uživatel</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'login' %}">Přihlásit</a>
+                                <a class="dropdown-item" href="{% url 'signup' %}">Registrovat</a>
+                                <a class="dropdown-item" href="{% url 'password_reset' %}">Reset hesla</a>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

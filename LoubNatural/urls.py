@@ -15,7 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.contrib.auth.views import LoginView
+from django.urls import path, include
+
+from accounts.views import SubmittableLoginView, user_logout, SignUpView
 from viewer.views import home, search, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
 
 
@@ -25,6 +28,7 @@ urlpatterns = [
 
     path('', home, name="home"),
     path('search/', search, name="search"),
+
     path('pedicure/', PedicureListView.as_view(), name="pedicure"),
     path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
     path('pedicure/create', PedicureCreateView.as_view(), name="pedicure_create"),
@@ -48,5 +52,11 @@ urlpatterns = [
     path('contact/create', ContactCreateView.as_view(), name="contact_create"),
     path('contact/update/<int:pk>/', ContactUpdateView.as_view(), name="contact_update"),
     path('contact/delete/<int:pk>/', ContactDeleteView.as_view(), name="contact_delete"),
+
+    path('accounts/login/', SubmittableLoginView.as_view(), name="login"),
+    path('accounts/logout/', user_logout, name="logout"),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/signup/',SignUpView.as_view(), name="signup"),
+
 ]
 
