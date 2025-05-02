@@ -6,28 +6,21 @@ Contact
 
 {% block content %}
 <h1>Kontaktní údaje</h1>
-{% if user.is_authenticated %}
+{% if perms.viewer.add_contact %}
 <a href="{% url 'contact_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
 <ul>
     {% for contact in contacts %}
     <li>
         <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
-        {% if user.is_authenticated %}
+        {% if perms.viewer.change_contact %}
         <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
+        {% endif %}
+        {% if perms.viewer.delete_contact %}
         <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>
     {% endfor %}
-
 </ul>
-
-<div>
-    <p class="text-justify">{{ pedikura.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ contact.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ contact.update }}</small></p>
-</div>
-
-
 
 {% endblock %}

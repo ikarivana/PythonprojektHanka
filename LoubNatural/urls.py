@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('pedicure/', PedicureListView.as_view(), name="pedicure"),
     path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
+    #path('pedicure/<int:pk>/', pedicure, name="pedicure_detail"),
     path('pedicure/create', PedicureCreateView.as_view(), name="pedicure_create"),
     path('pedicure/update/<int:pk>/', PedicureUpdateView.as_view(), name="pedicure_update"),
     path('pedicure/delete/<int:pk>/', PedicureDeleteView.as_view(), name="pedicure_delete"),

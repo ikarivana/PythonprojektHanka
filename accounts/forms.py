@@ -1,13 +1,24 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.db.transaction import atomic
 from django.forms import PasswordInput, NumberInput, DateField, Textarea, CharField
-
 from accounts.models import Profile
-from viewer import forms
-
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class SignUpForm(UserCreationForm):
+    password1 = forms.CharField(
+        label='Heslo',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    password2 = forms.CharField(
+        label='Potvrzení hesla',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'password1', 'password2')
+
 
     class Meta(UserCreationForm.Meta):
         model = User

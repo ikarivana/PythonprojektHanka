@@ -6,26 +6,23 @@
 
 {% block content %}
 <h1>Čistíme tělo</h1>
-{% if user.is_authenticated %}
+
+{% if perms.viewer.add_health %}
 <a href="{% url 'health_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
 <ul>
+
     {% for health in healths %}
     <li>
         <a href="{% url 'health_detail' health.id %}">{{ health }}</a>
-        {% if user.is_authenticated %}
+        {% if perms.viewer.change_health %}
         <a href="{% url 'health_update' health.id %}" class="btn">✔</a>
+        {% endif %}
+        {% if perms.viewer.delete_health %}
         <a href="{% url 'health_delete' health.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>
     {% endfor %}
-
 </ul>
-
-<div>
-    <p class="text-justify">{{ eyelash.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ health.update }}</small></p>
-</div>
 
 {% endblock %}

@@ -1,10 +1,13 @@
-from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import TextField, DateField, OneToOneField, CASCADE, CharField
+from django.contrib.auth.models import User
+from django.db.models import OneToOneField, TextField, CharField, DateField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 
 class Profile(models.Model):
-    user = OneToOneField(User, on_delete=CASCADE)
+    user = OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = DateField(blank=True, null=True)
     biography = TextField(max_length=500, blank=True)
     phone = CharField(max_length=20, blank=True, null=True)
@@ -16,4 +19,13 @@ class Profile(models.Model):
         return f"Profil(user={self.user})"
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username}"
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    try:
+        # Pokud profil existuje, jen ho uložíme
+        instance.profile.save()
+    except Profile.DoesNotExist:
+        # Pokud profil neexistuje, vytvoříme nový
+        Profile.objects.create(user=instance)

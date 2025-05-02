@@ -11,4 +11,53 @@
     <div>{{ health_detail.description }}</div>
 </div>
 
+<div>
+{% if perms.viewer.change_health %}
+        <a href="{% url 'health_update' health_detail.id %}" class="btn">✔</a>
+        {% endif %}
+        {% if perms.viewer.delete_health %}
+        <a href="{% url 'health_delete' health_detail.id %}" class="btn">🗑️</a>
+        {% endif %}
+</div>
+
+{% if request.user.is_authenticated %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>{{ review_form.as_table }}</table>
+        <button type="submit">Odeslat</button>
+    </form>
+
+    <hr>
+{% if request.user.is_authenticated %}
+    <!-- váš současný kód pro přihlášené uživatele -->
+{% else %}
+    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+{% endif %}
+
+    <h4>Hodnocení a komentáře:</h4>
+    {% for review in reviews %}
+        <div class="bg-light rounded mt-2 p-2 position-relative">
+            <span>Uživatel: {{ review.review }}</span>
+            <span class="font-italic">{{ review.created }}</span>
+            <div>
+                Hodnocení služby: {{ review.rating }}
+            </div>
+            <div>
+                Komentář: {{ review.comment }}
+            </div>
+        </div>
+    {% empty %}
+        <p>Zatím nikdo nehodnotil</p>
+    {% endfor %}
+{% else %}
+    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+{% endif %}
+
+<div>
+    <p class="text-justify">{{ eyelash.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health.created }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ health.update }}</small></p>
+</div>
+
+
 {% endblock %}

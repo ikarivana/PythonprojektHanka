@@ -6,26 +6,23 @@
 
 {% block content %}
 <h1>Výběr procedůry</h1>
-{% if user.is_authenticated %}
+
+{% if perms.viewer.add_rasy %}
 <a href="{% url 'eyelash_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
+
 <ul>
     {% for eyelash in eyelashs %}
     <li>
         <a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a>
-        {% if user.is_authenticated %}
+        {% if perms.viewer.change_rasy %}
         <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">✔</a>
+        {% endif %}
+        {% if perms.viewer.delete_rasy %}
         <a href="{% url 'eyelash_delete' eyelash.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
-
-<div>
-    <p class="text-justify">{{ eyelash.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ eyelash.created }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ eyelash.update }}</small></p>
-</div>
-
 
 {% endblock %}

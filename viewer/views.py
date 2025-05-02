@@ -1,16 +1,26 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from accounts.models import Profile
 
-
-from viewer.forms import PedikuraModelForm, RasyModelForm, ContactModelForm, ZdraviModelForm
+from viewer.forms import (
+    PedikuraModelForm,
+    RasyModelForm,
+    ContactModelForm,
+    ZdraviModelForm,
+    PedikuraReviewForm,
+    RasyReviewForm,
+    ZdraviReviewForm
+)
+from viewer.mixins import StaffRequiredMixin
 from viewer.models import *
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 
+
 def home(request):
     return render(request, 'home.html')
-
 
 class PedicureListView(ListView):
     template_name = 'pedikura.html'
@@ -22,30 +32,40 @@ class PedicureDetailView(DetailView):
     model = Pedikura
     context_object_name = 'pedicure_detail'
 
-class PedicureCreateView(LoginRequiredMixin, CreateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['review_form'] = PedikuraReviewForm()
+            context['reviews'] = self.object.reviews.all()
+        return context
+
+
+class PedicureCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = PedikuraModelForm
     success_url = reverse_lazy('pedicure')
+    permission_required = 'viewer.add_pedicure'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class PedicureUpdateView(LoginRequiredMixin, UpdateView):
+class PedicureUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     form_class = PedikuraModelForm
     model = Pedikura
     success_url = reverse_lazy('pedicure')
+    permission_required = 'viewer.change_pedicure'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class PedicureDeleteView(LoginRequiredMixin, DeleteView):
+class PedicureDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Pedikura
     success_url = reverse_lazy('pedicure')
-
+    permission_required = 'viewer.delete_pedicure'
 
 
 
@@ -59,30 +79,40 @@ class EyelashDetailView(DetailView):
     model = Rasy
     context_object_name = 'eyelash_detail'
 
-class EyelashCreateView(LoginRequiredMixin, CreateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['review_form'] = RasyModelForm()
+            context['reviews'] = self.object.reviews.all()
+        return context
+
+
+class EyelashCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = RasyModelForm
     success_url = reverse_lazy('eyelash')
+    permission_required = 'viewer.add_rasy'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class EyelashUpdateView(LoginRequiredMixin, UpdateView):
+class EyelashUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = RasyModelForm
     template_name = 'form.html'
     model = Rasy
     success_url = reverse_lazy('eyelash')
+    permission_required = 'viewer.change_rasy'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class EyelashDeleteView(LoginRequiredMixin, DeleteView):
+class EyelashDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Rasy
     success_url = reverse_lazy('eyelash')
-
+    permission_required = 'viewer.delete_rasy'
 
 
 class HealthListView(ListView):
@@ -95,28 +125,39 @@ class HealthDetailView(DetailView):
     model = Zdravi
     context_object_name = 'health_detail'
 
-class HealthCreateView(LoginRequiredMixin, CreateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['review_form'] = ZdraviModelForm()
+            context['reviews'] = self.object.reviews.all()
+        return context
+
+
+class HealthCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = ZdraviModelForm
     success_url = reverse_lazy('heatlh')
+    permission_required = 'viewer.add_zdravi'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class HealthUpdateView(LoginRequiredMixin, UpdateView):
+class HealthUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Zdravi
     success_url = reverse_lazy('health')
+    permission_required = 'viewer.change_zdravi'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class HealthDeleteView(LoginRequiredMixin, DeleteView):
+class HealthDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Zdravi
     success_url = reverse_lazy('health')
+    permission_required = 'viewer.delete_zdravi'
 
 
 
@@ -130,28 +171,31 @@ class ContactDetailView(DetailView):
     model = Contact
     context_object_name = 'contact_detail'
 
-class ContactCreateView(LoginRequiredMixin, CreateView):
+class ContactCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = ContactModelForm
     success_url = reverse_lazy('contact')
+    permission_required = 'viewer.add_contact'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class ContactUpdateView(LoginRequiredMixin, UpdateView):
+class ContactUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Contact
     success_url = reverse_lazy('contact')
+    permission_required = 'viewer.change_contact'
 
     def form_invalid(self, form):
         print("form není validní")
         return super().form_invalid(form)
 
-class ContactDeleteView(LoginRequiredMixin, DeleteView):
+class ContactDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Contact
     success_url = reverse_lazy('contact')
+    permission_required = 'viewer.delete_contact'
 
 
 def search(request):

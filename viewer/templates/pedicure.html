@@ -1,18 +1,61 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ pedicure_detail.name }}
+  {{ pedicure_detail.name }}
 {% endblock %}
 
 {% block content %}
-<h1 class=display-5">{{ pedicure_detail.name }}</h1>
+<h1 class="display-5">{{ pedicure_detail.name }}</h1>
 <hr class="row">
 <div class="col-md-16">
-    <p><strong>Čas procedůry: </strong> {{ pedicure_detail.procedure_time }} min.
+    <p><strong>Čas procedůry: </strong> {{ pedicure_detail.procedure_time }} min.</p>
     <p><strong>Cena: </strong> {{ pedicure_detail.price }}kč</p>
     <hr class="row">
     <div>{{ pedicure_detail.description }}</div>
 </div>
 
-{% endblock %}
+<div>
+    {% if perms.viewer.change_pedicure %}
+        <a href="{% url 'pedicure_update' pedicure_detail.id %}" class="btn">✔</a>
+    {% endif %}
+    {% if perms.viewer.delete_pedicure %}
+        <a href="{% url 'pedicure_delete' pedicure_detail.id %}" class="btn">🗑️</a>
+    {% endif %}
+</div>
 
+<hr>
+
+{% if request.user.is_authenticated %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>{{ review_form.as_table }}</table>
+        <button type="submit">Odeslat</button>
+    </form>
+
+    <hr>
+    <h4>Hodnocení a komentáře:</h4>
+    {% for review in reviews %}
+        <div class="bg-light rounded mt-2 p-2 position-relative">
+            <span>Uživatel: {{ review.review }}</span>
+            <span class="font-italic">{{ review.created }}</span>
+            <div>
+                Hodnocení služby: {{ review.rating }}
+            </div>
+            <div>
+                Komentář: {{ review.comment }}
+            </div>
+        </div>
+    {% empty %}
+        <p>Zatím nikdo nehodnotil</p>
+    {% endfor %}
+{% else %}
+    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+{% endif %}
+
+<div>
+    <p class="text-justify">{{ pedicure.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze: {{ pedicure.created|date:"j.n.Y G:i" }}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava: {{ pedicure.update|date:"j.n.Y G:i" }}</small></p>
+</div>
+
+{% endblock %}

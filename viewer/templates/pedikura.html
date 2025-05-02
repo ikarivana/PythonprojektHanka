@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Pedikúra
+    Pedikúra
 {% endblock %}
 
 
 {% block content %}
 <h1>Výběr procedůry</h1>
-{% if user.is_authenticated %}
+
+{% comment %} udělění oprávnění-nastaveni v adminu {% endcomment %}
+
+{% if perms.viewer.add_pedicure %}
 <a href="{% url 'pedicure_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
 
@@ -15,18 +18,14 @@ Pedikúra
     {% for pedicure in pedicures %}
     <li>
         <a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a>
-        {% if user.is_authenticated %}
+        {% if perms.viewer.change_pedicure %}
         <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">✔</a>
+        {% endif %}
+        {% if perms.viewer.delete_pedicure %}
         <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
-<div>
-    <p class="text-justify">{{ pedikura.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure.created|date:"j.n.Y G:i" }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure.update|date:"j.n.Y G:i" }}</small></p>
-</div>
-
 
 {% endblock %}

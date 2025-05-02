@@ -1,5 +1,7 @@
-from django.db.models import Model
+from django.db.models import Model, ForeignKey, SET_NULL, CASCADE
 from django.db.models.fields import *
+
+from accounts.models import Profile
 
 
 class Pedikura(Model):
@@ -64,3 +66,44 @@ class Contact(Model):
     def __str__(self):
         return self.name
 
+
+class BaseReview(Model):
+    review = ForeignKey(Profile, on_delete=SET_NULL, null=True, blank=False, related_name='%(class)s_reviews')
+    rating = IntegerField(null=True, blank=True)  # 1-5 (*)
+    comment = TextField(max_length=5000, null=True, blank=True)
+    created = DateTimeField(auto_now_add=True)
+    updated = DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        ordering = ['-updated']
+
+class PedikuraReview(BaseReview):
+    pedikura = ForeignKey(Pedikura, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
+
+    class Meta:
+        ordering = ['-updated']
+        unique_together = ['pedikura', 'review']
+
+    def __str__(self):
+        return f"{self.review}: {self.pedikura} ({self.rating})"
+
+class ZdraviReview(BaseReview):
+    zdravi = ForeignKey(Zdravi, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
+
+    class Meta:
+        ordering = ['-updated']
+        unique_together = ['zdravi', 'review']
+
+    def __str__(self):
+        return f"{self.review}: {self.zdravi} ({self.rating})"
+
+class RasyReview(BaseReview):
+    rasy = ForeignKey(Rasy, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
+
+    class Meta:
+        ordering = ['-updated']
+        unique_together = ['rasy', 'review']
+
+    def __str__(self):
+        return f"{self.review}: {self.rasy} ({self.rating})"

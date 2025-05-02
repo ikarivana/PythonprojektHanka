@@ -6,30 +6,39 @@
   Tato webová aplikace je navržená pro kamarádku kosmetičku, aby měla o svých zakaznicích a jejich požadavcích přehled.
 
 ## Popis projektu - databáze
- -[ ] Pedikúra
+ -[x] Pedikúra
    - Název ošetření + popis
      - Pedikúra basic 
      - Pedikúra plus
      - Pedikúra lady
      - Pedikúra pánská
- -[ ] Řasy
+ -[x] Řasy
    - Název ošetření
     - Volume 3D-4D 
     - Objemové 
     - Lash Lifting, Lash botox
 
--[ ] Zdraví
+-[x] Zdraví
   - Koloidní stříbro
   - Diochi
 
--[ ] Kontakt
+-[x] Kontakt
   - Název
   - Adresa 
   - Telefon
   - Email
   - popis
   
+-[x] Review
+  - review (-> Profile)
+  - pedikura (-> Pedikura)
+  - rating (Integer, 1-5 *)
+  - comment (String)
+  - created (DateTime)
+  - update (DateTime)
+  
 ![ER diagram](./zaloha/er-1.png)
+![ER diagram](./zaloha/er_review.png)
   
 ## Profil
 -[ ] 1 Jméno příjmení
