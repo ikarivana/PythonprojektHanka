@@ -18,6 +18,8 @@ from accounts.models import Profile
 
 
 def home(request):
+    print(f"User is authenticated: {request.user.is_authenticated}")
+    print(f"User: {request.user}")
     return render(request, 'home.html')
 
 
@@ -109,16 +111,14 @@ class PedicureDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView
     permission_required = 'viewer.delete_pedikura'
 
 
-class EyelashListView(LoginRequiredMixin
-    , ListView):
+class EyelashListView(ListView):
     template_name = 'rasy.html'
     model = Rasy
     context_object_name = 'eyelashs'
     permission_required = 'viewer.view_rasy'
 
 
-class EyelashDetailView(LoginRequiredMixin
-    , DetailView):
+class EyelashDetailView(DetailView):
     template_name = 'eyelash.html'
     model = Rasy
     context_object_name = 'eyelash_detail'
@@ -193,15 +193,14 @@ class EyelashDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView)
     permission_required = 'viewer.delete_rasy'
 
 
-class HealthListView(LoginRequiredMixin
-    , ListView):
+class HealthListView(ListView):
     template_name = 'zdravi.html'
     model = Zdravi
     context_object_name = 'healths'
     permission_required = 'viewer.view_zdravi'
 
 
-class HealthDetailView(LoginRequiredMixin, DetailView):
+class HealthDetailView(DetailView):
     template_name = 'health.html'
     model = Zdravi
     context_object_name = 'health_detail'
@@ -274,16 +273,14 @@ class HealthDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     permission_required = 'viewer.delete_zdravi'
 
 
-class ContactListView(LoginRequiredMixin
-    , ListView):
+class ContactListView(ListView):
     template_name = 'contact.html'
     model = Contact
     context_object_name = 'contacts'
     permission_required = 'viewer.view_contact'
 
 
-class ContactDetailView(LoginRequiredMixin,
-                        DetailView):
+class ContactDetailView(DetailView):
     template_name = 'contacte.html'
     model = Contact
     context_object_name = 'contact_detail'

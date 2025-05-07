@@ -1,1 +1,28 @@
 {% extends 'form.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Přihlášení</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Prosím zadejte správné uživatelské jméno a heslo.
+                                Pozor na velká a malá písmena.
+                            </div>
+                        {% endif %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Přihlásit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,12 +5,10 @@
     <h2>Seznam objednávek</h2>
 
     {% if user.is_staff %}
-    <a class="btn btn-primary" href="{% url 'order-create' %}">Přidat zakázku</a>
-    {% endif %}
-
     <div class="mb-3">
         <a href="{% url 'order-create' %}" class="btn btn-primary">Vytvořit novou objednávku</a>
     </div>
+    {% endif %}
 
     {% if orders %}
         <div class="list-group">
