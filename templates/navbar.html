@@ -13,16 +13,21 @@
                 <a class="nav-item nav-link active" href="{% url 'eyelash' %}">Řasy</a>
                 <a class="nav-item nav-link active" href="{% url 'health' %}">Zdraví</a>
                 <a class="nav-item nav-link active" href="{% url 'contact' %}">Kontakt</a>
+             {% if user.is_authenticated %}
+                <a class="nav-item nav-link active" href="{% url 'order-list' %}">Objednávky</a>
+             {% endif %}
             </div>
 
             <div class="navbar-nav ml-auto">
-                <div class="search-div">
-                    <form method="post" action="/search/">
-                        {% csrf_token %}
-                        <input type="text" id="search" placeholder="👁Najít ....">
-                    </form>
-                </div>
+            <div class="search-div">
+                <form method="post" action="/search/">
+                    {% csrf_token %}
+                    <input type="text" name="search" placeholder="Hledat">
+                    <button type="submit" class="btn btn-primary">⏳</button>
+                </form>
             </div>
+        </div>
+
             <div class="navbar-nav ml-auto">
                 <div class="nav-item ml-auto">
                     <div class="nav-item dropdown">

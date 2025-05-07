@@ -15,10 +15,10 @@
 </div>
 
 <div>
-{% if perms.viewer.change_eyelash %}
+{% if perms.viewer.change_rasy %}
     <a href="{% url 'eyelash_update' eyelash_detail.id %}" class="btn">✔</a>
 {% endif %}
-{% if perms.viewer.delete_eyelash %}
+{% if perms.viewer.delete_rasy %}
     <a href="{% url 'eyelash_delete' eyelash_detail.id %}" class="btn">🗑️</a>
 {% endif %}
 </div>

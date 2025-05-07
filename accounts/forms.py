@@ -1,11 +1,13 @@
 from django.db.transaction import atomic
 from django.forms import PasswordInput, NumberInput, DateField, Textarea, CharField
 from accounts.models import Profile
+from viewer.models import Order
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-class SignUpForm(UserCreationForm):
+class SignUpForm(forms.ModelForm):
     password1 = forms.CharField(
         label='Heslo',
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
@@ -76,3 +78,20 @@ class SignUpForm(UserCreationForm):
         if commit:
           profile.save()
         return user
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['service_date', 'description']
+
+        labels = {
+            'servis_date': 'Datum objednání',
+            'description': 'Výběr procedůry'
+        }
+        widgets = {
+            'service_date': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'},
+                format='%Y-%m-%dT%H:%M'
+            ),
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }

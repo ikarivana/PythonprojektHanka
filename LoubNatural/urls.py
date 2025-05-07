@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
 from django.urls import path, include
-
+from viewer import views
 from accounts.views import SubmittableLoginView, user_logout, SignUpView
 from viewer.views import home, search, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
 
@@ -27,11 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', home, name="home"),
-    path('search/', search, name="search"),
+    path('search/', search, name='search'),
 
     path('pedicure/', PedicureListView.as_view(), name="pedicure"),
     path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
-    #path('pedicure/<int:pk>/', pedicure, name="pedicure_detail"),
     path('pedicure/create', PedicureCreateView.as_view(), name="pedicure_create"),
     path('pedicure/update/<int:pk>/', PedicureUpdateView.as_view(), name="pedicure_update"),
     path('pedicure/delete/<int:pk>/', PedicureDeleteView.as_view(), name="pedicure_delete"),
@@ -53,6 +52,9 @@ urlpatterns = [
     path('contact/create', ContactCreateView.as_view(), name="contact_create"),
     path('contact/update/<int:pk>/', ContactUpdateView.as_view(), name="contact_update"),
     path('contact/delete/<int:pk>/', ContactDeleteView.as_view(), name="contact_delete"),
+
+    path('objednavky/', views.OrderListView.as_view(), name='order-list'),
+    path('objednavky/vytvorit/', views.OrderCreateView.as_view(), name='order-create'),
 
     path('accounts/login/', SubmittableLoginView.as_view(), name="login"),
     path('accounts/logout/', user_logout, name="logout"),

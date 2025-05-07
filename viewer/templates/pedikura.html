@@ -8,9 +8,8 @@
 {% block content %}
 <h1>Výběr procedůry</h1>
 
-{% comment %} udělění oprávnění-nastaveni v adminu {% endcomment %}
 
-{% if perms.viewer.add_pedicure %}
+{% if perms.viewer.add_pedikura %}
 <a href="{% url 'pedicure_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
 
@@ -18,14 +17,17 @@
     {% for pedicure in pedicures %}
     <li>
         <a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a>
-        {% if perms.viewer.change_pedicure %}
+        {% if perms.viewer.change_pedikura %}
         <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">✔</a>
         {% endif %}
-        {% if perms.viewer.delete_pedicure %}
+        {% if perms.viewer.delete_pedikura %}
         <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
+
+{% include 'paginator.html' %}
+
 
 {% endblock %}

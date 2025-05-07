@@ -1,7 +1,28 @@
 from django.contrib import admin
+from viewer.models import (
+    Pedikura, Rasy, Zdravi, Contact,
+    PedikuraReview, RasyReview, ZdraviReview,
+)
 
-from viewer.models import Pedikura, Rasy, Zdravi, Contact, PedikuraReview, ZdraviReview, RasyReview
+@admin.register(Pedikura)
+class PedikuraAdmin(admin.ModelAdmin):
+    list_display = ['name', 'procedure_time', 'price']
+    search_fields = ['name', 'description']
 
+@admin.register(Rasy)
+class RasyAdmin(admin.ModelAdmin):
+    list_display = ['name', 'procedure_time', 'price']
+    search_fields = ['name', 'description']
+
+@admin.register(Zdravi)
+class ZdraviAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name', 'description']
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ['name', 'phone', 'email']
+    search_fields = ['name', 'email', 'phone']
 
 @admin.register(PedikuraReview)
 class PedikuraReviewAdmin(admin.ModelAdmin):
@@ -20,8 +41,3 @@ class RasyReviewAdmin(admin.ModelAdmin):
     list_display = ['rasy', 'review', 'rating', 'created', 'updated']
     list_filter = ['rating', 'created', 'updated']
     search_fields = ['rasy__name', 'review__user__username', 'comment']
-
-admin.site.register(Pedikura)
-admin.site.register(Rasy)
-admin.site.register(Zdravi)
-admin.site.register(Contact)

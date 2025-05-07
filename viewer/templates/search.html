@@ -1,46 +1,73 @@
 {% extends 'base.html' %}
 
 {% block title %}
-   Vyhledávání '{{ search }}'
+    Vyhledávání {% if search %}'{{ search }}'{% endif %}
 {% endblock %}
 
 {% block content %}
-   <h1>Výsledky vyhledávání dotazu '{{ search }}</h1>
+    <h1>Výsledky vyhledávání '{{ search }}'</h1>
 
-   <h2>Výsledek pro hledání pedikúra</h2>
-   <ul>
-       {% for pedicure in pedicures_name %}
-           <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a></li>
-       {% empty %}
-           Nic nalezeno
-       {% endfor %}
-   </ul>
+    <h2>Pedikúra</h2>
+    <ul>
+        {% for pedicure in pedicures %}
+            <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure.name }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
 
-       <h2>Výsledek pro hledání pedikúra</h2>
-   <ul>
-       {% for pedicure in pedicures_description %}
-           <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a></li>
-       {% empty %}
-           Nic nalezeno
-       {% endfor %}
-   </ul>
+    <h2>Pedikúra - popis</h2>
+    <ul>
+        {% for pedicure in pedicures_description %}
+            <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure.name }} - {{ pedicure.description|truncatewords:30 }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
 
-   <hr>
-   <h2>Výsledek pro hledání řasy</h2>
-   <ul>
-       {% for eyelash in eyelash_name %}
-           <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a></li>
-       {% empty %}
-           Nic nalezeno
-       {% endfor %}
-   </ul>
-       <h2>Výsledek pro hledání řasy</h2>
-   <ul>
-       {% for eyelash in eyelash_description %}
-           <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a></li>
-       {% empty %}
-           Nic nalezeno
-       {% endfor %}
-   </ul>
+    <h2>Řasy</h2>
+    <ul>
+        {% for eyelash in eyelashes %}
+            <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash.name }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Řasy</h2>
+    <ul>
+        {% for eyelash in eyelashes_description %}
+            <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash.name }} - {{ eyelash.description|truncatewords:30 }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Zdraví</h2>
+    <ul>
+        {% for health in healths %}
+            <li><a href="{% url 'health_detail' health.id %}">{{ health.name }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
+    <h2>Zdraví - popis</h2>
+    <ul>
+        {% for health in healths_description %}
+            <li><a href="{% url 'health_detail' health.id %}">{{ health.name }} - {{ health.description|truncatewords:30 }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Kontakty</h2>
+    <ul>
+        {% for contact in contacts %}
+            <li><a href="{% url 'contact_detail' contact.id %}">{{ contact.name }}</a></li>
+        {% empty %}
+            <li>Žádné výsledky</li>
+        {% endfor %}
+    </ul>
+
 
 {% endblock %}

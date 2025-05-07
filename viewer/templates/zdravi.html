@@ -7,7 +7,7 @@
 {% block content %}
 <h1>Čistíme tělo</h1>
 
-{% if perms.viewer.add_health %}
+{% if perms.viewer.add_zdravi %}
 <a href="{% url 'health_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}
 <ul>
@@ -15,10 +15,10 @@
     {% for health in healths %}
     <li>
         <a href="{% url 'health_detail' health.id %}">{{ health }}</a>
-        {% if perms.viewer.change_health %}
+        {% if perms.viewer.change_zdravi %}
         <a href="{% url 'health_update' health.id %}" class="btn">✔</a>
         {% endif %}
-        {% if perms.viewer.delete_health %}
+        {% if perms.viewer.delete_zdravi %}
         <a href="{% url 'health_delete' health.id %}" class="btn">🗑️</a>
         {% endif %}
     </li>

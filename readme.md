@@ -117,7 +117,7 @@ taky přidame do seznamu ' requirements.txt '
 
 # Aplikace
 ## Vytvoření aplikace
- - v terminálu spuštění přes příkaz - 
+ - v terminálu spuštění přes příkaz 
  ```bash
   python manage.py startapp viewer 
  ```

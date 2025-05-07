@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import OneToOneField, TextField, CharField, DateField
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
+from django.db.models import OneToOneField, DateField, TextField, CharField
 
 
 class Profile(models.Model):
@@ -15,17 +12,7 @@ class Profile(models.Model):
     class Meta:
         ordering = ['user__username']
 
-    def __repr__(self):
-        return f"Profil(user={self.user})"
-
     def __str__(self):
         return f"{self.user.username}"
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    try:
-        # Pokud profil existuje, jen ho uložíme
-        instance.profile.save()
-    except Profile.DoesNotExist:
-        # Pokud profil neexistuje, vytvoříme nový
-        Profile.objects.create(user=instance)
+

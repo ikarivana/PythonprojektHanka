@@ -1,15 +1,8 @@
 from django.contrib import admin
 from accounts.models import Profile
-from viewer.models import Order
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'date_of_birth', 'phone']
     search_fields = ['user__username', 'phone']
     list_filter = ['date_of_birth']
-
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['profile', 'service_date', 'created']
-    list_filter = ['service_date', 'created']
-    search_fields = ['profile__user__username', 'description']

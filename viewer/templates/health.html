@@ -12,10 +12,10 @@
 </div>
 
 <div>
-{% if perms.viewer.change_health %}
+{% if perms.viewer.change_zdravi %}
         <a href="{% url 'health_update' health_detail.id %}" class="btn">✔</a>
         {% endif %}
-        {% if perms.viewer.delete_health %}
+        {% if perms.viewer.delete_zdravi %}
         <a href="{% url 'health_delete' health_detail.id %}" class="btn">🗑️</a>
         {% endif %}
 </div>
@@ -29,7 +29,7 @@
 
     <hr>
 {% if request.user.is_authenticated %}
-    <!-- váš současný kód pro přihlášené uživatele -->
+
 {% else %}
     <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
 {% endif %}
