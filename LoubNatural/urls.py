@@ -19,7 +19,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import path, include
 from viewer import views
 from accounts.views import SubmittableLoginView, user_logout, SignUpView
-from viewer.views import home, search, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
+from viewer.views import home, search_view, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
 
 
 
@@ -27,7 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', home, name="home"),
-    path('search/', search, name='search'),
+    path('search/', search_view, name='search'),
+
 
     path('pedicure/', PedicureListView.as_view(), name="pedicure"),
     path('pedicure/<int:pk>/', PedicureDetailView.as_view(), name="pedicure_detail"),
@@ -56,10 +57,9 @@ urlpatterns = [
     path('objednavky/', views.OrderListView.as_view(), name='order-list'),
     path('objednavky/vytvorit/', views.OrderCreateView.as_view(), name='order-create'),
 
-    path('accounts/login/', SubmittableLoginView.as_view(), name="login"),
+    path('login/', LoginView.as_view(), name='login'),
     path('accounts/logout/', user_logout, name="logout"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup/',SignUpView.as_view(), name="signup"),
 
 ]
-

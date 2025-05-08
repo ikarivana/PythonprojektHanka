@@ -7,6 +7,7 @@ from django.contrib import messages
 from .mixins import StaffRequiredMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.db import models
 from viewer.forms import (
     PedikuraModelForm, RasyModelForm, ZdraviModelForm,
@@ -44,41 +45,39 @@ class PedicureDetailView(DetailView):
             context['review_form'] = PedikuraReviewForm()
         return context
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
 
+        self.object = self.get_object()
+        form = PedikuraReviewForm(request.POST)
 
-def post(self, request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-    self.object = self.get_object()
-    form = PedikuraReviewForm(request.POST)
-
-    try:
-        # Zkusíme najít existující recenzi
-        existing_review = self.object.reviews.filter(user=request.user).first()
-        if existing_review:
-            # Aktualizace existující recenze
-            if form.is_valid():
-                existing_review.rating = form.cleaned_data['rating']
-                existing_review.comment = form.cleaned_data['comment']
-                existing_review.save()
-                messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+        try:
+            # Zkusíme najít existující recenzi
+            existing_review = self.object.reviews.filter(user=request.user).first()
+            if existing_review:
+                # Aktualizace existující recenze
+                if form.is_valid():
+                    existing_review.rating = form.cleaned_data['rating']
+                    existing_review.comment = form.cleaned_data['comment']
+                    existing_review.save()
+                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                else:
+                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
-                messages.error(request, 'Prosím opravte chyby ve formuláři.')
-        else:
-            # Vytvoření nové recenze
-            if form.is_valid():
-                review = form.save(commit=False)
-                review.pedikura = self.object
-                review.user = request.user
-                review.save()
-                messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
-            else:
-                messages.error(request, 'Prosím opravte chyby ve formuláři.')
-    except Exception as e:
-        messages.error(request, 'Při ukládání hodnocení nastala chyba.')
+                # Vytvoření nové recenze
+                if form.is_valid():
+                    review = form.save(commit=False)
+                    review.pedikura = self.object
+                    review.user = request.user
+                    review.save()
+                    messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                else:
+                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+        except Exception as e:
+            messages.error(request, 'Při ukládání hodnocení nastala chyba.')
 
-    return redirect('pedicure_detail', pk=self.object.pk)
+        return redirect('pedicure_detail', pk=self.object.pk)
 
 
 class PedicureCreateView(PermissionRequiredMixin, CreateView):
@@ -258,6 +257,7 @@ class HealthCreateView(PermissionRequiredMixin, CreateView):
 class HealthUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Zdravi
+    fields = ['name', 'description']
     success_url = reverse_lazy('health')
     permission_required = 'viewer.change_zdravi'
 
@@ -301,6 +301,7 @@ class ContactCreateView(PermissionRequiredMixin, CreateView):
 class ContactUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Contact
+    form_class = ContactModelForm
     success_url = reverse_lazy('contact')
     permission_required = 'viewer.change_contact'
 
@@ -316,7 +317,8 @@ class ContactDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView)
     permission_required = 'viewer.delete_contact'
 
 
-def search(request):
+@login_required
+def search_view(request):
     if request.method == 'POST':
         search_string = request.POST['search'].strip()
         if search_string:
@@ -339,7 +341,18 @@ def search(request):
                 'contacts': contact_name,
             }
             return render(request, 'search.html', context)
-    return render(request, 'home.html')
+    # Požadavky GET nebo prázdné vyhledávání, vypíše šablonu s prazdným kontexem.
+    context = {
+        'search': '',
+        'pedicures': Pedikura.objects.none(),
+        'pedicures_description': Pedikura.objects.none(),
+        'eyelashes': Rasy.objects.none(),
+        'eyelashes_description': Rasy.objects.none(),
+        'healths': Zdravi.objects.none(),
+        'healths_description': Zdravi.objects.none(),
+        'contacts': Contact.objects.none(),
+    }
+    return render(request, 'search.html', context)
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -364,4 +377,3 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         form.instance.profile = self.request.user.profile
         return super().form_valid(form)
-

@@ -1,12 +1,4 @@
-from django.db.transaction import atomic
-from django.forms import PasswordInput, NumberInput, DateField, Textarea, CharField
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
-
-from accounts.models import Profile
 from viewer.models import Order
-from django.db import transaction
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User

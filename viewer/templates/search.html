@@ -34,7 +34,7 @@
         {% endfor %}
     </ul>
 
-    <h2>Řasy</h2>
+    <h2>Řasy - popis</h2>
     <ul>
         {% for eyelash in eyelashes_description %}
             <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash.name }} - {{ eyelash.description|truncatewords:30 }}</a></li>

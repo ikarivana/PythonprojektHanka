@@ -14,10 +14,9 @@
     <div>{{pedicure_detail.description }}</div>
 </div>
 
-
 <div>
 {% if perms.viewer.change_pedikura %}
-    <a href="{% url 'pedicure_update' pedicure_detail.id %}" class="btn">✔</a>
+    <a href="{% url 'pedicure_update' pedicure_detail.id %}" class="btn">🖋️</a>
 {% endif %}
 {% if perms.viewer.delete_pedikura %}
     <a href="{% url 'pedicure_delete' pedicure_detail.id %}" class="btn">🗑️</a>
@@ -31,7 +30,13 @@
         <button type="submit">Odeslat</button>
     </form>
 
-    <hr>
+  <hr>
+{% if request.user.is_authenticated %}
+
+{% else %}
+    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+{% endif %}
+
     <h4>Hodnocení a komentáře:</h4>
     {% for review in reviews %}
         <div class="bg-light rounded mt-2 p-2 position-relative">

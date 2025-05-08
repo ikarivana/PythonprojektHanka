@@ -4,11 +4,11 @@
 <title>Loub-Natural</title>
 {%endblock%}
 
+{% load static %}
 
 {% block content %}
 <div class="container">
     {% if user.is_authenticated %}
-
     <h1>Vítejte, {{ user.username }}!
         Zdraví v každém kroku</h1>
     {% else %}
@@ -28,12 +28,10 @@
 
         Podnikání Hany Loubalové je oficiálně registrováno od roku 2020 a zahrnuje dvě hlavní živnosti – volnou živnost
         v oblasti výroby, obchodu a služeb a řemeslnou živnost v oboru pedikúra. Její činnost je evidována u Magistrátu
-        města Zlína a zaměřuje se především na kadeřnické, kosmetické a podobné činnosti. LoubNatural tak představuje
+        města Zlína a zaměřuje se především na pedikúru a podobné činnosti s tím spojené. LoubNatural tak představuje
         místo, kde se spojuje péče o zdraví nohou s přírodní filozofií a osobním přístupem ke každému klientovi.
     </p>
 
 </div>
 
 {% endblock %}
-
-

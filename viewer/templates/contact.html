@@ -14,7 +14,7 @@ Contact
     <li>
         <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
         {% if perms.viewer.change_contact %}
-        <a href="{% url 'contact_update' contact.id %}" class="btn">✔</a>
+        <a href="{% url 'contact_update' contact.id %}" class="btn">🖋️</a>
         {% endif %}
         {% if perms.viewer.delete_contact %}
         <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>

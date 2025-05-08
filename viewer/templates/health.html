@@ -13,7 +13,7 @@
 
 <div>
 {% if perms.viewer.change_zdravi %}
-        <a href="{% url 'health_update' health_detail.id %}" class="btn">✔</a>
+        <a href="{% url 'health_update' health_detail.id %}" class="btn">🖋️</a>
         {% endif %}
         {% if perms.viewer.delete_zdravi %}
         <a href="{% url 'health_delete' health_detail.id %}" class="btn">🗑️</a>

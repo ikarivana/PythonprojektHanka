@@ -16,7 +16,7 @@
     <li>
         <a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash }}</a>
         {% if perms.viewer.change_rasy %}
-        <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">✔</a>
+        <a href="{% url 'eyelash_update' eyelash.id %}" class="btn">🖋️</a>
         {% endif %}
         {% if perms.viewer.delete_rasy %}
         <a href="{% url 'eyelash_delete' eyelash.id %}" class="btn">🗑️</a>

@@ -80,6 +80,27 @@
     django-admin startproject zaverecny_project .
    pip install dotenv
  ````
+# Aplikace
+## Vytvoření aplikace
+ - v terminálu spuštění přes příkaz 
+ ```bash
+  python manage.py startapp viewer 
+ ```
+> [ ! WARNING ]
+> 
+> Nesmíme zapomenout zaregistrovat aplikaci do souboru  ' setings.py ' 
+ - složka s názvem projektu   
+
+### Struktura aplikace
+ - ' viewer ' - složka aplikace
+ - ' migration ' - složka obsahující migrační skripty
+ - ' __init__.py ' - slouží pouze k tomu aby složka byla package
+ - ' admin ' - zde registrujeme  modely, ktere budeme chtít zobrazit v admin sekci
+ - ' apps.py ' - nastavení aplikace
+ - ' models.py ' - definice modelů (schéma databáze)
+ - ' testy.py ' - testy
+ - ' views.py ' - funkcionalita
+
 ### DUMP/LOAD databaze
  ```bash
    pip django-dump-load-utf8==0.0.4 
@@ -115,23 +136,3 @@ taky přidame do seznamu ' requirements.txt '
 ```
  - lze spustit ručně pod nějakým číslem, stopnutí servru Ctrl+c
 
-# Aplikace
-## Vytvoření aplikace
- - v terminálu spuštění přes příkaz 
- ```bash
-  python manage.py startapp viewer 
- ```
-> [ ! WARNING ]
-> 
-> Nesmíme zapomenout zaregistrovat aplikaci do souboru  ' setings.py ' 
- - složka s názvem projektu   
-
-### Struktura aplikace
- - ' viewer ' - složka aplikace
- - ' migration ' - složka obsahující migrační skripty
- - ' __init__.py ' - slouží pouze k tomu aby složka byla package
- - ' admin ' - zde registrujeme  modely, ktere budeme chtít zobrazit v admin sekci
- - ' apps.py ' - nastavení aplikace
- - ' models.py ' - definice modelů (schéma databáze)
- - ' testy.py ' - testy
- - ' views.py ' - funkcionalita

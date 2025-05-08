@@ -18,7 +18,7 @@
     <li>
         <a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure }}</a>
         {% if perms.viewer.change_pedikura %}
-        <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">✔</a>
+        <a href="{% url 'pedicure_update' pedicure.id %}" class="btn">🖋️</a>
         {% endif %}
         {% if perms.viewer.delete_pedikura %}
         <a href="{% url 'pedicure_delete' pedicure.id %}" class="btn">🗑️</a>
