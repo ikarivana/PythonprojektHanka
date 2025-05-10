@@ -1,3 +1,9 @@
+from datetime import date
+from email.mime import image
+
+from django.http import JsonResponse
+import requests
+from .models import Image
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -12,16 +18,17 @@ from django.db import models
 from viewer.forms import (
     PedikuraModelForm, RasyModelForm, ZdraviModelForm,
     ContactModelForm, PedikuraReviewForm, RasyReviewForm,
-    ZdraviReviewForm
+    ZdraviReviewForm, ImageModelForm, ContactReviewForm
 )
-from viewer.models import Pedikura, Rasy, Zdravi, Contact, Order
+from viewer.models import Pedikura, Rasy, Zdravi, Contact, Order, Image
 from accounts.models import Profile
 
 
 def home(request):
+    home_images = Image.objects.filter(is_home=True)
     print(f"User is authenticated: {request.user.is_authenticated}")
     print(f"User: {request.user}")
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'home_images': home_images})
 
 
 class PedicureListView(ListView):
@@ -286,6 +293,43 @@ class ContactDetailView(DetailView):
     context_object_name = 'contact_detail'
     permission_required = 'viewer.view_contact'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['review_form'] = ContactReviewForm()
+            context['reviews'] = self.object.reviews.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        self.object = self.get_object()
+        form = ContactReviewForm(request.POST)
+
+        try:
+            existing_review = self.object.reviews.filter(user=request.user).first()
+            if existing_review:
+                if form.is_valid():
+                    existing_review.rating = form.cleaned_data['rating']
+                    existing_review.comment = form.cleaned_data['comment']
+                    existing_review.save()
+                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                else:
+                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+            else:
+                if form.is_valid():
+                    review = form.save(commit=False)
+                    review.contact = self.object
+                    review.user = request.user
+                    review.save()
+                    messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                else:
+                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+        except Exception as e:
+            messages.error(request, 'Při ukládání hodnocení nastala chyba.')
+
+        return redirect('contact_detail', pk=self.object.pk)
 
 class ContactCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
@@ -317,7 +361,7 @@ class ContactDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView)
     permission_required = 'viewer.delete_contact'
 
 
-@login_required
+
 def search_view(request):
     if request.method == 'POST':
         search_string = request.POST['search'].strip()
@@ -356,6 +400,7 @@ def search_view(request):
 
 
 class OrderListView(LoginRequiredMixin, ListView):
+    order_images = Image.objects.filter(order=True)
     model = Order
     template_name = 'order_list.html'
     context_object_name = 'orders'
@@ -377,3 +422,50 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         form.instance.profile = self.request.user.profile
         return super().form_valid(form)
+
+class ImageListView(ListView):
+    template_name = 'images.html'
+    model = Image
+    context_object_name = 'images'
+
+    def images(request):
+        images = Image.objects.all()
+        return render(request, 'images.html', {'images': images})
+
+    def images_view(request):
+        pedikura_images = Image.objects.filter(pedikura=True)
+        rasy_images = Image.objects.filter(rasy=True)
+        zdravi_images = Images.objects.filter(zdravi=True)
+        contact_images = Images.objects.filter(contact=True)
+        home_images = Images.objects.filter(is_home=True)
+        order_images = Images.objects.filter(order=True)
+
+        return render(request, 'images.html', {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images, 'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images})
+
+
+class ImageDetailView(DetailView):
+    template_name = 'image.html'
+    model = Image
+
+    def image_detail(request, pk):
+        get_object_or_404(Image, id=id)
+        return render(request, 'image.html', {'image': image})
+
+class ImageCreateView(PermissionRequiredMixin, CreateView):
+    template_name = 'form_image.html'
+    form_class = ImageModelForm
+    success_url = reverse_lazy('images')
+    permission_required = 'viewer.add_image'
+
+class ImageUpdateView(PermissionRequiredMixin, UpdateView):
+    template_name = 'form_image.html'
+    model = Image
+    form_class = ImageModelForm
+    success_url = reverse_lazy('images')
+    permission_required = 'viewer.change_image'
+
+class ImageDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
+    template_name = 'confirm_delete.html'
+    model = Image
+    success_url = reverse_lazy('images')
+    permission_required = 'viewer.delete_image'

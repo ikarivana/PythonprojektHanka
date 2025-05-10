@@ -1,3 +1,4 @@
+from django.db import models
 from django.db.models import (
     Model,
     ForeignKey,
@@ -7,7 +8,7 @@ from django.db.models import (
     IntegerField,
     TextField,
     CharField,
-    EmailField
+    EmailField, ImageField
 )
 from django.contrib.auth.models import User
 from accounts.models import Profile
@@ -64,6 +65,10 @@ class Contact(Model):
     email = EmailField(null=False, blank=False, unique=True)
     address = TextField(null=False, blank=True)
     description = TextField(max_length=5000, null=True, blank=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = "Contact"
 
     def __repr__(self):
         return f"Contact(name={self.name} phone={self.phone} email={self.email} description={self.description} address={self.address})"
@@ -124,6 +129,24 @@ class ZdraviReview(BaseReview):
     def __str__(self):
         return f"{self.review}: {self.zdravi} ({self.rating})"
 
+
+class ContactReview(BaseReview):
+    contact = ForeignKey(Contact, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
+    name = CharField(max_length=30, null=False, blank=False)
+    emaul = EmailField(null=False, blank=False)
+    @property
+    def review(self):
+        return self.user
+
+    class Meta:
+        ordering = ['-updated']
+        unique_together = ['contact']
+
+
+    def __str__(self):
+        return f"{self.review}: {self.contact} ({self.rating})"
+
+
 class Order(Model):
     profile = ForeignKey(Profile, on_delete=CASCADE, related_name='orders')
     service_date = DateTimeField("Datum zakázky")
@@ -138,3 +161,19 @@ class Order(Model):
 
     def __str__(self):
         return f"Objednávka pro {self.profile.user.username} na {self.service_date}"
+
+
+class Image(Model):
+    image = ImageField(upload_to='images/')
+    pedikura = ForeignKey(Pedikura, on_delete=SET_NULL, null=True, blank=True, related_name='images')
+    rasy = ForeignKey(Rasy, on_delete=SET_NULL, null=True, blank=True, related_name='images')
+    zdravi = ForeignKey(Zdravi, on_delete=SET_NULL, null=True, blank=True, related_name='images')
+    contact = ForeignKey(Contact, on_delete=SET_NULL, null=True, blank=True, related_name='images')
+    order = models.BooleanField(default=False, verbose_name="Zobrazit na order strance")
+    is_home = models.BooleanField(default=False, verbose_name="Zobrazit na home stránce")
+
+    def __repr__(self):
+        return f"Image(image={self.image})"
+
+    def __str__(self):
+        return f"Image:{self.image}"

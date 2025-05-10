@@ -12,13 +12,13 @@
      - Pedikúra plus
      - Pedikúra lady
      - Pedikúra pánská
- -[x] Řasy
+ -[x] Řasy + popis
    - Název ošetření
     - Volume 3D-4D 
     - Objemové 
     - Lash Lifting, Lash botox
 
--[x] Zdraví
+-[x] Zdraví + popis
   - Koloidní stříbro
   - Diochi
 
@@ -31,11 +31,14 @@
   
 -[x] Review
   - review (-> Profile)
-  - pedikura (-> Pedikura)
   - rating (Integer, 1-5 *)
   - comment (String)
   - created (DateTime)
   - update (DateTime)
+  - 
+-[] Obrazky
+  - image (soubor)
+  - 
   
 ![ER diagram](./zaloha/er-1.png)
 ![ER diagram](./zaloha/er_review.png)
@@ -81,6 +84,8 @@
    pip install dotenv
  ````
 # Aplikace
+ 
+
 ## Vytvoření aplikace
  - v terminálu spuštění přes příkaz 
  ```bash
@@ -118,7 +123,14 @@ taky přidame do seznamu ' requirements.txt '
  python manage.py loaddata .\zaloha\fixtures.json
 ```
 
- # Struktura projektu
+
+### Spuštění servru
+```bash
+  python manage.py runserver
+```
+ - lze spustit ručně pod nějakým číslem, stopnutí servru Ctrl+c
+
+# Struktura projektu
  - ' __init__.py ' - složka projektu (základní informace)
   - ' settings.py ' - nastavení projektu
     - zabespečení hesla v settings.py - vytvoření složky .env po  instalaci ' python-dotenv==1.0.1 ' 
@@ -129,10 +141,3 @@ taky přidame do seznamu ' requirements.txt '
   - ' urls.py ' - nastavení url cesty
   - ' manage.py ' - hlavní skript pro praci s projektem např.  
     - spuštění servru, testu migrací,  atd.
-
-### Spuštění servru
-```bash
-  python manage.py runserver
-```
- - lze spustit ručně pod nějakým číslem, stopnutí servru Ctrl+c
-

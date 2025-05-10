@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+Obrázky
+{% endblock %}
+
+
+{% block content %}
+
+{% if perms.viewer.add_image %}
+<a href="{% url 'image_update' image.id %}" class="btn btn-primary">🖋️</a>
+{% endif %}
+
+{% if perms.viewer.delete_image %}
+<a href="{% url 'image_delete' image.id %}" class="btn btn-primary">🗑️</a>
+{% endif %}
+
+<div class="container mt-5">
+    <img src="{{ image.image.url }}" alt="{{ image.name }}" width="80%">
+</div>
+
+<div class="image.details mt-4">
+    {% if image.padikura %}
+    <div class="pedikura-image mb-2">
+        Pedikúra: <a href="{% url 'pedikura' image.pedikura.id %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="image.details mt-4">
+    {% if image.rasy %}
+    <div class="rasy-image mb-2">
+        Řasy: <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="image.details mt-4">
+    {% if image.zdravi %}
+    <div class="zdravi-image mb-2">
+        Zdraví: <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="image.details mt-4">
+    {% if image.contact %}
+    <div class="contact-image mb-2">
+        Kontakt: <a href="{% url 'contact_detail' image.contact.id %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="image.details mt-4">
+    {% if image.is_home %}
+    <div class="is_home-image mb-2">
+        Domovská: <a href="{% url 'home' %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="image.details mt-4">
+    {% if image.order %}
+    <div class="order-image mb-2">
+        Objednávky: <a href="{% url 'order_list' %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

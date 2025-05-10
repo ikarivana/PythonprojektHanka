@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="rasy-images">
+    {% for image in eyelash_detail.images.all %}
+        <span class="rasy-image">
+            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
+        </span>
+    {% endfor %}
+</div>
+
 <h1 class="display-5">{{ eyelash_detail.name }}</h1>
 <hr class="row">
 <div class="col-md-16">

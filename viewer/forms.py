@@ -1,7 +1,9 @@
 from django import forms
+from django.forms import ModelForm
+
 from viewer.models import (
     Pedikura, Rasy, Zdravi, Contact,
-    PedikuraReview, ZdraviReview, RasyReview
+    PedikuraReview, ZdraviReview, RasyReview, ContactReview, Image
 )
 
 class BaseReviewForm(forms.ModelForm):
@@ -38,6 +40,16 @@ class RasyReviewForm(BaseReviewForm):
         model = RasyReview
         fields = ['rating', 'comment']
 
+class ContactReviewForm(BaseReviewForm):
+    class Meta:
+         model = ContactReview
+         fields = ['rating', 'comment']
+
+         class Meta:
+             model = ContactReview
+             fields = ['review', 'comment']
+
+
 class PedikuraModelForm(forms.ModelForm):
     class Meta:
         model = Pedikura
@@ -56,4 +68,10 @@ class ZdraviModelForm(forms.ModelForm):
 class ContactModelForm(forms.ModelForm):
     class Meta:
         model = Contact
+        fields = '__all__'
+
+class ImageModelForm(ModelForm):
+
+     class Meta:
+        model = Image
         fields = '__all__'

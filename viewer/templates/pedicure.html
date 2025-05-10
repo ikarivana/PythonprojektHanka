@@ -4,7 +4,17 @@
   {{ pedicure_detail.name }}
 {% endblock %}
 
+
 {% block content %}
+
+<div class="pedikura-images">
+    {% for image in pedicure_detail.images.all %}
+        <span class="pedikura-image">
+            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
+        </span>
+    {% endfor %}
+</div>
+
 <h1 class="display-5">{{ pedicure_detail.name }}</h1>
 <hr class="row">
 <div class="col-md-16">

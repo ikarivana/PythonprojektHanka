@@ -13,7 +13,12 @@
         Zdraví v každém kroku</h1>
     {% else %}
     <h1>Vítejte na našich stránkách</h1>
-      {% endif %}
+    {% endif %}
+
+    {% for img in home_images %}
+    <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+    {% endfor %}
+
     <p>
         Hana Loubalová je podnikatelka působící ve Zlíně, která provozuje pod značkou Loub-Natural salon zaměřený na
         pedikúru a přírodní doplňky pro podporu lidského zdraví. Její provozovna se nachází na adrese Vodní 453, 760 01

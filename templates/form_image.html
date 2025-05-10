@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
- Formulář
+  Formulář
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
         {% endfor %}
     {% endif %}
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-group">
         {{ form.as_p }}

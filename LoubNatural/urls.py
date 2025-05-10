@@ -14,14 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
 from django.urls import path, include
 from viewer import views
 from accounts.views import SubmittableLoginView, user_logout, SignUpView
-from viewer.views import home, search_view, PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView
-
-
+from viewer.views import home, search_view, PedicureListView, PedicureDetailView, PedicureCreateView, \
+    PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, \
+    EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, \
+    ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView, ImageCreateView, \
+    ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,12 +58,18 @@ urlpatterns = [
     path('contact/update/<int:pk>/', ContactUpdateView.as_view(), name="contact_update"),
     path('contact/delete/<int:pk>/', ContactDeleteView.as_view(), name="contact_delete"),
 
-    path('objednavky/', views.OrderListView.as_view(), name='order-list'),
-    path('objednavky/vytvorit/', views.OrderCreateView.as_view(), name='order-create'),
+    path('objednavky/', views.OrderListView.as_view(), name='order_list'),
+    path('objednavky/vytvorit/', views.OrderCreateView.as_view(), name='order_create'),
 
     path('login/', LoginView.as_view(), name='login'),
     path('accounts/logout/', user_logout, name="logout"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup/',SignUpView.as_view(), name="signup"),
 
-]
+    path('images/', ImageListView.as_view(), name='images'),
+    path('image/<int:pk>/', ImageDetailView.as_view(), name='image'),
+    path('image/create/',ImageCreateView.as_view(), name='image_create'),
+    path('image/update/<int:pk>/',ImageUpdateView.as_view(), name='image_update'),
+    path('image/delete/<int:pk>/',ImageDeleteView.as_view(), name='image_delete'),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

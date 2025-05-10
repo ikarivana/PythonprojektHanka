@@ -32,9 +32,13 @@ footer {
     color: #000000 !important;
 }
 
-/* Logo ve footer*/
-.footer-logo {
-    width: 10px !important;
-    height: auto !important;
+/* Logo ve nabar*/
+.logo{
+   vertical-align: middle;
+    margin-left: 16px;
 }
 
+/* Barva pozadí tlačítka hledat*/
+.btn-primary {
+    background-color: #66FF99 !important;
+}

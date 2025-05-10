@@ -16,6 +16,13 @@
 <div>{{ contact_detail.description }}</div>
 </div>
 
+<div class="conctact-images">
+    {% for image in contact_detail.images.all %}
+        <span class="contact-image">
+            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
+        </span>
+    {% endfor %}
+</div>
 
 {% endblock %}
 
