@@ -38,10 +38,10 @@
   - 
 -[] Obrazky
   - image (soubor)
-  - 
+
   
-![ER diagram](./zaloha/er-1.png)
-![ER diagram](./zaloha/er_review.png)
+![ER diagram](./images/er-1.png)
+![ER diagram](./images/er_review.png)
   
 ## Profil
 -[ ] 1 Jméno příjmení

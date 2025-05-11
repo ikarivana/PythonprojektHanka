@@ -25,7 +25,7 @@ from viewer.views import home, search_view, PedicureListView, PedicureDetailView
     PedicureUpdateView, PedicureDeleteView, EyelashListView, EyelashDetailView, EyelashCreateView, EyelashUpdateView, \
     EyelashDeleteView, HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView, \
     ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView, ImageCreateView, \
-    ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView
+    ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView, name_day
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -71,5 +71,7 @@ urlpatterns = [
     path('image/create/',ImageCreateView.as_view(), name='image_create'),
     path('image/update/<int:pk>/',ImageUpdateView.as_view(), name='image_update'),
     path('image/delete/<int:pk>/',ImageDeleteView.as_view(), name='image_delete'),
+
+    path('nameday/', name_day, name='nameday')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
- Formulář
+Formulář
 {% endblock %}
 
 {% block content %}
@@ -9,20 +9,20 @@
     <h2>{% if 'login' in request.path %}Přihlášení{% else %}Formulář{% endif %}</h2>
 
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
     {% endif %}
 
     <form method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        {{ form.as_p }}
-    </div>
-    <button type="submit" class="btn btn-primary">Přidat</button>
-</form>
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Přidat</button>
+    </form>
 
 </div>
 {% endblock %}

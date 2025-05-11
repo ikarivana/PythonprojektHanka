@@ -71,7 +71,6 @@ class ContactModelForm(forms.ModelForm):
         fields = '__all__'
 
 class ImageModelForm(ModelForm):
-
-     class Meta:
+    class Meta:
         model = Image
         fields = '__all__'

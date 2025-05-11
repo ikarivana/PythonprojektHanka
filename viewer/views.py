@@ -1,6 +1,8 @@
-from datetime import date
+import os
+from calendar import month
+from datetime import datetime
 from email.mime import image
-
+from http.client import responses
 from django.http import JsonResponse
 import requests
 from .models import Image
@@ -331,6 +333,7 @@ class ContactDetailView(DetailView):
 
         return redirect('contact_detail', pk=self.object.pk)
 
+
 class ContactCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = ContactModelForm
@@ -361,7 +364,6 @@ class ContactDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView)
     permission_required = 'viewer.delete_contact'
 
 
-
 def search_view(request):
     if request.method == 'POST':
         search_string = request.POST['search'].strip()
@@ -374,6 +376,18 @@ def search_view(request):
             health_description = Zdravi.objects.filter(description__contains=search_string)
             contact_name = Contact.objects.filter(name__contains=search_string)
 
+            url =(f"https://www.googleapis.com/customsearch/v1"
+                  f"?key={os.getenv('GOOGLE_API_KEY')}"
+                  f"&cx={os.getenv('GOOGLE_CX')}"
+                  F"&q={search_string}")
+            g_request = requests.get(url)
+            print(f"g_request: {g_request}")
+            g_json = g_request.json()
+            print(f"g_jeson: {g_json}")
+            for g_result in g_json:
+               print(g_result)
+               print(f"\t{g_result}")
+
             context = {
                 'search': search_string,
                 'pedicures': pedicura_name,
@@ -382,20 +396,22 @@ def search_view(request):
                 'eyelashes_description': eyelash_description,
                 'healths': health_name,
                 'healths_description': health_description,
-                'contacts': contact_name,
+                'contacts': contact_name
             }
             return render(request, 'search.html', context)
-    # Požadavky GET nebo prázdné vyhledávání, vypíše šablonu s prazdným kontexem.
-    context = {
-        'search': '',
-        'pedicures': Pedikura.objects.none(),
-        'pedicures_description': Pedikura.objects.none(),
-        'eyelashes': Rasy.objects.none(),
-        'eyelashes_description': Rasy.objects.none(),
-        'healths': Zdravi.objects.none(),
-        'healths_description': Zdravi.objects.none(),
-        'contacts': Contact.objects.none(),
-    }
+
+
+            # Požadavky GET nebo prázdné vyhledávání, vypíše šablonu s prazdným kontexem.
+            context = {
+                'search': '',
+                'pedicures': Pedikura.objects.none(),
+                'pedicures_description': Pedikura.objects.none(),
+                'eyelashes': Rasy.objects.none(),
+                'eyelashes_description': Rasy.objects.none(),
+                'healths': Zdravi.objects.none(),
+                'healths_description': Zdravi.objects.none(),
+                'contacts': Contact.objects.none(),
+   }
     return render(request, 'search.html', context)
 
 
@@ -423,6 +439,7 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.instance.profile = self.request.user.profile
         return super().form_valid(form)
 
+
 class ImageListView(ListView):
     template_name = 'images.html'
     model = Image
@@ -440,7 +457,9 @@ class ImageListView(ListView):
         home_images = Images.objects.filter(is_home=True)
         order_images = Images.objects.filter(order=True)
 
-        return render(request, 'images.html', {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images, 'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images})
+        return render(request, 'images.html',
+                      {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
+                       'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images})
 
 
 class ImageDetailView(DetailView):
@@ -451,11 +470,13 @@ class ImageDetailView(DetailView):
         get_object_or_404(Image, id=id)
         return render(request, 'image.html', {'image': image})
 
+
 class ImageCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form_image.html'
     form_class = ImageModelForm
     success_url = reverse_lazy('images')
     permission_required = 'viewer.add_image'
+
 
 class ImageUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form_image.html'
@@ -464,8 +485,35 @@ class ImageUpdateView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('images')
     permission_required = 'viewer.change_image'
 
+
 class ImageDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
     model = Image
     success_url = reverse_lazy('images')
     permission_required = 'viewer.delete_image'
+
+
+def name_day(request):
+    try:
+        # Získání dnešního data ve formátu DDMM
+        today = datetime.now().strftime("%d%m")
+        api_url = f"https://svatky.adresa.info/json?lang=cs&date={today}"
+
+        # HTTP požadavek s timeoutem a ošetřením chyb
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()
+        result_json = response.json()
+        if isinstance(result_json, list) and len(result_json) > 0:
+            name = result_json[0].get('name', 'Neznámé jméno')
+        else:
+            name = "Dnes nikdo nemá svátek"
+
+    except requests.exceptions.RequestException as e:
+        print(f"Chyba při komunikaci s API: {e}")
+        name = "Nelze zjistit svátek"
+
+    except (ValueError, KeyError) as e:
+        print(f"Chyba při parsování JSON: {e}")
+        name = "Chyba v datech"
+
+    return render(request, 'svatek.html', {'name': name})
