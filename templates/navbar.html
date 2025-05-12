@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container fixed">
-        <span class="navbar-brand" href="/">Loub-Natural</span>
+        <span class="navbar-brand" href="/"><b>Loub-Natural</b></span>
         <button
                 class="navbar-toggler" type="button"
                 data-toggle="collapse" data-target="#navbarNavAltMarkup">
@@ -18,7 +18,7 @@
                 <a class="nav-item nav-link active" href="{% url 'health' %}">Zdraví</a>
                 <a class="nav-item nav-link active" href="{% url 'contact' %}">Kontakt</a>
                 <a class="nav-item nav-link active" href="{% url 'images' %}">Obrázky</a>
-             {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                 <a class="nav-item nav-link active" href="{% url 'order_list' %}">Objednávky</a>
                 {% endif %}
             </div>
@@ -32,31 +32,32 @@
             </div>
 
             <div class="navbar-nav ml-auto">
-            <div class="search-div">
-                <form method="post" action="/search/">
-                    {% csrf_token %}
-                    <input type="text" name="search" placeholder="Hledat">
-                    <button type="submit" class="btn btn-primary">⏳</button>
-                </form>
+                <div class="search-div">
+                    <form method="post" action="/search/">
+                        {% csrf_token %}
+                        <input type="text" name="search" placeholder="Hledat">
+                        <button type="submit" class="btn btn-primary">⏳</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
             <div class="navbar-nav ml-auto">
                 <div class="nav-item ml-auto">
                     <div class="nav-item dropdown">
                         {% if user.is_authenticated %}
-                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span>{{ user.username }}</span></a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'logout' %}">Odhlásit</a>
-                                <a class="dropdown-item" href="{% url 'password_change' %}">Změna hesla</a>
-                            </div>
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            <span>{{ user.username }}</span></a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'logout' %}">Odhlásit</a>
+                            <a class="dropdown-item" href="{% url 'password_change' %}">Změna hesla</a>
+                        </div>
                         {% else %}
-                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Nepřihlášený uživatel</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'login' %}">Přihlásit</a>
-                                <a class="dropdown-item" href="{% url 'signup' %}">Registrovat</a>
-                                <a class="dropdown-item" href="{% url 'password_reset' %}">Reset hesla</a>
-                            </div>
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Nepřihlášený uživatel</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'login' %}">Přihlásit</a>
+                            <a class="dropdown-item" href="{% url 'signup' %}">Registrovat</a>
+                            <a class="dropdown-item" href="{% url 'password_reset' %}">Reset hesla</a>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
