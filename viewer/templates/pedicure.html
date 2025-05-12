@@ -68,7 +68,7 @@
 
 <div>
     <p class="text-justify">{{ pedicure.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure.created|date:"j.n.Y G:i"}}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure.update|date:"j.n.Y G:i" }}</small></p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure_detail.created|date:"j.n.Y G:i"}}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure_detail.updated|date:"j.n.Y G:i" }}</small></p>
 </div>
 {% endblock %}

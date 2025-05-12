@@ -5,9 +5,10 @@ from email.mime import image
 from http.client import responses
 from django.http import JsonResponse
 import requests
+from django.template import context
 from .models import Image
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -38,7 +39,11 @@ class PedicureListView(ListView):
     model = Pedikura
     context_object_name = 'pedicures'
     permission_required = 'viewer.view_pedikura'
-    paginate_by = 2
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pedikura1_images'] = Image.objects.filter(pedikura1=True)
+        return context
 
 
 class PedicureDetailView(DetailView):
@@ -106,6 +111,7 @@ class PedicureUpdateView(PermissionRequiredMixin, UpdateView):
     model = Pedikura
     success_url = reverse_lazy('pedicure')
     permission_required = 'viewer.change_pedikura'
+    context_object_name = 'pedicure'
 
     def form_invalid(self, form):
         print("form není validní")
@@ -124,6 +130,11 @@ class EyelashListView(ListView):
     model = Rasy
     context_object_name = 'eyelashs'
     permission_required = 'viewer.view_rasy'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rasy1_images'] = Image.objects.filter(rasy1=True)
+        return context
 
 
 class EyelashDetailView(DetailView):
@@ -206,6 +217,12 @@ class HealthListView(ListView):
     model = Zdravi
     context_object_name = 'healths'
     permission_required = 'viewer.view_zdravi'
+    zdravi1_images = Image.objects.filter(zdravi1=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zdravi1_images'] = Image.objects.filter(zdravi1=True)
+        return context
 
 
 class HealthDetailView(DetailView):
@@ -287,6 +304,11 @@ class ContactListView(ListView):
     model = Contact
     context_object_name = 'contacts'
     permission_required = 'viewer.view_contact'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['contact1_images'] = Image.objects.filter(contact1=True)
+        return context
 
 
 class ContactDetailView(DetailView):
@@ -376,17 +398,17 @@ def search_view(request):
             health_description = Zdravi.objects.filter(description__contains=search_string)
             contact_name = Contact.objects.filter(name__contains=search_string)
 
-            url =(f"https://www.googleapis.com/customsearch/v1"
-                  f"?key={os.getenv('GOOGLE_API_KEY')}"
-                  f"&cx={os.getenv('GOOGLE_CX')}"
-                  F"&q={search_string}")
+            url = (f"https://www.googleapis.com/customsearch/v1"
+                   f"?key={os.getenv('GOOGLE_API_KEY')}"
+                   f"&cx={os.getenv('GOOGLE_CX')}"
+                   F"&q={search_string}")
             g_request = requests.get(url)
             print(f"g_request: {g_request}")
             g_json = g_request.json()
             print(f"g_jeson: {g_json}")
             for g_result in g_json:
-               print(g_result)
-               print(f"\t{g_result}")
+                print(g_result)
+                print(f"\t{g_result}")
 
             context = {
                 'search': search_string,
@@ -400,7 +422,6 @@ def search_view(request):
             }
             return render(request, 'search.html', context)
 
-
             # Požadavky GET nebo prázdné vyhledávání, vypíše šablonu s prazdným kontexem.
             context = {
                 'search': '',
@@ -411,7 +432,7 @@ def search_view(request):
                 'healths': Zdravi.objects.none(),
                 'healths_description': Zdravi.objects.none(),
                 'contacts': Contact.objects.none(),
-   }
+            }
     return render(request, 'search.html', context)
 
 
@@ -444,6 +465,7 @@ class ImageListView(ListView):
     template_name = 'images.html'
     model = Image
     context_object_name = 'images'
+    paginate_by = 5
 
     def images(request):
         images = Image.objects.all()
@@ -456,16 +478,21 @@ class ImageListView(ListView):
         contact_images = Images.objects.filter(contact=True)
         home_images = Images.objects.filter(is_home=True)
         order_images = Images.objects.filter(order=True)
+        pedikura1_images = Images.objects.filter(pedikura1=True)
+        rasy1_images = Images.objects.filter(rasy1=True)
+        zdravi1_images = Images.objects.filter(zdravi1=True)
+        contact1_images = Images.objects.filter(contact1=True)
 
         return render(request, 'images.html',
                       {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
-                       'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images})
+                       'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images,
+                       'pedikura1': pedikura1_images, 'rasy1': rasy1_images, 'zdravi1': zdravi1_images,
+                       'contact1': contact1_images})
 
 
 class ImageDetailView(DetailView):
     template_name = 'image.html'
     model = Image
-
     def image_detail(request, pk):
         get_object_or_404(Image, id=id)
         return render(request, 'image.html', {'image': image})

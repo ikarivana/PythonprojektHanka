@@ -18,6 +18,8 @@ class Pedikura(Model):
     procedure_time = IntegerField(null=False, blank=False)
     description = TextField(max_length=5000, null=True, blank=True)
     price = IntegerField(null=False, blank=False)
+    created = DateTimeField(auto_now_add=True)
+    updated = DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['name']
@@ -34,6 +36,8 @@ class Rasy(Model):
     procedure_time = IntegerField(null=False, blank=False, default=0)
     description = TextField(max_length=5000, null=True, blank=True)
     price = IntegerField(null=False, blank=False)
+    created = DateTimeField(auto_now_add=True)
+    updated = DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['name']
@@ -48,6 +52,8 @@ class Rasy(Model):
 class Zdravi(Model):
     name = CharField(max_length=30, null=False, blank=False, unique=True)
     description = TextField(max_length=5000, null=True, blank=True)
+    created = DateTimeField(auto_now_add=True)
+    updated = DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['name']
@@ -65,6 +71,8 @@ class Contact(Model):
     email = EmailField(null=False, blank=False, unique=True)
     address = TextField(null=False, blank=True)
     description = TextField(max_length=5000, null=True, blank=True)
+    created = DateTimeField(auto_now_add=True)
+    updated = DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['name']
@@ -171,6 +179,10 @@ class Image(Model):
     contact = ForeignKey(Contact, on_delete=SET_NULL, null=True, blank=True, related_name='images')
     order = models.BooleanField(default=False, verbose_name="Zobrazit na order strance")
     is_home = models.BooleanField(default=False, verbose_name="Zobrazit na home stránce")
+    pedikura1 = models.BooleanField( default=False, verbose_name="Zobrazit na stránce Pedikura")
+    rasy1 = models.BooleanField(default=False, verbose_name="Zobrazit na stránce Řasy")
+    zdravi1 = models.BooleanField(default=False, verbose_name="Zobrazit na stránce Zdraví")
+    contact1 = models.BooleanField(default=False, verbose_name="Zobrazit na stránce Kontakt")
 
     def __repr__(self):
         return f"Image(image={self.image})"

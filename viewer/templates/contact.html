@@ -6,6 +6,11 @@ Contact
 
 {% block content %}
 <h1>Kontaktní údaje</h1>
+<div>
+        {% for img in contact1_images %}
+        <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+        {% endfor %}
+    </div>
 {% if perms.viewer.add_contact %}
 <a href="{% url 'contact_create' %}" class="btn btn-primary">Přidat</a>
 {% endif %}

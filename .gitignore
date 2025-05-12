@@ -1,3 +1,4 @@
 /.idea
 /.env
 /identifier.sqlite
+/db.sqlite3

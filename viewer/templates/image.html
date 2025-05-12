@@ -66,4 +66,13 @@ Obrázky
     </div>
     {% endif %}
 </div>
+
+<div class="image.details mt-4">
+    {% if image.pedikura1 %}
+    <div class="pedikura-image mb-2">
+        Objednávky: <a href="{% url 'pedikura' %}">{{ image.name }}</a>
+    </div>
+    {% endif %}
+</div>
+
 {% endblock %}

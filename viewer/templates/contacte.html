@@ -24,5 +24,11 @@
     {% endfor %}
 </div>
 
+<div>
+    <p class="text-justify">{{ contact.description }}</p>
+    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ contact_detail.created|date:"j.n.Y G:i"}}</small></p>
+    <p class="mt2"><small class="text-muted">Poslední úprava : {{ contact_detail.updated|date:"j.n.Y G:i" }}</small></p>
+</div>
+
 {% endblock %}
 
