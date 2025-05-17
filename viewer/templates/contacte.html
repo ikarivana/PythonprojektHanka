@@ -1,34 +1,99 @@
 {% extends 'base.html' %}
 
-{% block title %}
-{{ contact_detail.name }}
-{% endblock %}
-
-
 {% block content %}
-<h1 class="display-5">{{ contact_detail.name }}</h1>
-    <hr class="row">
-<div class="col-md-16">
-    <p><strong>Telefon: </strong> {{ contact_detail.phone }}
-    <p><strong>Email: </strong>{{ contact_detail.email }}
-    <p><strong>Adresa: </strong>{{ contact_detail.address }}</p>
-    <hr class="row">
-<div>{{ contact_detail.description }}</div>
-</div>
+<div class="contact-container">
+    <h1>{{ contact_detail.name }}</h1>
 
-<div class="conctact-images">
-    {% for image in contact_detail.images.all %}
-        <span class="contact-image">
-            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
-        </span>
+    <div class="home-container">
+        {% for image in contact_detail.images.all %}
+        <div class="image-item">
+            <img src="{{ image.image.url }}" alt="{{ image.name }}">
+            {% if perms.viewer.change_image or perms.viewer.delete_image %}
+            <div class="image-controls">
+                {% if perms.viewer.change_image %}
+                <a href="{% url 'image_update' image.pk %}" class="btn-edit">🖋️</a>
+                {% endif %}
+                {% if perms.viewer.delete_image %}
+                <a href="{% url 'image_delete' image.pk %}" class="btn-delete">🗑️</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="no-images">Zatím nejsou přidány žádné obrázky</p>
+        {% endfor %}
+    </div>
+
+    {% if perms.viewer.add_image %}
+    <div class="button-group">
+        <a href="{% url 'image_create' %}?contact_id={{ contact_detail.id }}" class="btn btn-primary">Přidat obrázek</a>
+    </div>
+    {% endif %}
+
+
+    <div class="procedure-item">
+        <div>
+            <p><strong>Telefon: </strong> {{ contact_detail.phone }}</p>
+            <p><strong>Email: </strong>{{ contact_detail.email }}</p>
+            <p><strong>Adresa: </strong>{{ contact_detail.address }}</p>
+        </div>
+    </div>
+
+    <div class="procedure-item">
+        <div class="procedure-content">
+            {{ contact_detail.description|linebreaks }}
+        </div>
+    </div>
+
+    {% if perms.viewer.change_contact or perms.viewer.delete_contact %}
+    <div class="procedure-controls">
+        {% if perms.viewer.change_contact %}
+        <a href="{% url 'contact_update' contact_detail.id %}" class="btn-edit">🖋️</a>
+        {% endif %}
+        {% if perms.viewer.delete_contact %}
+        <a href="{% url 'contact_delete' contact_detail.id %}" class="btn-delete">🗑️</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+    <div class="procedure-item">
+        <form action="" method="post" class="form-group w-100">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit" class="btn btn-primary">Odeslat hodnocení</button>
+        </form>
+    </div>
+
+    <h4>Hodnocení a komentáře:</h4>
+    {% for review in reviews %}
+    <div class="procedure-item">
+        <div>
+            <span>Uživatel: {{ review.user }}</span>
+            <span class="font-italic">{{ review.created }}</span>
+            <div>
+                Hodnocení služby: {{ review.rating }}
+            </div>
+            <div>
+                Komentář: {{ review.comment }}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="no-images">Zatím nikdo nehodnotil</p>
     {% endfor %}
-</div>
+    {% else %}
+    <div class="procedure-item">
+        <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo se <a
+                href="{% url 'register' %}">zaregistrujte</a>.</p>
+    </div>
+    {% endif %}
 
-<div>
-    <p class="text-justify">{{ contact.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ contact_detail.created|date:"j.n.Y G:i"}}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ contact_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    {% if request.user.is_authenticated %}
+    <div class="procedure-item">
+        <small class="text-muted">Přidáno do databáze: {{ contact_detail.created|date:"j.n.Y G:i"}}</small><br>
+        <small class="text-muted">Poslední úprava: {{ contact_detail.updated|date:"j.n.Y G:i" }}</small>
+    </div>
+    {% endif %}
 </div>
-
 {% endblock %}
-

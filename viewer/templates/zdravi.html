@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Zdraví
@@ -6,29 +7,83 @@ Zdraví
 
 {% block content %}
 <div class="container">
-    <h1>Čistíme tělo</h1>
-
-    <div>
-        {% for img in zdravi1_images %}
-        <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
         {% endfor %}
     </div>
-    {% if perms.viewer.add_zdravi %}
-    <a href="{% url 'health_create' %}" class="btn btn-primary">Přidat</a>
     {% endif %}
-    <ul>
 
-        {% for health in healths %}
-        <li>
-            <a href="{% url 'health_detail' health.id %}">{{ health }}</a>
-            {% if perms.viewer.change_zdravi %}
-            <a href="{% url 'health_update' health.id %}" class="btn">🖋️</a>
-            {% endif %}
-            {% if perms.viewer.delete_zdravi %}
-            <a href="{% url 'health_delete' health.id %}" class="btn">🗑️</a>
-            {% endif %}
-        </li>
+    <h1>Čistíme tělo</h1>
+
+    {% if user.is_authenticated %}
+        {% if is_staff %}
+            <div class="admin-panel">
+                <p class="admin-label">Administrátorský přístup</p>
+                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="container-fluid"></div>
+    <div class="home-container">
+        {% for img in zdravi1_images %}
+            <div class="image-item">
+                <a href="{% url 'image' pk=img.id %}">
+                    <img src="{{ img.image.url }}" alt="zdraví">
+                </a>
+
+                {% if user.is_authenticated and perms.viewer.change_image %}
+                    <div class="image-controls">
+                        <a href="{% url 'image_update' pk=img.id %}?next={% url 'health' %}" class="btn btn-edit" title="Upravit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% if perms.viewer.delete_image %}
+                            <a href="{% url 'image_delete' pk=img.id %}?next={% url 'health' %}" class="btn btn-delete" title="Smazat"
+                               onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
         {% endfor %}
-    </ul>
+
+        {% if user.is_authenticated and perms.viewer.add_image %}
+            <a href="{% url 'image_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat nový obrázek</a>
+        {% endif %}
+    </div>
+
+    <div class="health-container">
+        {% if perms.viewer.add_health %}
+            <a href="{% url 'health_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat proceduru</a>
+        {% endif %}
+
+        <ul class="procedure-list">
+            {% for health in healths %}
+                <li class="procedure-item">
+                    <a href="{% url 'health_detail' health.id %}" class="procedure-link">{{ health }}</a>
+                    <div class="procedure-controls">
+                        {% if perms.viewer.change_health %}
+                            <a href="{% url 'health_update' health.id %}?next={% url 'health' %}" class="btn btn-edit" title="Upravit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+                        {% if perms.viewer.delete_health %}
+                            <a href="{% url 'health_delete' health.id %}?next={% url 'health' %}" class="btn btn-delete" title="Smazat"
+                               onclick="return confirm('Opravdu chcete smazat tuto proceduru?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

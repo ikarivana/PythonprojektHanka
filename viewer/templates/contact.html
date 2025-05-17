@@ -1,31 +1,90 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
-Contact
+Kontakt
 {% endblock %}
 
 {% block content %}
-<h1>Kontaktní údaje</h1>
-<div>
-        {% for img in contact1_images %}
-        <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
         {% endfor %}
     </div>
-{% if perms.viewer.add_contact %}
-<a href="{% url 'contact_create' %}" class="btn btn-primary">Přidat</a>
-{% endif %}
-<ul>
-    {% for contact in contacts %}
-    <li>
-        <a href="{% url 'contact_detail' contact.id %}">{{ contact }}</a>
-        {% if perms.viewer.change_contact %}
-        <a href="{% url 'contact_update' contact.id %}" class="btn">🖋️</a>
-        {% endif %}
-        {% if perms.viewer.delete_contact %}
-        <a href="{% url 'contact_delete' contact.id %}" class="btn">🗑️</a>
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+    {% endif %}
 
+    <h1>Kontaktní údaje</h1>
+
+    {% if user.is_authenticated %}
+        {% if is_staff %}
+            <div class="admin-panel">
+                <p class="admin-label">Administrátorský přístup</p>
+                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="container-fluid"></div>
+    <div class="home-container">
+        {% for img in contact1_images %}
+            <div class="image-item">
+                <a href="{% url 'image' pk=img.id %}">
+                    <img src="{{ img.image.url }}" alt="kontakt">
+                </a>
+
+                {% if user.is_authenticated and perms.viewer.change_image %}
+                    <div class="image-controls">
+                        <a href="{% url 'image_update' pk=img.id %}?next={% url 'contact' %}" class="btn btn-edit" title="Upravit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% if perms.viewer.delete_image %}
+                            <a href="{% url 'image_delete' pk=img.id %}?next={% url 'contact' %}" class="btn btn-delete" title="Smazat"
+                               onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated and perms.viewer.add_image %}
+            <a href="{% url 'image_create' %}?next={% url 'contact' %}" class="btn btn-primary">Přidat nový obrázek</a>
+        {% endif %}
+    </div>
+
+    <div class="contact-container">
+        {% if perms.viewer.add_contact %}
+            <a href="{% url 'contact_create' %}?next={% url 'contact' %}" class="btn btn-primary">Přidat kontakt</a>
+        {% endif %}
+
+        <ul class="procedure-list">
+            {% for contact in contacts %}
+            <li class="procedure-item">
+                <a href="{% url 'contact_detail' contact.id %}" class="procedure-link">{{ contact }}</a>
+                <div class="procedure-controls">
+                    {% if perms.viewer.change_contact %}
+                    <a href="{% url 'contact_update' contact.id %}?next={% url 'contact' %}" class="btn btn-edit" title="Upravit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% endif %}
+                    {% if perms.viewer.delete_contact %}
+                    <a href="{% url 'contact_delete' contact.id %}?next={% url 'contact' %}" class="btn btn-delete" title="Smazat"
+                       onclick="return confirm('Opravdu chcete smazat tento kontakt?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endblock %}
+

@@ -1,78 +1,98 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Obrázky
 {% endblock %}
 
-
 {% block content %}
-
-{% if perms.viewer.add_image %}
-<a href="{% url 'image_update' image.id %}" class="btn btn-primary">🖋️</a>
-{% endif %}
-
-{% if perms.viewer.delete_image %}
-<a href="{% url 'image_delete' image.id %}" class="btn btn-primary">🗑️</a>
-{% endif %}
-
-<div class="container mt-5">
-    <img src="{{ image.image.url }}" alt="{{ image.name }}" width="80%">
-</div>
-
-<div class="image.details mt-4">
-    {% if image.padikura %}
-    <div class="pedikura-image mb-2">
-        Pedikúra: <a href="{% url 'pedikura' image.pedikura.id %}">{{ image.name }}</a>
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
-</div>
 
-<div class="image.details mt-4">
-    {% if image.rasy %}
-    <div class="rasy-image mb-2">
-        Řasy: <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.name }}</a>
-    </div>
+    {% if user.is_authenticated %}
+        {% if is_staff %}
+            <div class="admin-panel text-center">
+                <p class="admin-label">Administrátorský přístup</p>
+                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+            </div>
+        {% endif %}
     {% endif %}
-</div>
 
-<div class="image.details mt-4">
-    {% if image.zdravi %}
-    <div class="zdravi-image mb-2">
-        Zdraví: <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.name }}</a>
+    <div class="image-controls-top text-center mb-3">
+        {% if perms.viewer.add_image %}
+        <a href="{% url 'image_update' image.id %}" class="btn btn-primary mx-2">🖋️</a>
+        {% endif %}
+
+        {% if perms.viewer.delete_image %}
+        <a href="{% url 'image_delete' image.id %}" class="btn btn-primary mx-2"
+           onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 
-<div class="image.details mt-4">
-    {% if image.contact %}
-    <div class="contact-image mb-2">
-        Kontakt: <a href="{% url 'contact_detail' image.contact.id %}">{{ image.name }}</a>
+    <div class="image-display text-center mb-4">
+        <img src="{{ image.image.url }}"
+             alt="{{ image.name }}"
+             class="main-image img-fluid mx-auto d-block"
+             style="max-width: 500px;">
     </div>
-    {% endif %}
-</div>
 
-<div class="image.details mt-4">
-    {% if image.is_home %}
-    <div class="is_home-image mb-2">
-        Domovská: <a href="{% url 'home' %}">{{ image.name }}</a>
+    <div class="image-details text-center">
+        {% if image.padikura %}
+        <div class="detail-item pedikura-image mb-2">
+            <span class="detail-label">Pedikúra:</span>
+            <a href="{% url 'pedikura' image.pedikura.id %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.rasy %}
+        <div class="detail-item rasy-image mb-2">
+            <span class="detail-label">Řasy:</span>
+            <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.zdravi %}
+        <div class="detail-item zdravi-image mb-2">
+            <span class="detail-label">Zdraví:</span>
+            <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.contact %}
+        <div class="detail-item contact-image mb-2">
+            <span class="detail-label">Kontakt:</span>
+            <a href="{% url 'contact_detail' image.contact.id %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.is_home %}
+        <div class="detail-item is_home-image mb-2">
+            <span class="detail-label">Domovská:</span>
+            <a href="{% url 'home' %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.order %}
+        <div class="detail-item order-image mb-2">
+            <span class="detail-label">Objednávky:</span>
+            <a href="{% url 'order_list' %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
+
+        {% if image.pedikura1 %}
+        <div class="detail-item pedikura-image mb-2">
+            <span class="detail-label">Pedikúra:</span>
+            <a href="{% url 'pedikura' %}">{{ image.name }}</a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
-
-<div class="image.details mt-4">
-    {% if image.order %}
-    <div class="order-image mb-2">
-        Objednávky: <a href="{% url 'order_list' %}">{{ image.name }}</a>
-    </div>
-    {% endif %}
-</div>
-
-<div class="image.details mt-4">
-    {% if image.pedikura1 %}
-    <div class="pedikura-image mb-2">
-        Objednávky: <a href="{% url 'pedikura' %}">{{ image.name }}</a>
-    </div>
-    {% endif %}
-</div>
-
 {% endblock %}

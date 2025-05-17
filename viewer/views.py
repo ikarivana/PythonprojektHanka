@@ -1,37 +1,67 @@
 import os
-from calendar import month
 from datetime import datetime
 from email.mime import image
-from http.client import responses
-from django.http import JsonResponse
 import requests
-from django.template import context
-from .models import Image
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.contrib import messages
-from .mixins import StaffRequiredMixin
-from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.db import models
+
+from accounts.models import Profile
 from viewer.forms import (
     PedikuraModelForm, RasyModelForm, ZdraviModelForm,
     ContactModelForm, PedikuraReviewForm, RasyReviewForm,
     ZdraviReviewForm, ImageModelForm, ContactReviewForm
 )
-from viewer.models import Pedikura, Rasy, Zdravi, Contact, Order, Image
-from accounts.models import Profile
+from viewer.models import Pedikura, Rasy, Zdravi, Contact, Order, Image, Novinky, NovinkyImage
+from .forms import OrderForm, NovinkyForm
+from .mixins import StaffRequiredMixin
+from django.contrib import messages
 
 
 def home(request):
-    home_images = Image.objects.filter(is_home=True)
-    print(f"User is authenticated: {request.user.is_authenticated}")
-    print(f"User: {request.user}")
-    return render(request, 'home.html', {'home_images': home_images})
+    try:
+        home_images = Image.objects.filter(is_home=True)
+        context = {
+            'home_images': home_images,
+            'welcome_message': 'Vítejte na našich stránkách'
+        }
+
+        if request.user.is_authenticated:
+            display_name = request.user.get_full_name() or request.user.username
+            context['welcome_message'] = f'Vítejte, {display_name}! Zdraví v každém kroku'
+            context.update({
+                'is_staff': request.user.is_staff,
+                'last_login': request.user.last_login,
+            })
+
+        return render(request, 'home.html', context)
+    except Exception as e:
+        messages.error(request, f"Nastala chyba při načítání stránky: {str(e)}")
+        return render(request, 'home.html', {'welcome_message': 'Vítejte na našich stránkách'})
+
+# Zabezpečení pro class-based views
+class ImageCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'  # přesměrování nepřihlášení uživatele
+    model = Image
+    fields = ['image', 'is_home', 'pedikura1', 'rasy1', 'zdravi1', 'contact1']
+
+
+class ImageUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Image
+    fields = ['image', 'is_home', 'pedikura1', 'rasy1', 'zdravi1', 'contact1']
+
+
+class ImageDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Image
+    success_url = reverse_lazy('home')
 
 
 class PedicureListView(ListView):
@@ -43,7 +73,23 @@ class PedicureListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pedikura1_images'] = Image.objects.filter(pedikura1=True)
+        if not self.request.user.is_authenticated:
+            context['registration_form'] = UserCreationForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                login(request, user)
+                messages.success(request, 'Registrace proběhla úspěšně!')
+                return redirect('pedicure')
+            else:
+                self.object_list = self.get_queryset()
+                context = self.get_context_data(registration_form=form)
+                return self.render_to_response(context)
+        return redirect('pedicure')
 
 
 class PedicureDetailView(DetailView):
@@ -53,24 +99,32 @@ class PedicureDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Zobrazíme reviews vždy, ale formulář pouze pro přihlášené
         context['reviews'] = self.object.reviews.all()
         if self.request.user.is_authenticated:
             context['review_form'] = PedikuraReviewForm()
+        else:
+            context['registration_form'] = UserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-
         self.object = self.get_object()
-        form = PedikuraReviewForm(request.POST)
 
+        if not request.user.is_authenticated:
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                login(request, user)
+                messages.success(request, 'Registrace proběhla úspěšně!')
+                return redirect('pedicure_detail', pk=self.object.pk)
+            else:
+                context = self.get_context_data(registration_form=form)
+                return self.render_to_response(context)
+
+        # Existující logika pro hodnocení
+        form = PedikuraReviewForm(request.POST)
         try:
-            # Zkusíme najít existující recenzi
             existing_review = self.object.reviews.filter(user=request.user).first()
             if existing_review:
-                # Aktualizace existující recenze
                 if form.is_valid():
                     existing_review.rating = form.cleaned_data['rating']
                     existing_review.comment = form.cleaned_data['comment']
@@ -79,7 +133,6 @@ class PedicureDetailView(DetailView):
                 else:
                     messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
-                # Vytvoření nové recenze
                 if form.is_valid():
                     review = form.save(commit=False)
                     review.pedikura = self.object
@@ -321,7 +374,7 @@ class ContactDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
             context['review_form'] = ContactReviewForm()
-            context['reviews'] = self.object.reviews.all()
+            context['reviews'] = self.object.reviews.all().order_by('-created')  # seřazení od nejnovějšího
         return context
 
     def post(self, request, *args, **kwargs):
@@ -401,7 +454,7 @@ def search_view(request):
             url = (f"https://www.googleapis.com/customsearch/v1"
                    f"?key={os.getenv('GOOGLE_API_KEY')}"
                    f"&cx={os.getenv('GOOGLE_CX')}"
-                   F"&q={search_string}")
+                   f"&q={search_string}")
             g_request = requests.get(url)
             print(f"g_request: {g_request}")
             g_json = g_request.json()
@@ -420,9 +473,8 @@ def search_view(request):
                 'healths_description': health_description,
                 'contacts': contact_name
             }
-            return render(request, 'search.html', context)
-
-            # Požadavky GET nebo prázdné vyhledávání, vypíše šablonu s prazdným kontexem.
+        else:
+            # Prázdný vyhledávací řetězec
             context = {
                 'search': '',
                 'pedicures': Pedikura.objects.none(),
@@ -431,33 +483,53 @@ def search_view(request):
                 'eyelashes_description': Rasy.objects.none(),
                 'healths': Zdravi.objects.none(),
                 'healths_description': Zdravi.objects.none(),
-                'contacts': Contact.objects.none(),
+                'contacts': Contact.objects.none()
             }
+    else:
+        # GET požadavek
+        context = {
+            'search': '',
+            'pedicures': Pedikura.objects.none(),
+            'pedicures_description': Pedikura.objects.none(),
+            'eyelashes': Rasy.objects.none(),
+            'eyelashes_description': Rasy.objects.none(),
+            'healths': Zdravi.objects.none(),
+            'healths_description': Zdravi.objects.none(),
+            'contacts': Contact.objects.none()
+        }
+
     return render(request, 'search.html', context)
 
 
 class OrderListView(LoginRequiredMixin, ListView):
-    order_images = Image.objects.filter(order=True)
     model = Order
     template_name = 'order_list.html'
     context_object_name = 'orders'
-    paginate_by = 10
 
     def get_queryset(self):
-        return Order.objects.filter(profile=self.request.user.profile)
+        # Kontrola existence profilu
+        try:
+            profile = self.request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=self.request.user)
+
+        if self.request.user.is_staff:
+            return Order.objects.all()
+        return Order.objects.filter(profile=profile)
 
 
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
+    form_class = OrderForm
     template_name = 'form.html'
-    fields = ['service_date', 'description']
-    success_url = reverse_lazy('order-list')
+    success_url = reverse_lazy('viewer:order-list')
 
     def test_func(self):
         return self.request.user.is_staff
 
     def form_valid(self, form):
         form.instance.profile = self.request.user.profile
+        messages.success(self.request, 'Objednávka byla úspěšně vytvořena.')
         return super().form_valid(form)
 
 
@@ -474,17 +546,17 @@ class ImageListView(ListView):
     def images_view(request):
         pedikura_images = Image.objects.filter(pedikura=True)
         rasy_images = Image.objects.filter(rasy=True)
-        zdravi_images = Images.objects.filter(zdravi=True)
-        contact_images = Images.objects.filter(contact=True)
-        home_images = Images.objects.filter(is_home=True)
-        order_images = Images.objects.filter(order=True)
-        pedikura1_images = Images.objects.filter(pedikura1=True)
-        rasy1_images = Images.objects.filter(rasy1=True)
-        zdravi1_images = Images.objects.filter(zdravi1=True)
-        contact1_images = Images.objects.filter(contact1=True)
+        zdravi_images = Image.objects.filter(zdravi=True)
+        contact_images = Image.objects.filter(contact=True)
+        home_images = Image.objects.filter(is_home=True)
+        order_images = Image.objects.filter(order=True)
+        pedikura1_images = Image.objects.filter(pedikura1=True)
+        rasy1_images = Image.objects.filter(rasy1=True)
+        zdravi1_images = Image.objects.filter(zdravi1=True)
+        contact1_images = Image.objects.filter(contact1=True)
 
         return render(request, 'images.html',
-                      {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
+               {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
                        'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images,
                        'pedikura1': pedikura1_images, 'rasy1': rasy1_images, 'zdravi1': zdravi1_images,
                        'contact1': contact1_images})
@@ -501,8 +573,23 @@ class ImageDetailView(DetailView):
 class ImageCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form_image.html'
     form_class = ImageModelForm
-    success_url = reverse_lazy('images')
     permission_required = 'viewer.add_image'
+
+    def form_valid(self, form):
+        contact_id = self.request.GET.get('contact_id')
+        if contact_id:
+            form.instance.contact_id = contact_id
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        contact_id = self.request.GET.get('contact_id')
+        if contact_id:
+            return reverse_lazy('contact_detail', kwargs={'pk': contact_id})
+        next_url = self.request.POST.get('next') or self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse_lazy('images')
+
 
 
 class ImageUpdateView(PermissionRequiredMixin, UpdateView):
@@ -544,3 +631,116 @@ def name_day(request):
         name = "Chyba v datech"
 
     return render(request, 'svatek.html', {'name': name})
+
+
+def seznam_novinek(request):
+    if request.user.is_authenticated and request.user.has_perm('viewer.add_novinky'):
+        if request.method == 'POST':
+            form = NovinkyForm(request.POST, request.FILES)
+            if form.is_valid():
+                try:
+                    novinka = form.save(commit=False)
+                    novinka.autor = request.user
+                    novinka.save()
+
+                    # Zpracování dalších obrázků
+                    for image in request.FILES.getlist('images'):
+                        if image.size <= 5 * 1024 * 1024:  # 5MB limit
+                            NovinkyImage.objects.create(
+                                novinka=novinka,
+                                image=image
+                            )
+                        else:
+                            messages.warning(request, f'Obrázek {image.name} byl přeskočen - je větší než 5MB.')
+
+                    messages.success(request, 'Novinka byla úspěšně vytvořena!')
+                    return redirect('seznam_novinek')
+                except Exception as e:
+                    messages.error(request, f'Při ukládání došlo k chybě: {str(e)}')
+            else:
+                messages.error(request, 'Prosím opravte chyby ve formuláři.')
+        else:
+            form = NovinkyForm()
+    else:
+        form = None
+
+    novinky = Novinky.objects.all().order_by('-datum_vytvoreni')
+    return render(request, 'seznam_novinek.html', {
+        'novinky': novinky,
+        'form': form
+    })
+
+
+def detail_novinky(request, novinka_id):
+    novinka = get_object_or_404(Novinky, pk=novinka_id)
+    images = novinka.images.all()  # Získání všech obrázků
+    form = None
+    if request.user.is_authenticated:
+        form = NovinkyForm(instance=novinka)
+
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
+        if 'delete' in request.POST and request.user.has_perm('viewer.delete_novinky'):
+            novinka.delete()
+            return redirect('seznam_novinek')
+        elif 'update' in request.POST and request.user.has_perm('viewer.change_novinky'):
+            form = NovinkyForm(request.POST, request.FILES, instance=novinka)
+            if form.is_valid():
+                form.save()
+                # Přidáno zpracování obrázků
+                for image in request.FILES.getlist('images'):
+                    NovinkyImage.objects.create(
+                        novinka=novinka,
+                        image=image
+                    )
+                return redirect('detail_novinky', novinka_id=novinka.id)
+
+    return render(request, 'detail_novinky.html', {
+        'novinka': novinka,
+        'form': form if request.user.is_authenticated else None,
+        'images': images  # Přidání obrázků do kontextu
+    })
+
+
+@login_required
+@permission_required('viewer.add_novinky')
+def pridat_novinku(request):
+    if request.method == 'POST':
+        form = NovinkyForm(request.POST, request.FILES)
+        if form.is_valid():
+            novinka = form.save(commit=False)
+            novinka.autor = request.user
+            novinka.save()
+
+            # Zpracování více obrázků
+            for image in request.FILES.getlist('images'):
+                NovinkyImage.objects.create(
+                    novinka=novinka,
+                    image=image
+                )
+            return redirect('seznam_novinek')
+    else:
+        form = NovinkyForm()
+    return render(request, 'pridat_novinku.html', {'form': form})
+
+
+@login_required
+@permission_required('viewer.delete_novinky')
+def smazat_novinku(request, novinka_id):
+    novinka = get_object_or_404(Novinky, pk=novinka_id)
+    if request.method == 'POST':
+        novinka.delete()
+        return redirect('seznam_novinek')
+    return render(request, 'smazat_novinku.html', {'novinka': novinka})
+
+
+class RegisterView(CreateView):
+    template_name = 'registration/register.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('pedicure')
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect(self.success_url)

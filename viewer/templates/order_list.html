@@ -1,57 +1,103 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
 <div class="container mt-4">
-    <h2>Seznam objednávek</h2>
-
-    {% if user.is_staff %}
-    <div class="mb-3">
-        <a href="{% url 'order_create' %}" class="btn btn-primary">Vytvořit novou objednávku</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Seznam objednávek</h2>
+        {% if user.is_staff %}
+            <a href="{% url 'viewer:order-create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Vytvořit novou objednávku
+            </a>
+        {% endif %}
     </div>
-    {% endif %}
 
-    {% for img in order_images %}
-    <img src="{{ img.image.url }}" alt="{{ img.image.name }}">
-    {% endfor %}
 
-    {% if orders %}
-    <div class="list-group">
-        {% for order in orders %}
-        <div class="list-group-item">
-            <h5 class="mb-1">{{ order.service_date|date:"d.m.Y H:i" }}</h5>
-            <p class="mb-1">{{ order.description }}</p>
-            <small>Vytvořeno: {{ order.created|date:"d.m.Y H:i" }}</small>
+    {% if order_images %}
+    <div class="row mb-4">
+        {% for img in order_images %}
+        <div class="col-md-4 col-sm-6 mb-3">
+            <img src="{{ img.image.url }}" alt="{{ img.image.name }}" class="img-fluid rounded shadow-sm">
         </div>
         {% endfor %}
     </div>
-
-    {% if is_paginated %}
-    <nav class="mt-4">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Předchozí</a>
-            </li>
-            {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Další</a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
     {% endif %}
+
+    {% if orders %}
+        <div class="list-group shadow-sm">
+            {% for order in orders %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">
+                            <i class="far fa-calendar-alt text-primary"></i>
+                            {{ order.service_date|date:"d.m.Y H:i" }}
+                        </h5>
+                        <p class="mb-1">{{ order.description }}</p>
+                        <small class="text-muted">
+                            <i class="far fa-clock"></i> Vytvořeno: {{ order.created|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                    <div class="ms-3">
+                        <span class="badge bg-primary rounded-pill">
+                            #{{ order.id }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <nav class="mt-4" aria-label="Stránkování objednávek">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" title="První stránka">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" title="Předchozí stránka">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" title="Další stránka">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" title="Poslední stránka">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            <div class="text-center text-muted mt-2">
+                Stránka {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            </div>
+        </nav>
+        {% endif %}
     {% else %}
-    <p>Zatím nemáte žádné objednávky.</p>
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> Zatím nemáte žádné objednávky.
+        </div>
     {% endif %}
 </div>
 {% endblock %}
+

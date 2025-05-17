@@ -1,19 +1,40 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  {{ pedicure_detail.name }}
+{{ pedicure_detail.name }}
 {% endblock %}
 
-
 {% block content %}
+<div class="container-fluid">
+    <div class="home-container">
+        {% for image in pedicure_detail.images.all %}
+        <div class="image-item">
+            <a href="{% url 'image' pk=image.id %}">
+                <img src="{{ image.image.url }}" alt="{{ image.name }}">
+            </a>
 
-<div class="pedikura-images">
-    {% for image in pedicure_detail.images.all %}
-        <span class="pedikura-image">
-            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
-        </span>
-    {% endfor %}
+            {% if user.is_authenticated and perms.viewer.change_image %}
+            <div class="image-controls">
+                <a href="{% url 'image_update' pk=image.id %}?next={% url 'pedicure_detail' pedicure_detail.id %}" class="btn btn-edit"
+                   title="Upravit">🖋️</a>
+                {% if perms.viewer.delete_image %}
+                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'pedicure_detail' pedicure_detail.id %}" class="btn btn-delete"
+                   title="Smazat"
+                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated and perms.viewer.add_image %}
+        <a href="{% url 'image_create' %}?next={% url 'pedicure_detail' pedicure_detail.id %}" class="btn btn-primary">Přidat nový obrázek</a>
+        {% endif %}
+    </div>
 </div>
+
 
 <h1 class="display-5">{{ pedicure_detail.name }}</h1>
 <hr class="row">
@@ -25,50 +46,48 @@
 </div>
 
 <div>
-{% if perms.viewer.change_pedikura %}
+    {% if perms.viewer.change_pedikura %}
     <a href="{% url 'pedicure_update' pedicure_detail.id %}" class="btn">🖋️</a>
-{% endif %}
-{% if perms.viewer.delete_pedikura %}
+    {% endif %}
+    {% if perms.viewer.delete_pedikura %}
     <a href="{% url 'pedicure_delete' pedicure_detail.id %}" class="btn">🗑️</a>
-{% endif %}
+    {% endif %}
 </div>
 
 {% if request.user.is_authenticated %}
-    <form action="" method="post">
-        {% csrf_token %}
-        <table>{{ review_form.as_table }}</table>
-        <button type="submit">Odeslat</button>
-    </form>
+<form action="" method="post">
+    {% csrf_token %}
+    <table>{{ review_form.as_table }}</table>
+    <button type="submit">Odeslat</button>
+</form>
 
-  <hr>
-{% if request.user.is_authenticated %}
+<hr>
 
+<h4>Hodnocení a komentáře:</h4>
+{% for review in reviews %}
+<div class="bg-light rounded mt-2 p-2 position-relative">
+    <span>Uživatel: {{ review.review }}</span>
+    <span class="font-italic">{{ review.created }}</span>
+    <div>
+        Hodnocení služby: {{ review.rating }}
+    </div>
+    <div>
+        Komentář: {{ review.comment }}
+    </div>
+</div>
+{% empty %}
+<p>Zatím nikdo nehodnotil</p>
+{% endfor %}
 {% else %}
-    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
-{% endif %}
-
-    <h4>Hodnocení a komentáře:</h4>
-    {% for review in reviews %}
-        <div class="bg-light rounded mt-2 p-2 position-relative">
-            <span>Uživatel: {{ review.review }}</span>
-            <span class="font-italic">{{ review.created }}</span>
-            <div>
-                Hodnocení služby: {{ review.rating }}
-            </div>
-            <div>
-                Komentář: {{ review.comment }}
-            </div>
-        </div>
-    {% empty %}
-        <p>Zatím nikdo nehodnotil</p>
-    {% endfor %}
-{% else %}
-    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+    <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo se <a href="{% url 'register' %}">zaregistrujte</a>.</p>
 {% endif %}
 
 <div>
     <p class="text-justify">{{ pedicure.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure_detail.created|date:"j.n.Y G:i"}}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    {% if request.user.is_authenticated %}
+        <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ pedicure_detail.created|date:"j.n.Y G:i"}}</small></p>
+        <p class="mt2"><small class="text-muted">Poslední úprava : {{ pedicure_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    {% endif %}
 </div>
+
 {% endblock %}

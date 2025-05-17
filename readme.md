@@ -123,7 +123,7 @@
 
 ### DUMP/LOAD databaze
  ```bash
-   pip django-dump-load-utf8==0.0.4 
+   pip install django-dump-load-utf8==0.0.4 
  ```
 - Přidáme ' django_dump_load_utf8 ' do seznamu
   nainstalovaných aplikací v ' settings.py - INSTALLED_APPS '

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Novinky
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Novinky</h1>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated and perms.viewer.add_novinky %}
+    <div class="mb-4">
+        <h2>Přidat novinku</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}*{% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                <div class="alert alert-danger mt-1">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="mb-3">
+                <label for="images" class="form-label">Další obrázky</label>
+                <input type="file" name="images" id="images" multiple class="form-control">
+                <small class="form-text text-muted">Můžete vybrat více obrázků najednou. Maximální velikost každého obrázku je 5MB.</small>
+            </div>
+
+            <div class="button-group mb-4">
+                <button type="submit" class="btn btn-primary">Uložit</button>
+            </div>
+        </form>
+    </div>
+    <hr>
+    {% endif %}
+
+
+    {% for novinka in novinky %}
+    <div class="news-item">
+        <div class="row">
+            {% if novinka.obrazek %}
+            <div class="col-md-3">
+                <img src="{{ novinka.obrazek.url }}" alt="{{ novinka.titulek }}" class="news-image">
+            </div>
+            <div class="col-md-9">
+            {% else %}
+            <div class="col-md-12">
+            {% endif %}
+                <h2>{{ novinka.titulek }}</h2>
+                <p class="news-meta">
+                    {{ novinka.datum_vytvoreni|date:"d.m.Y" }}
+                </p>
+                <p>{{ novinka.obsah|truncatewords:30 }}</p>
+                <div class="btn-group">
+                    <a href="{% url 'detail_novinky' novinka.id %}" class="btn btn-primary">
+                        Číst více
+                    </a>
+                    {% if user.is_authenticated and perms.viewer.change_novinky %}
+                    <a href="{% url 'detail_novinky' novinka.id %}?edit=true" class="btn btn-secondary">
+                        Upravit
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Žádné novinky k zobrazení.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Nová objednávka</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Uložit objednávku
+        </button>
+        <a href="{% url 'viewer:order-create' %}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Zrušit
+        </a>
+    </form>
+</div>
+{% endblock %}

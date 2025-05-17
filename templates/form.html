@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Formulář
-{% endblock %}
+{%load static%}
 
 {% block content %}
-<div class="container">
-    <h2>{% if 'login' in request.path %}Přihlášení{% else %}Formulář{% endif %}</h2>
-
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.as_p }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card login-card">
+                <div class="card-header">
+                    <h2 class="text-center mb-0">Přihlášení</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Prosím zadejte správné uživatelské jméno a heslo.
+                                Pozor na velká a malá písmena.
+                            </div>
+                        {% endif %}
+                        {{ form.as_p }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Přihlásit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Přidat</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

@@ -17,12 +17,14 @@
     {% endif %}
 
     <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="form-group">
-        {{ form.as_p }}
-    </div>
-    <button type="submit" class="btn btn-primary">Přidat</button>
-</form>
-
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Přidat</button>
+    </form>
 </div>
 {% endblock %}

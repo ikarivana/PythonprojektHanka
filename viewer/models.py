@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django.db.models import (
     Model,
@@ -65,13 +67,13 @@ class Zdravi(Model):
     def __str__(self):
         return self.name
 
-class Contact(Model):
+class Contact(models.Model):
     name = CharField(max_length=30, null=False, blank=False, unique=True)
     phone = CharField(max_length=15, null=False, blank=True)
     email = EmailField(null=False, blank=False, unique=True)
     address = TextField(null=False, blank=True)
     description = TextField(max_length=5000, null=True, blank=True)
-    created = DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     updated = DateTimeField(auto_now=True)
 
     class Meta:
@@ -141,14 +143,14 @@ class ZdraviReview(BaseReview):
 class ContactReview(BaseReview):
     contact = ForeignKey(Contact, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
     name = CharField(max_length=30, null=False, blank=False)
-    emaul = EmailField(null=False, blank=False)
+    email = EmailField(null=False, blank=False)
     @property
     def review(self):
         return self.user
 
     class Meta:
-        ordering = ['-updated']
-        unique_together = ['contact']
+        ordering = ['-created']
+        unique_together = ['contact', 'user']
 
 
     def __str__(self):
@@ -189,3 +191,29 @@ class Image(Model):
 
     def __str__(self):
         return f"Image:{self.image}"
+
+
+class Novinky(models.Model):
+    titulek = models.CharField(max_length=200)
+    obsah = models.TextField()
+    datum_vytvoreni = models.DateTimeField(auto_now_add=True)
+    obrazek = models.ImageField(upload_to='novinky/', null=True, blank=True)
+    publikovano = models.BooleanField(default=True)
+
+
+    class Meta:
+        ordering = ['-datum_vytvoreni']
+        verbose_name = 'Novinka'
+        verbose_name_plural = 'Novinky'
+
+    def __str__(self):
+        return self.titulek
+
+
+class NovinkyImage(models.Model):
+    novinka = models.ForeignKey(Novinky, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='novinky_images/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']

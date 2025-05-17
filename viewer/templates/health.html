@@ -6,13 +6,36 @@
 
 {% block content %}
 
-<div class="zdravi-images">
-    {% for image in health_detail.images.all %}
-    <span class="zdravi-image">
-            <img src="{{ image.image.url }}" alt="{{ image.name }}" height="80%">
-        </span>
-    {% endfor %}
+<div class="container-fluid">
+    <div class="home-container">
+        {% for image in health_detail.images.all %}
+        <div class="image-item">
+            <a href="{% url 'image' pk=image.id %}">
+                <img src="{{ image.image.url }}" alt="{{ image.name }}">
+            </a>
+
+            {% if user.is_authenticated and perms.viewer.change_image %}
+            <div class="image-controls">
+                <a href="{% url 'image_update' pk=image.id %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-edit"
+                   title="Upravit">🖋️</a>
+                {% if perms.viewer.delete_image %}
+                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-delete"
+                   title="Smazat"
+                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated and perms.viewer.add_image %}
+        <a href="{% url 'image_create' %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-primary">Přidat nový obrázek</a>
+        {% endif %}
+    </div>
 </div>
+
 
 <h1 class="display-5">{{ health_detail.name }}</h1>
 <hr class="row">
@@ -37,11 +60,6 @@
 </form>
 
 <hr>
-{% if request.user.is_authenticated %}
-
-{% else %}
-<p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
-{% endif %}
 
 <h4>Hodnocení a komentáře:</h4>
 {% for review in reviews %}
@@ -59,14 +77,15 @@
 <p>Zatím nikdo nehodnotil</p>
 {% endfor %}
 {% else %}
-<p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a>.</p>
+<p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo se <a href="{% url 'register' %}">zaregistrujte</a>.</p>
 {% endif %}
 
 <div>
     <p class="text-justify">{{ health.description }}</p>
-    <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health_detail.created|date:"j.n.Y G:i" }}</small></p>
-    <p class="mt2"><small class="text-muted">Poslední úprava : {{ health_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    {% if request.user.is_authenticated %}
+        <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health_detail.created|date:"j.n.Y G:i" }}</small></p>
+        <p class="mt2"><small class="text-muted">Poslední úprava : {{ health_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    {% endif %}
 </div>
-
 
 {% endblock %}

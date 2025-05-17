@@ -1,42 +1,84 @@
 {% extends 'base.html' %}
-
-{%block title %}
-<title>Loub-Natural</title>
-{%endblock%}
-
 {% load static %}
 
 {% block content %}
 <div class="container">
-    {% if user.is_authenticated %}
-    <h1>Vítejte, {{ user.username }}!
-        Zdraví v každém kroku</h1>
-    {% else %}
-    <h1>Vítejte na našich stránkách</h1>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
+    <h1>{{ welcome_message }}</h1>
+
+    {% if user.is_authenticated %}
+    {% if is_staff %}
+    <div class="admin-panel">
+        <p class="admin-label">Administrátorský přístup</p>
+        <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <div class="container-fluid"></div>
+    <div class="home-container">
     {% for img in home_images %}
-    <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+        <div class="image-item">
+            <a href="{% url 'image' pk=img.id %}?next={% url 'home' %}">
+                <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
+            </a>
+
+            {% if user.is_authenticated and perms.viewer.change_image %}
+                <div class="image-controls">
+                    <a href="{% url 'image_update' pk=img.id %}?next={% url 'home' %}" class="btn btn-edit" title="Upravit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% if perms.viewer.delete_image %}
+                        <a href="{% url 'image_delete' pk=img.id %}?next={% url 'home' %}" class="btn btn-delete" title="Smazat"
+                           onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
     {% endfor %}
+
+    {% if user.is_authenticated and perms.viewer.add_image %}
+        <a href="{% url 'image_create' %}?next={% url 'home' %}" class="btn btn-primary">Přidat nový obrázek</a>
+    {% endif %}
+</div>
 
     <p>
         Hana Loubalová je podnikatelka působící ve Zlíně, která provozuje pod značkou Loub-Natural salon zaměřený na
-        pedikúru a přírodní doplňky pro podporu lidského zdraví. Její provozovna se nachází na adrese Vodní 453, 760 01
+        pedikúru a přírodní doplňky pro podporu lidského zdraví. Její provozovna se nachází na adrese Vodní 453, 760
+        01
         Zlín, kde nabízí nejen odborné ošetření nohou, ale také prodej přírodních produktů, které mají napomáhat
-        harmonizaci těla a celkovému zdraví. Kromě klasické pedikúry se specializuje i na řešení specifických problémů,
+        harmonizaci těla a celkovému zdraví. Kromě klasické pedikúry se specializuje i na řešení specifických
+        problémů,
         jako jsou otlaky či kuří oka, s důrazem na prevenci ortopedických komplikací.<br>
 
-        LoubNatural pod vedením Hany Loubalové klade důraz na individuální přístup ke klientům a využívání přírodních
-        metod a přípravků. Nabídka služeb je rozšířena o konzultace a doporučení vhodných kosmetických či zdravotních
+        LoubNatural pod vedením Hany Loubalové klade důraz na individuální přístup ke klientům a využívání
+        přírodních
+        metod a přípravků. Nabídka služeb je rozšířena o konzultace a doporučení vhodných kosmetických či
+        zdravotních
         produktů pro domácí péči. Klienti oceňují nejen profesionální přístup, ale i možnost zakoupit si přírodní
         doplňky přímo v salnu, což podtrhuje komplexnost poskytovaných služeb.<br>
 
-        Podnikání Hany Loubalové je oficiálně registrováno od roku 2020 a zahrnuje dvě hlavní živnosti – volnou živnost
-        v oblasti výroby, obchodu a služeb a řemeslnou živnost v oboru pedikúra. Její činnost je evidována u Magistrátu
-        města Zlína a zaměřuje se především na pedikúru a podobné činnosti s tím spojené. LoubNatural tak představuje
+        Podnikání Hany Loubalové je oficiálně registrováno od roku 2020 a zahrnuje dvě hlavní živnosti – volnou
+        živnost
+        v oblasti výroby, obchodu a služeb a řemeslnou živnost v oboru pedikúra. Její činnost je evidována u
+        Magistrátu
+        města Zlína a zaměřuje se především na pedikúru a podobné činnosti s tím spojené. LoubNatural tak
+        představuje
         místo, kde se spojuje péče o zdraví nohou s přírodní filozofií a osobním přístupem ke každému klientovi.
     </p>
 
 </div>
-
 {% endblock %}

@@ -1,27 +1,61 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Obrázky
 {% endblock %}
 
 {% block content %}
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-{% if perms.viewer.add_image %}
-<a href="{% url 'image_create' %}" class="btn btn-primary">Přidat</a>
-{% endif %}
+    <h1 class="text-center">Seznam obrázků</h1>
 
-<h1>Obrázky</h1>
-<ul>
-    {% for image in images %}
-    <li>
-        <a href="{% url 'image' image.id %}">
-        <img src="{{ image.image.url }}" alt="{{ image.name }}" width="60px">
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+    {% if user.is_authenticated %}
+        {% if is_staff %}
+            <div class="admin-panel">
+                <p class="admin-label">Administrátorský přístup</p>
+                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
 
-{% include 'paginator.html' %}
+    <div class="controls-section text-center mb-4">
+        {% if perms.viewer.add_image %}
+            <a href="{% url 'image_create' %}" class="btn btn-primary">Přidat</a>
+        {% endif %}
+    </div>
 
+    <div class="images-list-container">
+        <ul class="images-list list-unstyled text-center">
+            {% for image in images %}
+            <li class="image-list-item d-inline-block m-3">
+                <a href="{% url 'image' image.id %}" class="image-link">
+                    <img src="{{ image.image.url }}"
+                         alt="{{ image.name }}"
+                         width="200px"
+                         loading="lazy"
+                         class="mx-auto d-block img-thumbnail">
+                    {% if image.name %}
+                        <span class="image-name d-block mt-2">{{ image.name }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% empty %}
+                <li class="no-images">Žádné obrázky k zobrazení</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="pagination-container text-center mt-4">
+        {% include 'paginator.html' %}
+    </div>
+</div>
 {% endblock %}
-
