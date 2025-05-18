@@ -2,11 +2,10 @@ from viewer.models import Order
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 import pytz
 
-class SignUpForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     phone = forms.CharField(
         label='Telefon',
         required=False,
@@ -107,3 +106,4 @@ class OrderForm(forms.ModelForm):
             raise forms.ValidationError('Popis musí obsahovat alespoň 10 znaků.')
 
         return description.strip()
+

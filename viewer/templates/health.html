@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container-fluid">
     <div class="home-container">
         {% for image in health_detail.images.all %}
@@ -16,12 +15,14 @@
 
             {% if user.is_authenticated and perms.viewer.change_image %}
             <div class="image-controls">
-                <a href="{% url 'image_update' pk=image.id %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-edit"
+                <a href="{% url 'image_update' pk=image.id %}?next={% url 'health_detail' health_detail.id %}"
+                   class="btn btn-edit"
                    title="Upravit">🖋️</a>
                 {% if perms.viewer.delete_image %}
-                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-delete"
+                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'health_detail' health_detail.id %}"
+                   class="btn btn-delete delete-review"
                    title="Smazat"
-                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+                   data-bs-toggle="tooltip">🗑️</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -31,11 +32,11 @@
         {% endfor %}
 
         {% if user.is_authenticated and perms.viewer.add_image %}
-        <a href="{% url 'image_create' %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-primary">Přidat nový obrázek</a>
+        <a href="{% url 'image_create' %}?next={% url 'health_detail' health_detail.id %}" class="btn btn-primary">Přidat
+            nový obrázek</a>
         {% endif %}
     </div>
 </div>
-
 
 <h1 class="display-5">{{ health_detail.name }}</h1>
 <hr class="row">
@@ -48,7 +49,7 @@
     <a href="{% url 'health_update' health_detail.id %}" class="btn">🖋️</a>
     {% endif %}
     {% if perms.viewer.delete_zdravi %}
-    <a href="{% url 'health_delete' health_detail.id %}" class="btn">🗑️</a>
+    <a href="{% url 'health_delete' health_detail.id %}" class="btn delete-review">🗑️</a>
     {% endif %}
 </div>
 
@@ -58,34 +59,114 @@
     <table>{{ review_form.as_table }}</table>
     <button type="submit">Odeslat</button>
 </form>
-
+{% endif %}
 <hr>
 
 <h4>Hodnocení a komentáře:</h4>
 {% for review in reviews %}
-<div class="bg-light rounded mt-2 p-2 position-relative">
-    <span>Uživatel: {{ review.review }}</span>
-    <span class="font-italic">{{ review.created }}</span>
-    <div>
-        Hodnocení služby: {{ review.rating }}
+<div class="review-item bg-light rounded mt-2 p-3 position-relative">
+    <div class="review-header d-flex justify-content-between align-items-start">
+        <div class="review-meta">
+            <strong>{{ review.user.username }}</strong>
+            {% if review.rating %}
+            <div class="rating">
+                {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if user == review.user or user.is_superuser %}
+        <div class="action-buttons">
+            <a href="{% url 'health_review_edit' review.id %}"
+               class="btn btn-sm btn-outline-primary me-1"
+               data-bs-toggle="tooltip"
+               title="Upravit recenzi">
+                <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'health_review_delete' review.id %}"
+               class="btn btn-sm btn-outline-danger delete-review"
+               data-bs-toggle="tooltip"
+               title="Smazat recenzi">
+                <i class="bi bi-trash"></i>
+            </a>
+        </div>
+        {% endif %}
     </div>
-    <div>
-        Komentář: {{ review.comment }}
+
+    {% if review.comment %}
+    <div class="review-content mt-2">
+        {{ review.comment|linebreaks }}
+    </div>
+    {% endif %}
+
+    <div class="review-footer mt-2">
+        <small class="text-muted">
+            {% if review.updated != review.created %}
+            Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
+            {% else %}
+            Přidáno: {{ review.created|date:"j.n.Y G:i" }}
+            {% endif %}
+
+            {% if user.is_superuser %}
+            <span class="ms-2 text-info">
+                <i class="bi bi-info-circle"></i> ID: {{ review.id }}
+            </span>
+            {% endif %}
+        </small>
     </div>
 </div>
 {% empty %}
-<p>Zatím nikdo nehodnotil</p>
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
+</div>
 {% endfor %}
-{% else %}
-<p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo se <a href="{% url 'register' %}">zaregistrujte</a>.</p>
+
+{% if not user.is_authenticated %}
+<div class="alert alert-secondary mt-3">
+    <i class="bi bi-person-lock"></i>
+    Pro přidání hodnocení se prosím
+    <a href="{% url 'login' %}" class="alert-link">přihlaste</a>
+    nebo se
+    <a href="{% url 'signup' %}" class="alert-link">zaregistrujte</a>.
+</div>
 {% endif %}
 
-<div>
-    <p class="text-justify">{{ health.description }}</p>
+<div class="mt-4">
     {% if request.user.is_authenticated %}
-        <p class="mt3"><small class="text-muted">Přidáno do databáze : {{ health_detail.created|date:"j.n.Y G:i" }}</small></p>
-        <p class="mt2"><small class="text-muted">Poslední úprava : {{ health_detail.updated|date:"j.n.Y G:i" }}</small></p>
+    <div class="metadata mt-3">
+        <small class="text-muted d-block">
+            <i class="bi bi-clock"></i> Přidáno do databáze: {{ health_detail.created|date:"j.n.Y G:i"}}
+        </small>
+        <small class="text-muted d-block mt-1">
+            <i class="bi bi-pencil"></i> Poslední úprava: {{ health_detail.updated|date:"j.n.Y G:i" }}
+        </small>
+    </div>
     {% endif %}
 </div>
 
+<!-- Modální okno pro potvrzení smazání -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Potvrzení smazání</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat tuto položku?</p>
+                {% if user.is_superuser %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Pozor: Mazání jako administrátor
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                <a href="" id="confirmDelete" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Smazat
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

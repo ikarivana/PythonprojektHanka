@@ -2,26 +2,56 @@ import os
 from datetime import datetime
 from email.mime import image
 import requests
+from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.decorators import login_required, permission_required
+
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin
+)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+    CreateView
+)
+
+from accounts.forms import CustomUserCreationForm
+from .forms import OrderForm, NovinkyForm
 
 from accounts.models import Profile
 from viewer.forms import (
-    PedikuraModelForm, RasyModelForm, ZdraviModelForm,
-    ContactModelForm, PedikuraReviewForm, RasyReviewForm,
-    ZdraviReviewForm, ImageModelForm, ContactReviewForm
+    PedikuraModelForm,
+    RasyModelForm,
+    ZdraviModelForm,
+    ContactModelForm,
+    PedikuraReviewForm,
+    RasyReviewForm,
+    ZdraviReviewForm,
+    ImageModelForm,
+    ContactReviewForm
 )
-from viewer.models import Pedikura, Rasy, Zdravi, Contact, Order, Image, Novinky, NovinkyImage
-from .forms import OrderForm, NovinkyForm
+from viewer.models import (
+    Pedikura,
+    Rasy,
+    Zdravi,
+    Contact,
+    Order,
+    Image,
+    Novinky,
+    NovinkyImage,
+    PedikuraReview,
+    RasyReview,
+    ZdraviReview,
+    ContactReview
+)
 from .mixins import StaffRequiredMixin
-from django.contrib import messages
+
 
 
 def home(request):
@@ -74,12 +104,12 @@ class PedicureListView(ListView):
         context = super().get_context_data(**kwargs)
         context['pedikura1_images'] = Image.objects.filter(pedikura1=True)
         if not self.request.user.is_authenticated:
-            context['registration_form'] = UserCreationForm()
+            context['registration_form'] = CustomUserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            form = UserCreationForm(request.POST)
+            form = CustomUserCreationForm(request.POST)
             if form.is_valid():
                 user = form.save()
                 login(request, user)
@@ -103,14 +133,14 @@ class PedicureDetailView(DetailView):
         if self.request.user.is_authenticated:
             context['review_form'] = PedikuraReviewForm()
         else:
-            context['registration_form'] = UserCreationForm()
+            context['registration_form'] = CustomUserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if not request.user.is_authenticated:
-            form = UserCreationForm(request.POST)
+            form = CustomUserCreationForm(request.POST)
             if form.is_valid():
                 user = form.save()
                 login(request, user)
@@ -735,12 +765,163 @@ def smazat_novinku(request, novinka_id):
     return render(request, 'smazat_novinku.html', {'novinka': novinka})
 
 
-class RegisterView(CreateView):
-    template_name = 'registration/register.html'
-    form_class = UserCreationForm
-    success_url = reverse_lazy('pedicure')
+class BaseReviewEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    fields = ['rating', 'comment']
+    template_name = 'reviews/review_form.html'
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user.is_superuser or self.request.user == review.user
 
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return redirect(self.success_url)
+        response = super().form_valid(form)
+        if self.request.user.is_superuser and self.request.user != self.object.user:
+            messages.warning(self.request, f'Upravili jste recenzi uživatele {self.object.user} jako administrátor.')
+        else:
+            messages.success(self.request, 'Recenze byla úspěšně upravena.')
+        return response
+
+
+class BaseReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    template_name = 'review_confirm_delete.html'
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user.is_superuser or self.request.user == review.user
+
+    def delete(self, request, *args, **kwargs):
+        review = self.get_object()
+        if request.user.is_superuser and request.user != review.user:
+            messages.warning(request, f'Smazali jste recenzi uživatele {review.user} jako administrátor.')
+        else:
+            messages.success(request, 'Recenze byla úspěšně smazána.')
+        return super().delete(request, *args, **kwargs)
+
+
+class PedikuraReviewCreateView(LoginRequiredMixin, CreateView):
+    model = PedikuraReview
+    form_class = PedikuraReviewForm
+    template_name = 'review_form.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.pedikura_id = self.kwargs['pk']
+        messages.success(self.request, 'Vaše hodnocení bylo úspěšně přidáno.')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('pedicure_detail', kwargs={'pk': self.kwargs['pk']})
+
+class PedikuraReviewEditView(BaseReviewEditView):
+    model = PedikuraReview
+    template_name = 'review_form.html'
+    fields = ['rating', 'comment']
+
+    def get_success_url(self):
+        return reverse_lazy('pedicure_detail', kwargs={'pk': self.object.pedikura.pk})
+
+
+class PedikuraReviewDeleteView(BaseReviewDeleteView):
+    model = PedikuraReview
+    template_name = 'confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('pedicure_detail', kwargs={'pk': self.object.pedikura.pk})
+
+
+
+
+class RasyReviewCreateView(LoginRequiredMixin, CreateView):
+    model = RasyReview
+    form_class = RasyReviewForm
+    template_name = 'review_form.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.rasy_id = self.kwargs['pk']
+        messages.success(self.request, 'Vaše hodnocení bylo úspěšně přidáno.')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('eyelash_detail', kwargs={'pk': self.kwargs['pk']})
+
+class RasyReviewEditView(BaseReviewEditView):
+    model = RasyReview
+    template_name = 'review_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('eyelash_detail', kwargs={'pk': self.object.rasy.pk})
+
+class RasyReviewDeleteView(BaseReviewDeleteView):
+    model = RasyReview
+    template_name = 'confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('eyelash_detail', kwargs={'pk': self.object.rasy.pk})
+
+
+
+
+class ZdraviReviewCreateView(LoginRequiredMixin, CreateView):
+    model = ZdraviReview
+    form_class = ZdraviReviewForm
+    template_name = 'review_form.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.zdravi_id = self.kwargs['pk']
+        messages.success(self.request, 'Vaše hodnocení bylo úspěšně přidáno.')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('health_detail', kwargs={'pk': self.kwargs['pk']})
+
+
+class ZdraviReviewEditView(BaseReviewEditView):
+    model = ZdraviReview
+    template_name = 'review_form.html'
+    def get_success_url(self):
+        return reverse_lazy('health_detail', kwargs={'pk': self.object.zdravi.pk})
+
+
+class ZdraviReviewDeleteView(BaseReviewDeleteView):
+    model = ZdraviReview
+    template_name = 'confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('health_detail', kwargs={'pk': self.object.zdravi.pk})
+
+
+class ContactReviewCreateView(LoginRequiredMixin, CreateView):
+    model = ContactReview
+    form_class = ContactReviewForm
+    template_name = 'review_form.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.contact_id = self.kwargs['pk']
+        messages.success(self.request, 'Vaše hodnocení bylo úspěšně přidáno.')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('contact_detail', kwargs={'pk': self.kwargs['pk']})
+
+
+
+class ContactReviewEditView(BaseReviewEditView):
+    model = ContactReview
+    template_name = 'review_form.html'
+    fields = ['rating', 'comment', 'name', 'email']
+
+    def get_success_url(self):
+        return reverse_lazy('contact_detail', kwargs={'pk': self.object.contact.pk})
+
+
+class ContactReviewDeleteView(BaseReviewDeleteView):
+    model = ContactReview
+    template_name = 'confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('contact_detail', kwargs={'pk': self.object.contact.pk})
+
+

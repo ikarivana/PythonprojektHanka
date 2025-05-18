@@ -2,98 +2,173 @@
 
 {% block content %}
 <div class="contact-container">
-    <h1>{{ contact_detail.name }}</h1>
+    <h1 class="display-5">{{ contact_detail.name }}</h1>
 
     <div class="home-container">
         {% for image in contact_detail.images.all %}
         <div class="image-item">
-            <img src="{{ image.image.url }}" alt="{{ image.name }}">
-            {% if perms.viewer.change_image or perms.viewer.delete_image %}
+            <a href="{% url 'image' pk=image.id %}">
+                <img src="{{ image.image.url }}" alt="{{ image.name }}">
+            </a>
+
+            {% if user.is_authenticated and perms.viewer.change_image %}
             <div class="image-controls">
                 {% if perms.viewer.change_image %}
-                <a href="{% url 'image_update' image.pk %}" class="btn-edit">🖋️</a>
+                <a href="{% url 'image_update' pk=image.id %}?next={% url 'contact_detail' contact_detail.id %}"
+                   class="btn btn-edit"
+                   title="Upravit">🖋️</a>
                 {% endif %}
                 {% if perms.viewer.delete_image %}
-                <a href="{% url 'image_delete' image.pk %}" class="btn-delete">🗑️</a>
+                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'contact_detail' contact_detail.id %}"
+                   class="btn btn-delete delete-review"
+                   data-bs-toggle="tooltip"
+                   title="Smazat">🗑️</a>
                 {% endif %}
             </div>
             {% endif %}
         </div>
         {% empty %}
-        <p class="no-images">Zatím nejsou přidány žádné obrázky</p>
+        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
         {% endfor %}
+
+        {% if user.is_authenticated and perms.viewer.add_image %}
+        <a href="{% url 'image_create' %}?next={% url 'contact_detail' contact_detail.id %}" class="btn btn-primary">Přidat
+            nový obrázek</a>
+        {% endif %}
     </div>
 
-    {% if perms.viewer.add_image %}
-    <div class="button-group">
-        <a href="{% url 'image_create' %}?contact_id={{ contact_detail.id }}" class="btn btn-primary">Přidat obrázek</a>
-    </div>
-    {% endif %}
-
-
-    <div class="procedure-item">
-        <div>
-            <p><strong>Telefon: </strong> {{ contact_detail.phone }}</p>
-            <p><strong>Email: </strong>{{ contact_detail.email }}</p>
-            <p><strong>Adresa: </strong>{{ contact_detail.address }}</p>
-        </div>
+    <div class="col-md-16">
+        <p><strong>Telefon: </strong> {{ contact_detail.phone }}</p>
+        <p><strong>Email: </strong>{{ contact_detail.email }}</p>
+        <p><strong>Adresa: </strong>{{ contact_detail.address }}</p>
+        <hr class="row">
+        <div>{{ contact_detail.description|linebreaks }}</div>
     </div>
 
-    <div class="procedure-item">
-        <div class="procedure-content">
-            {{ contact_detail.description|linebreaks }}
-        </div>
-    </div>
-
-    {% if perms.viewer.change_contact or perms.viewer.delete_contact %}
-    <div class="procedure-controls">
+    <div>
         {% if perms.viewer.change_contact %}
-        <a href="{% url 'contact_update' contact_detail.id %}" class="btn-edit">🖋️</a>
+        <a href="{% url 'contact_update' contact_detail.id %}" class="btn">🖋️</a>
         {% endif %}
         {% if perms.viewer.delete_contact %}
-        <a href="{% url 'contact_delete' contact_detail.id %}" class="btn-delete">🗑️</a>
+        <a href="{% url 'contact_delete' contact_detail.id %}" class="btn delete-review">🗑️</a>
         {% endif %}
     </div>
-    {% endif %}
 
     {% if request.user.is_authenticated %}
-    <div class="procedure-item">
-        <form action="" method="post" class="form-group w-100">
-            {% csrf_token %}
-            {{ review_form.as_p }}
-            <button type="submit" class="btn btn-primary">Odeslat hodnocení</button>
-        </form>
-    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>{{ review_form.as_table }}</table>
+        <button type="submit" class="btn btn-primary">Odeslat</button>
+    </form>
+    {% endif %}
+    <hr>
 
     <h4>Hodnocení a komentáře:</h4>
     {% for review in reviews %}
-    <div class="procedure-item">
-        <div>
-            <span>Uživatel: {{ review.user }}</span>
-            <span class="font-italic">{{ review.created }}</span>
-            <div>
-                Hodnocení služby: {{ review.rating }}
+    <div class="review-item bg-light rounded mt-2 p-3 position-relative">
+        <div class="review-header d-flex justify-content-between align-items-start">
+            <div class="review-meta">
+                <strong>{{ review.user.username }}</strong>
+                {% if review.rating %}
+                <div class="rating">
+                    {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+                </div>
+                {% endif %}
             </div>
-            <div>
-                Komentář: {{ review.comment }}
+
+            {% if user == review.user or user.is_superuser %}
+            <div class="action-buttons">
+                <a href="{% url 'contact_review_edit' review.id %}"
+                   class="btn btn-sm btn-outline-primary me-1"
+                   data-bs-toggle="tooltip"
+                   title="Upravit recenzi">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'contact_review_delete' review.id %}"
+                   class="btn btn-sm btn-outline-danger delete-review"
+                   data-bs-toggle="tooltip"
+                   title="Smazat recenzi">
+                    <i class="bi bi-trash"></i>
+                </a>
             </div>
+            {% endif %}
+        </div>
+
+        {% if review.comment %}
+        <div class="review-content mt-2">
+            {{ review.comment|linebreaks }}
+        </div>
+        {% endif %}
+
+        <div class="review-footer mt-2">
+            <small class="text-muted">
+                {% if review.updated != review.created %}
+                Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
+                {% else %}
+                Přidáno: {{ review.created|date:"j.n.Y G:i" }}
+                {% endif %}
+
+                {% if user.is_superuser %}
+                <span class="ms-2 text-info">
+                    <i class="bi bi-info-circle"></i> ID: {{ review.id }}
+                </span>
+                {% endif %}
+            </small>
         </div>
     </div>
     {% empty %}
-    <p class="no-images">Zatím nikdo nehodnotil</p>
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
+    </div>
     {% endfor %}
-    {% else %}
-    <div class="procedure-item">
-        <p>Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo se <a
-                href="{% url 'register' %}">zaregistrujte</a>.</p>
+
+    {% if not user.is_authenticated %}
+    <div class="alert alert-secondary mt-3">
+        <i class="bi bi-person-lock"></i>
+        Pro přidání hodnocení se prosím
+        <a href="{% url 'login' %}" class="alert-link">přihlaste</a>
+        nebo se
+        <a href="{% url 'signup' %}" class="alert-link">zaregistrujte</a>.
     </div>
     {% endif %}
 
-    {% if request.user.is_authenticated %}
-    <div class="procedure-item">
-        <small class="text-muted">Přidáno do databáze: {{ contact_detail.created|date:"j.n.Y G:i"}}</small><br>
-        <small class="text-muted">Poslední úprava: {{ contact_detail.updated|date:"j.n.Y G:i" }}</small>
+    <div class="mt-4">
+        {% if request.user.is_authenticated %}
+        <div class="metadata mt-3">
+            <small class="text-muted d-block">
+                <i class="bi bi-clock"></i> Přidáno do databáze: {{ contact_detail.created|date:"j.n.Y G:i"}}
+            </small>
+            <small class="text-muted d-block mt-1">
+                <i class="bi bi-pencil"></i> Poslední úprava: {{ contact_detail.updated|date:"j.n.Y G:i" }}
+            </small>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
+
+    <!-- Modální okno pro potvrzení smazání -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potvrzení smazání</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Opravdu chcete smazat tuto položku?</p>
+                    {% if user.is_superuser %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Pozor: Mazání jako administrátor
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                    <a href="" id="confirmDelete" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Smazat
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
