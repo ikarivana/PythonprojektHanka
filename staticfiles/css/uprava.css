@@ -1,0 +1,914 @@
+/*====
+ ZÁKLADNÍ BAREVNÉ PROMĚNNÉ
+==========*/
+:root {
+    /* Hlavní barvy webu */
+    --primary-green: #66FF99;      /* Světle zelená pro navbar a footer */
+    --dark-green: #2E8B57;         /* Tmavě zelená pro tlačítka a aktivní prvky */
+    --hover-green: #3CB371;        /* Středně zelená pro hover efekty */
+
+    /* Textové barvy */
+    --text-dark: #1a1a1a;          /* Tmavý text - upraveno na tmavší */
+    --text-light: #ffffff;         /* Světlý text */
+
+    /* Další barvy */
+    --error-red: #ff4444;          /* Červená pro chybové hlášky */
+    --border-gray: #e0e0e0;        /* Šedá pro ohraničení */
+}
+
+
+/*====
+ NAVIGAČNÍ LIŠTA A PATIČKA
+===============*/
+:root {
+    --transition-speed: 0.3s;
+}
+
+.navbar {
+    background-color: var(--primary-green) !important;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all var(--transition-speed) ease;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: #66FF99 !important;
+}
+
+.navbar-brand img {
+    margin-left: 10px;
+}
+
+/* Menu položky */
+.nav-link {
+    color: white !important;
+    padding: 0.5rem 1rem;
+}
+
+/* Dropdown styly */
+.dropdown-menu {
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.7rem 1.5rem;
+    color: #333 !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(var(--bs-success-rgb), 0.1);
+    color: var(--bs-success) !important;
+}
+
+/* Mobilní zobrazení */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--bs-success);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .dropdown-menu {
+        background-color: rgba(255,255,255,0.95);
+        margin: 0.5rem 1rem;
+    }
+}
+
+/* Hamburger menu */
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.5) !important;
+    padding: 0.5rem;
+}
+
+.navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Formulář */
+.form-control {
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.form-control:focus {
+    background: rgba(255,255,255,0.3);
+    border-color: white;
+    box-shadow: none;
+    color: white;
+}
+
+footer {
+    background-color: var(--primary-green) !important;
+    padding: 1rem;
+    margin-top: auto;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Logo v navigaci */
+.logo {
+    vertical-align: middle;
+    margin-left: 16px;
+}
+
+/* Navigační odkazy */
+.nav-link {
+    color: var(--text-dark) !important;
+}
+
+.nav-link:hover {
+    color: black !important;
+}
+
+/* Název webu v navigaci */
+.navbar-brand {
+    color: var(--text-dark) !important;
+}
+
+/* Rozbalovací menu */
+.dropdown-item {
+    color: var(--text-dark) !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary-green) !important;
+    color: black !important;
+}
+
+/*====
+ PŘIHLAŠOVACÍ FORMULÁŘ
+=============*/
+/* Hlavní kontejner */
+.login-container {
+    max-width: 450px;
+    margin: 3rem auto;
+    padding: 2rem;
+}
+
+/* Karta formuláře */
+.login-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border: 1px solid rgba(46, 139, 87, 0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Nadpis formuláře */
+.login-card h2 {
+    color: var(--text-dark);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+/*====
+ FORMULÁŘOVÉ PRVKY
+========*/
+/* Obalení formulářových polí */
+form p {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Popisky polí */
+form p label {
+    display: block;
+    margin-bottom: 0.7rem;
+    color: var(--text-dark) !important;    /* Změněno na tmavou barvu */
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+
+/* Vstupní pole */
+form p input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid var(--border-gray);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+/* Efekty vstupních polí */
+form p input:focus {
+    border-color: var(--text-dark);
+    background-color: var(--text-light);
+    box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.1);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+form p input::placeholder {
+    color: #aaa;
+}
+
+/*=====
+ TLAČÍTKA
+=========*/
+/* Hlavní tlačítko */
+.btn-primary, .login-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--dark-green) !important;
+    color: var(--text-light) !important;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+/* Efekt při najetí na tlačítko */
+.btn-primary:hover, .login-btn:hover {
+    background-color: var(--hover-green) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 139, 87, 0.3);
+}
+
+/*===
+ POMOCNÉ PRVKY
+======*/
+/* Pomocný text */
+.helptext {
+    display: block;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* Chybové zprávy */
+.alert-danger {
+    background-color: #fff3f3;
+    border-left: 4px solid var(--error-red);
+    color: #8b0000;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Hlavní nadpis */
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Admin panel */
+.admin-panel {
+    background: linear-gradient(135deg, #f6f8ff 0%, #f1f4ff 100%);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.admin-label {
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.last-login {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Kontejner s obrázky */
+.home-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+/* Jednotlivé obrázky */
+.image-item {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    aspect-ratio: 4/3;
+}
+
+.image-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.image-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Ovládací prvky pro admin */
+.image-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-item:hover .image-controls {
+    opacity: 1;
+}
+
+.btn-edit,
+.btn-delete {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.btn-edit {
+    color: #2563eb;
+}
+
+.btn-delete {
+    color: #dc2626;
+}
+
+.btn-edit:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* Tlačítko pro přidání nového obrázku */
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* Text pod galerií */
+p {
+    line-height: 1.8;
+    color: #444;
+    font-size: 1.1rem;
+    margin-top: 30px;
+}
+
+/* Responsivní design */
+@media (max-width: 768px) {
+    .home-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .image-controls {
+        opacity: 1;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        width: 35px;
+        height: 35px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Zprávy */
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Seznam procedur */
+.pedikura-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.procedure-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.procedure-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.procedure-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+}
+
+.procedure-link {
+    color: #334155;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    flex-grow: 1;
+}
+
+.procedure-link:hover {
+    color: #2563eb;
+}
+
+.procedure-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* Přizpůsobení pro mobilní zařízení */
+@media (max-width: 768px) {
+    .procedure-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .procedure-controls {
+        align-self: flex-end;
+    }
+}
+
+/* Tlačítka v seznamu procedur - specifické styly */
+.procedure-controls .btn-edit,
+.procedure-controls .btn-delete {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+}
+
+/* Animace pro tlačítka */
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Speciální styly pro tlačítko přidání procedury */
+.pedikura-container .btn-primary {
+    margin-bottom: 20px;
+    background: #2563eb;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.pedikura-container .btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* Zpráva při prázdném seznamu */
+.no-images {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+    font-style: italic;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* Seznam procedur pro zdraví */
+.health-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.health-container .procedure-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.health-container .procedure-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.health-container .procedure-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+}
+
+/* Doplňující styly pro sekci zdraví */
+.health-container .btn-primary {
+    background: #10b981; /* Zelená barva pro sekci zdraví */
+}
+
+.health-container .btn-primary:hover {
+    background: #059669;
+}
+
+.health-container .procedure-link {
+    color: #047857; /* Tmavší zelená pro odkazy */
+}
+
+.health-container .procedure-link:hover {
+    color: #059669;
+}
+
+/* Seznam procedur pro řasy */
+.rasy-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.rasy-container .procedure-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.rasy-container .procedure-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.rasy-container .procedure-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+}
+
+/* Doplňující styly pro sekci řas */
+.rasy-container .btn-primary {
+    background: #8b5cf6; /* Fialová barva pro sekci řas */
+}
+
+.rasy-container .btn-primary:hover {
+    background: #7c3aed;
+}
+
+.rasy-container .procedure-link {
+    color: #6d28d9; /* Tmavší fialová pro odkazy */
+}
+
+.rasy-container .procedure-link:hover {
+    color: #7c3aed;
+}
+
+/* Specifické styly pro tlačítka v sekci řas */
+.rasy-container .procedure-controls .btn-edit,
+.rasy-container .procedure-controls .btn-delete {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+}
+
+.rasy-container .procedure-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsivní design */
+@media (max-width: 768px) {
+    .rasy-container .procedure-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .rasy-container .procedure-controls {
+        align-self: flex-end;
+    }
+}
+
+/* Seznam kontaktů */
+.contact-container {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.contact-container .procedure-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.contact-container .procedure-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.contact-container .procedure-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+}
+
+/* Doplňující styly pro sekci kontaktů */
+.contact-container .btn-primary {
+    background: #14b8a6; /* Tyrkysová barva pro sekci kontaktů */
+}
+
+.contact-container .btn-primary:hover {
+    background: #0d9488;
+}
+
+.contact-container .procedure-link {
+    color: #0f766e; /* Tmavší tyrkysová pro odkazy */
+}
+
+.contact-container .procedure-link:hover {
+    color: #0d9488;
+}
+
+/* Specifické styly pro tlačítka v sekci kontaktů */
+.contact-container .procedure-controls .btn-edit,
+.contact-container .procedure-controls .btn-delete {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+}
+
+.contact-container .procedure-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsivní design */
+@media (max-width: 768px) {
+    .contact-container .procedure-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .contact-container .procedure-controls {
+        align-self: flex-end;
+    }
+}
+
+.news-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.news-meta {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.news-content {
+    margin: 2rem 0;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+.news-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.news-image-container {
+    margin: 20px 0;
+}
+
+.news-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.news-content {
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+.news-meta {
+    color: #666;
+    font-style: italic;
+}
+
+.button-group {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.button-group .btn {
+    margin-right: 10px;
+}
+
+.edit-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: .5rem;
+}
+
+textarea.form-control {
+    min-height: 150px;
+}
+.btn-group {
+    display: inline-flex;
+    gap: 10px;
+}
+
+.news-item {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+.registration-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.registration-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.registration-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.registration-container .btn {
+    margin-top: 1rem;
+}
+

@@ -1,7 +1,16 @@
+import os
+import sys
+
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, project_root)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'loubnatural.settings')
+import django
+django.setup()
+
 from django.test import TestCase
 from django import forms
 from django.contrib.auth.models import User
-
 
 from viewer.forms import PedikuraReviewForm
 from viewer.models import Pedikura, PedikuraReview
@@ -113,4 +122,6 @@ class PedikuraReviewFormTest(TestCase):
         self.assertEqual(updated_review.comment, 'Aktualizovaný komentář')
         self.assertEqual(updated_review.pedikura, self.pedikura)
         self.assertEqual(updated_review.user, self.user)
+
+
 

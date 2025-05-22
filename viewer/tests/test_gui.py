@@ -1,4 +1,13 @@
 import os
+import sys
+
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, project_root)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'loubnatural.settings')
+import django
+django.setup()
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User
 from selenium import webdriver
@@ -75,7 +84,7 @@ class TestGUI(StaticLiveServerTestCase):
             print(f"Current URL (login): {self.browser.current_url}")
 
             # Vyplnění přihlašovacího formuláře
-            wait = WebDriverWait(self.browser, 10)
+            wait = WebDriverWait(self.browser, 5)
             try:
                 username_input = wait.until(
                     EC.presence_of_element_located((By.NAME, 'username'))
@@ -91,7 +100,7 @@ class TestGUI(StaticLiveServerTestCase):
                 print("Login form submitted")
 
                 # Počkáme na přihlášení
-                time.sleep(2)
+                time.sleep(1)
                 print(f"Current URL after login: {self.browser.current_url}")
 
             except Exception as e:

@@ -1,3 +1,13 @@
+import os
+import sys
+
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, project_root)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'loubnatural.settings')
+import django
+django.setup()
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from viewer.models import Pedikura
