@@ -96,6 +96,11 @@ class BaseReview(Model):
     class Meta:
         abstract = True
         ordering = ['-updated']
+        permissions = [
+            ("change_review", "Může upravovat všechny recenze"),
+            ("delete_review", "Může mazat všechny recenze"),
+        ]
+
 
 class PedikuraReview(BaseReview):
     pedikura = ForeignKey(Pedikura, on_delete=CASCADE, null=False, blank=False, related_name='reviews')
@@ -151,7 +156,6 @@ class ContactReview(BaseReview):
     class Meta:
         ordering = ['-created']
         unique_together = ['contact', 'user']
-
 
     def __str__(self):
         return f"{self.review}: {self.contact} ({self.rating})"

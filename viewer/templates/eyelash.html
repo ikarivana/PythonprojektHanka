@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}
 {{ eyelash_detail.name }}
@@ -41,10 +42,10 @@
 <h1 class="display-5">{{ eyelash_detail.name }}</h1>
 <hr class="row">
 <div class="col-md-16">
-    <p><strong>Čas procedůry: </strong> {{ eyelash_detail.procedure_time }} min.
+    <p><strong>Čas procedůry: </strong> {{ eyelash_detail.procedure_time }} min.</p>
     <p><strong>Cena: </strong> {{ eyelash_detail.price }}kč</p>
     <hr class="row">
-    <div>{{eyelash_detail.description }}</div>
+    <div>{{ eyelash_detail.description }}</div>
 </div>
 
 <div>
@@ -56,75 +57,87 @@
     {% endif %}
 </div>
 
-{% if request.user.is_authenticated %}
-<form action="" method="post">
-    {% csrf_token %}
-    <table>{{ review_form.as_table }}</table>
-    <button type="submit">Odeslat</button>
-</form>
-{% endif %}
-<hr>
-
 <h4>Hodnocení a komentáře:</h4>
-{% for review in reviews %}
-<div class="review-item bg-light rounded mt-2 p-3 position-relative">
-    <div class="review-header d-flex justify-content-between align-items-start">
-        <div class="review-meta">
-            <strong>{{ review.user.username }}</strong>
-            {% if review.rating %}
-            <div class="rating">
-                {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+{% if reviews %}
+    {% for review in reviews %}
+    <div class="review-item bg-light rounded mt-2 p-3 position-relative">
+        <div class="review-header d-flex justify-content-between align-items-start">
+            <div class="review-meta">
+                <strong>{{ review.user.username }}</strong>
+                {% if review.rating %}
+                <div class="rating">
+                    {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if user == review.user or user.is_superuser or perms.viewer.change_review %}
+            <div class="action-buttons">
+                <a href="{% url 'eyelash_review_edit' review.id %}"
+                   class="btn btn-sm btn-outline-primary me-1"
+                   data-bs-toggle="tooltip"
+                   title="Upravit recenzi">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                {% if user == review.user or user.is_superuser or perms.viewer.delete_review %}
+<a href="{% url 'eyelash_review_delete' review.id %}"
+   class="btn btn-sm btn-outline-danger"
+   onclick="return confirm('Opravdu chcete smazat tuto recenzi?')"
+   title="Smazat recenzi">
+    <i class="bi bi-trash"></i>
+</a>
+{% endif %}
+
             </div>
             {% endif %}
         </div>
 
-        {% if user == review.user or user.is_superuser %}
-        <div class="action-buttons">
-            <a href="{% url 'eyelash_review_edit' review.id %}"
-               class="btn btn-sm btn-outline-primary me-1"
-               data-bs-toggle="tooltip"
-               title="Upravit recenzi">
-                <i class="bi bi-pencil"></i>
-            </a>
-            <a href="{% url 'eyelash_review_delete' review.id %}"
-               class="btn btn-sm btn-outline-danger delete-review"
-               data-bs-toggle="tooltip"
-               title="Smazat recenzi">
-                <i class="bi bi-trash"></i>
-            </a>
+        {% if review.comment %}
+        <div class="review-content mt-2">
+            {{ review.comment|linebreaks }}
         </div>
         {% endif %}
-    </div>
 
-    {% if review.comment %}
-    <div class="review-content mt-2">
-        {{ review.comment|linebreaks }}
+        <div class="review-footer mt-2">
+            <small class="text-muted">
+                {% if review.updated != review.created %}
+                Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
+                {% else %}
+                Přidáno: {{ review.created|date:"j.n.Y G:i" }}
+                {% endif %}
+            </small>
+        </div>
     </div>
-    {% endif %}
-
-    <div class="review-footer mt-2">
-        <small class="text-muted">
-            {% if review.updated != review.created %}
-            Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
-            {% else %}
-            Přidáno: {{ review.created|date:"j.n.Y G:i" }}
-            {% endif %}
-
-            {% if user.is_superuser %}
-            <span class="ms-2 text-info">
-                <i class="bi bi-info-circle"></i> ID: {{ review.id }}
-            </span>
-            {% endif %}
-        </small>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
     </div>
+{% endif %}
+
+{% if request.user.is_authenticated %}
+<div class="review-form-container mt-4 mb-4">
+    <h5>Přidat hodnocení</h5>
+    <form action="" method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Hodnocení</label>
+                {% render_field review_form.rating class="form-select" %}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Komentář</label>
+                {% render_field review_form.comment class="form-control" %}
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i> Odeslat hodnocení
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
-{% empty %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
-</div>
-{% endfor %}
-
-{% if not user.is_authenticated %}
+{% else %}
 <div class="alert alert-secondary mt-3">
     <i class="bi bi-person-lock"></i>
     Pro přidání hodnocení se prosím
@@ -147,29 +160,4 @@
     {% endif %}
 </div>
 
-<!-- Modální okno pro potvrzení smazání -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Potvrzení smazání</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Opravdu chcete smazat tuto položku?</p>
-                {% if user.is_superuser %}
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i> Pozor: Mazání jako administrátor
-                </div>
-                {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
-                <a href="" id="confirmDelete" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Smazat
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

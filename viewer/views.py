@@ -53,7 +53,6 @@ from viewer.models import (
 from .mixins import StaffRequiredMixin
 
 
-
 def home(request):
     try:
         home_images = Image.objects.filter(is_home=True)
@@ -74,6 +73,7 @@ def home(request):
     except Exception as e:
         messages.error(request, f"Nastala chyba při načítání stránky: {str(e)}")
         return render(request, 'home.html', {'welcome_message': 'Vítejte na našich stránkách'})
+
 
 # Zabezpečení pro class-based views
 class ImageCreateView(LoginRequiredMixin, CreateView):
@@ -227,9 +227,13 @@ class EyelashDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Recenze zobrazujeme všem
+        context['reviews'] = self.object.reviews.all()
+        # Formulář pouze přihlášeným
         if self.request.user.is_authenticated:
             context['review_form'] = RasyReviewForm()
-            context['reviews'] = self.object.reviews.all()
+        else:
+            context['registration_form'] = CustomUserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -315,9 +319,13 @@ class HealthDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Přidáme recenze pro všechny uživatele
+        context['reviews'] = self.object.reviews.all()
+        # Formulář pro recenze pouze pro přihlášené
         if self.request.user.is_authenticated:
             context['review_form'] = ZdraviReviewForm()
-            context['reviews'] = self.object.reviews.all()
+        else:
+            context['registration_form'] = CustomUserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -402,9 +410,13 @@ class ContactDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Recenze pro všechny, seřazené od nejnovější
+        context['reviews'] = self.object.reviews.all().order_by('-created')
+        # Formulář pouze pro přihlášené
         if self.request.user.is_authenticated:
             context['review_form'] = ContactReviewForm()
-            context['reviews'] = self.object.reviews.all().order_by('-created')  # seřazení od nejnovějšího
+        else:
+            context['registration_form'] = CustomUserCreationForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -586,7 +598,7 @@ class ImageListView(ListView):
         contact1_images = Image.objects.filter(contact1=True)
 
         return render(request, 'images.html',
-               {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
+                      {'pedikura_images': pedikura_images, 'rasy_images': rasy_images, 'zdravi_images': zdravi_images,
                        'contact_images': contact_images, 'home_images': home_images, 'order_images': order_images,
                        'pedikura1': pedikura1_images, 'rasy1': rasy1_images, 'zdravi1': zdravi1_images,
                        'contact1': contact1_images})
@@ -595,6 +607,7 @@ class ImageListView(ListView):
 class ImageDetailView(DetailView):
     template_name = 'image.html'
     model = Image
+
     def image_detail(request, pk):
         get_object_or_404(Image, id=id)
         return render(request, 'image.html', {'image': image})
@@ -619,7 +632,6 @@ class ImageCreateView(PermissionRequiredMixin, CreateView):
         if next_url:
             return next_url
         return reverse_lazy('images')
-
 
 
 class ImageUpdateView(PermissionRequiredMixin, UpdateView):
@@ -767,15 +779,19 @@ def smazat_novinku(request, novinka_id):
 
 class BaseReviewEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ['rating', 'comment']
-    template_name = 'reviews/review_form.html'
+    template_name = 'review_form.html'
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.is_superuser or self.request.user == review.user
+        return (self.request.user.is_superuser or
+                self.request.user == review.user or
+                self.request.user.has_perm('viewer.change_review'))
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        if self.request.user.is_superuser and self.request.user != self.object.user:
+        if (self.request.user.is_superuser or
+            self.request.user.has_perm('edit_review')) and \
+                self.request.user != self.object.user:
             messages.warning(self.request, f'Upravili jste recenzi uživatele {self.object.user} jako administrátor.')
         else:
             messages.success(self.request, 'Recenze byla úspěšně upravena.')
@@ -787,11 +803,13 @@ class BaseReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.is_superuser or self.request.user == review.user
+        return (self.request.user.is_superuser or
+                self.request.user == review.user or
+                self.request.user.has_perm('viewer.delete_review'))
 
     def delete(self, request, *args, **kwargs):
         review = self.get_object()
-        if request.user.is_superuser and request.user != review.user:
+        if (request.user.is_superuser or request.user.has_perm('viewer.delete_review')) and request.user != review.user:
             messages.warning(request, f'Smazali jste recenzi uživatele {review.user} jako administrátor.')
         else:
             messages.success(request, 'Recenze byla úspěšně smazána.')
@@ -812,10 +830,16 @@ class PedikuraReviewCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('pedicure_detail', kwargs={'pk': self.kwargs['pk']})
 
+
 class PedikuraReviewEditView(BaseReviewEditView):
     model = PedikuraReview
     template_name = 'review_form.html'
     fields = ['rating', 'comment']
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        print(f"Editing review ID: {obj.id}, User: {obj.user}, Pedikura: {obj.pedikura.pk}")
+        return obj
 
     def get_success_url(self):
         return reverse_lazy('pedicure_detail', kwargs={'pk': self.object.pedikura.pk})
@@ -827,8 +851,6 @@ class PedikuraReviewDeleteView(BaseReviewDeleteView):
 
     def get_success_url(self):
         return reverse_lazy('pedicure_detail', kwargs={'pk': self.object.pedikura.pk})
-
-
 
 
 class RasyReviewCreateView(LoginRequiredMixin, CreateView):
@@ -845,6 +867,7 @@ class RasyReviewCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('eyelash_detail', kwargs={'pk': self.kwargs['pk']})
 
+
 class RasyReviewEditView(BaseReviewEditView):
     model = RasyReview
     template_name = 'review_form.html'
@@ -852,14 +875,24 @@ class RasyReviewEditView(BaseReviewEditView):
     def get_success_url(self):
         return reverse_lazy('eyelash_detail', kwargs={'pk': self.object.rasy.pk})
 
+
 class RasyReviewDeleteView(BaseReviewDeleteView):
     model = RasyReview
     template_name = 'confirm_delete.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if not (request.user == obj.user or request.user.is_superuser or request.user.has_perm('viewer.delete_review')):
+            messages.error(request, 'Nemáte oprávnění smazat tuto recenzi.')
+            return redirect('eyelash_detail', pk=obj.eyelash.pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Recenze byla úspěšně smazána.')
+        return super().delete(request, *args, **kwargs)
+
     def get_success_url(self):
-        return reverse_lazy('eyelash_detail', kwargs={'pk': self.object.rasy.pk})
-
-
+        return reverse_lazy('eyelash_detail', kwargs={'pk': self.object.eyelash.pk})
 
 
 class ZdraviReviewCreateView(LoginRequiredMixin, CreateView):
@@ -880,6 +913,7 @@ class ZdraviReviewCreateView(LoginRequiredMixin, CreateView):
 class ZdraviReviewEditView(BaseReviewEditView):
     model = ZdraviReview
     template_name = 'review_form.html'
+
     def get_success_url(self):
         return reverse_lazy('health_detail', kwargs={'pk': self.object.zdravi.pk})
 
@@ -887,6 +921,18 @@ class ZdraviReviewEditView(BaseReviewEditView):
 class ZdraviReviewDeleteView(BaseReviewDeleteView):
     model = ZdraviReview
     template_name = 'confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        # Kontrola oprávnění
+        obj = self.get_object()
+        if not (request.user == obj.user or request.user.is_superuser or request.user.has_perm('viewer.delete_review')):
+            messages.error(request, 'Nemáte oprávnění smazat tuto recenzi.')
+            return redirect('health_detail', pk=obj.zdravi.pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Recenze byla úspěšně smazána.')
+        return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('health_detail', kwargs={'pk': self.object.zdravi.pk})
@@ -907,7 +953,6 @@ class ContactReviewCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy('contact_detail', kwargs={'pk': self.kwargs['pk']})
 
 
-
 class ContactReviewEditView(BaseReviewEditView):
     model = ContactReview
     template_name = 'review_form.html'
@@ -921,7 +966,16 @@ class ContactReviewDeleteView(BaseReviewDeleteView):
     model = ContactReview
     template_name = 'confirm_delete.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if not (request.user == obj.user or request.user.is_superuser or request.user.has_perm('viewer.delete_review')):
+            messages.error(request, 'Nemáte oprávnění smazat tuto recenzi.')
+            return redirect('contact_detail', pk=obj.contact.pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Recenze byla úspěšně smazána.')
+        return super().delete(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse_lazy('contact_detail', kwargs={'pk': self.object.contact.pk})
-
-

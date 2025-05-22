@@ -14,8 +14,9 @@
     /* Další barvy */
     --error-red: #ff4444;          /* Červená pro chybové hlášky */
     --border-gray: #e0e0e0;        /* Šedá pro ohraničení */
+    --bs-success-rgb: 25, 135, 84;    /* RGB hodnoty pro zelenou barvu */
+    --bs-success: #198754;            /* Hexadecimální hodnota pro zelenou barvu */
 }
-
 
 /*====
  NAVIGAČNÍ LIŠTA A PATIČKA
@@ -61,10 +62,12 @@
     color: #333 !important;
 }
 
-.dropdown-item:hover {
+.dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:hover {
     background-color: rgba(var(--bs-success-rgb), 0.1);
-    color: var(--bs-success) !important;
+    color: var(--bs-success);
 }
+
 
 /* Mobilní zobrazení */
 @media (max-width: 991.98px) {
@@ -292,7 +295,7 @@ h1 {
 }
 
 .admin-label {
-    color: #2563eb;
+    color: #2E8B57;
     font-weight: 600;
     margin-bottom: 5px;
 }
@@ -378,7 +381,7 @@ h1 {
 }
 
 .btn-edit:hover {
-    background: #2563eb;
+    background: #2E8B57;
     color: white;
 }
 
@@ -491,7 +494,7 @@ p {
 }
 
 .procedure-link {
-    color: #334155;
+    color: #2E8B57;
     text-decoration: none;
     font-weight: 500;
     font-size: 1.1rem;
@@ -499,7 +502,7 @@ p {
 }
 
 .procedure-link:hover {
-    color: #2563eb;
+    color: #2E8B57;
 }
 
 .procedure-controls {
@@ -553,7 +556,7 @@ p {
 }
 
 .pedikura-container .btn-primary:hover {
-    background: #1d4ed8;
+    background: #2E8B57;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
 }
@@ -652,19 +655,19 @@ p {
 
 /* Doplňující styly pro sekci řas */
 .rasy-container .btn-primary {
-    background: #8b5cf6; /* Fialová barva pro sekci řas */
+    background: #3CB371;
 }
 
 .rasy-container .btn-primary:hover {
-    background: #7c3aed;
+    background: #2E8B57;
 }
 
 .rasy-container .procedure-link {
-    color: #6d28d9; /* Tmavší fialová pro odkazy */
+    color: #2E8B57;
 }
 
 .rasy-container .procedure-link:hover {
-    color: #7c3aed;
+    color: #2E8B57;
 }
 
 /* Specifické styly pro tlačítka v sekci řas */
@@ -912,3 +915,8 @@ textarea.form-control {
     margin-top: 1rem;
 }
 
+/* Vzhled checkboxu novinky */
+.form-check-input {
+    border-radius: 4px;
+    cursor: pointer;
+}

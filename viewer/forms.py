@@ -1,4 +1,3 @@
-
 from django import forms
 from django.forms import ModelForm
 from django.forms.widgets import ClearableFileInput
@@ -8,6 +7,8 @@ from viewer.models import (
     Pedikura, Rasy, Zdravi, Contact,
     PedikuraReview, ZdraviReview, RasyReview, ContactReview, Image
 )
+
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -32,6 +33,7 @@ class OrderForm(forms.ModelForm):
         self.fields['service_date'].required = True
         self.fields['description'].required = True
 
+
 class BaseReviewForm(forms.ModelForm):
     rating = forms.IntegerField(
         min_value=1,
@@ -51,29 +53,33 @@ class BaseReviewForm(forms.ModelForm):
             raise forms.ValidationError('Hodnocení musí být mezi 1 a 5')
         return rating
 
+
 class PedikuraReviewForm(BaseReviewForm):
     class Meta:
         model = PedikuraReview
         fields = ['rating', 'comment']
+
 
 class ZdraviReviewForm(BaseReviewForm):
     class Meta:
         model = ZdraviReview
         fields = ['rating', 'comment']
 
+
 class RasyReviewForm(BaseReviewForm):
     class Meta:
         model = RasyReview
         fields = ['rating', 'comment']
 
+
 class ContactReviewForm(BaseReviewForm):
     class Meta:
-         model = ContactReview
-         fields = ['rating', 'comment']
+        model = ContactReview
+        fields = ['rating', 'comment']
 
-         class Meta:
-             model = ContactReview
-             fields = ['review', 'comment']
+        class Meta:
+            model = ContactReview
+            fields = ['review', 'comment']
 
 
 class PedikuraModelForm(forms.ModelForm):
@@ -81,20 +87,24 @@ class PedikuraModelForm(forms.ModelForm):
         model = Pedikura
         fields = '__all__'
 
+
 class RasyModelForm(forms.ModelForm):
     class Meta:
         model = Rasy
         fields = '__all__'
+
 
 class ZdraviModelForm(forms.ModelForm):
     class Meta:
         model = Zdravi
         fields = '__all__'
 
+
 class ContactModelForm(forms.ModelForm):
     class Meta:
         model = Contact
         fields = '__all__'
+
 
 class ImageModelForm(ModelForm):
     class Meta:
@@ -106,7 +116,7 @@ class NovinkyForm(forms.ModelForm):
     def clean_obrazek(self):
         obrazek = self.cleaned_data.get('obrazek')
         if obrazek:
-            if obrazek.size > 5*1024*1024:  # 5MB
+            if obrazek.size > 5 * 1024 * 1024:  # 5MB
                 raise forms.ValidationError("Obrázek je příliš velký. Maximální velikost je 5MB.")
             # Kontrola typu souboru
             allowed_types = ['image/jpeg', 'image/png', 'image/gif']
@@ -131,8 +141,11 @@ class NovinkyForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'publikovano': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
+                'class': 'form-check-input form-switch custom-switch-input',
+                'role': 'switch'
+
             }),
+
         }
         error_messages = {
             'titulek': {

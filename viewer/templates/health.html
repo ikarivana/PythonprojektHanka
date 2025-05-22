@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}
 {{ health_detail.name }}
@@ -53,16 +54,10 @@
     {% endif %}
 </div>
 
-{% if request.user.is_authenticated %}
-<form action="" method="post">
-    {% csrf_token %}
-    <table>{{ review_form.as_table }}</table>
-    <button type="submit">Odeslat</button>
-</form>
-{% endif %}
 <hr>
 
 <h4>Hodnocení a komentáře:</h4>
+{% if reviews %}
 {% for review in reviews %}
 <div class="review-item bg-light rounded mt-2 p-3 position-relative">
     <div class="review-header d-flex justify-content-between align-items-start">
@@ -75,7 +70,7 @@
             {% endif %}
         </div>
 
-        {% if user == review.user or user.is_superuser %}
+        {% if user == review.user or user.is_superuser or perms.viewer.change_review %}
         <div class="action-buttons">
             <a href="{% url 'health_review_edit' review.id %}"
                class="btn btn-sm btn-outline-primary me-1"
@@ -83,12 +78,15 @@
                title="Upravit recenzi">
                 <i class="bi bi-pencil"></i>
             </a>
+            {% if user == review.user or user.is_superuser or perms.viewer.delete_review %}
             <a href="{% url 'health_review_delete' review.id %}"
-               class="btn btn-sm btn-outline-danger delete-review"
-               data-bs-toggle="tooltip"
+               class="btn btn-sm btn-outline-danger"
+               onclick="return confirm('Opravdu chcete smazat tuto recenzi?')"
                title="Smazat recenzi">
                 <i class="bi bi-trash"></i>
             </a>
+            {% endif %}
+
         </div>
         {% endif %}
     </div>
@@ -106,22 +104,39 @@
             {% else %}
             Přidáno: {{ review.created|date:"j.n.Y G:i" }}
             {% endif %}
-
-            {% if user.is_superuser %}
-            <span class="ms-2 text-info">
-                <i class="bi bi-info-circle"></i> ID: {{ review.id }}
-            </span>
-            {% endif %}
         </small>
     </div>
 </div>
-{% empty %}
+{% endfor %}
+{% else %}
 <div class="alert alert-info">
     <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
 </div>
-{% endfor %}
+{% endif %}
 
-{% if not user.is_authenticated %}
+{% if request.user.is_authenticated %}
+<div class="review-form-container mt-4 mb-4">
+    <h5>Přidat hodnocení</h5>
+    <form action="" method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Hodnocení</label>
+                {% render_field review_form.rating class="form-select" %}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Komentář</label>
+                {% render_field review_form.comment class="form-control" %}
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i> Odeslat hodnocení
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% else %}
 <div class="alert alert-secondary mt-3">
     <i class="bi bi-person-lock"></i>
     Pro přidání hodnocení se prosím
@@ -130,6 +145,7 @@
     <a href="{% url 'signup' %}" class="alert-link">zaregistrujte</a>.
 </div>
 {% endif %}
+
 
 <div class="mt-4">
     {% if request.user.is_authenticated %}
@@ -143,30 +159,5 @@
     </div>
     {% endif %}
 </div>
-
-<!-- Modální okno pro potvrzení smazání -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Potvrzení smazání</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Opravdu chcete smazat tuto položku?</p>
-                {% if user.is_superuser %}
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i> Pozor: Mazání jako administrátor
-                </div>
-                {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
-                <a href="" id="confirmDelete" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Smazat
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
+

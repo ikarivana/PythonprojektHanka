@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'django_dump_load_utf8',
     'viewer.apps.ViewerConfig',
-
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
