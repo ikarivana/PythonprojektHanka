@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}
 {{ novinka.titulek }}
@@ -80,7 +81,7 @@
                     {% if field.name == 'publikovano' %}
                     <div class="mt-3">
                         <div class="form-check form-switch">
-                            {{ field|attr:"class:form-check-input" }}
+                           {{ field|add_class:"form-check-input" }}
                             <label class="form-check-label" for="{{ field.id_for_label }}">
                                 {{ field.label }}
                             </label>
