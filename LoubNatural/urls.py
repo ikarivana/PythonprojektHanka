@@ -32,7 +32,7 @@ from viewer.views import (
     HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView,
     ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView,
     ImageCreateView, ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView,
-    OrderListView, OrderCreateView,
+    OrderListView, OrderCreateView, OrderDeleteView
 )
 
 urlpatterns = [
@@ -90,6 +90,8 @@ urlpatterns = [
 
                   path('objednavky/', OrderListView.as_view(), name='order_list'),
                   path('objednavky/vytvorit/', OrderCreateView.as_view(), name='order_create'),
+                  path('objednavka/smazat/<int:pk>/', views.OrderDeleteView.as_view(), name='order-delete'),
+
 
                   path('login/', LoginView.as_view(), name='login'),
                   path('accounts/logout/', user_logout, name="logout"),
@@ -111,6 +113,7 @@ urlpatterns = [
                   path('novinky/smazat/<int:novinka_id>/', views.smazat_novinku, name='smazat_novinku'),
 
                   path('', include(('viewer.urls', 'viewer'), namespace='viewer')),
+                  path('', views.index, name='index'),
 
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

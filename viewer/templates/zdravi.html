@@ -19,13 +19,11 @@ Zdraví
 
     <h1>Čistíme tělo</h1>
 
-    {% if user.is_authenticated %}
-        {% if is_staff %}
+    {% if user.is_authenticated and is_staff %}
             <div class="admin-panel">
                 <p class="admin-label">Administrátorský přístup</p>
                 <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
             </div>
-        {% endif %}
     {% endif %}
 
     <div class="container-fluid"></div>
@@ -60,7 +58,7 @@ Zdraví
     </div>
 
     <div class="health-container">
-        {% if perms.viewer.add_health %}
+         {% if user.is_authenticated and perms.viewer.add_zdravi %}
             <a href="{% url 'health_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat proceduru</a>
         {% endif %}
 
@@ -68,19 +66,21 @@ Zdraví
             {% for health in healths %}
                 <li class="procedure-item">
                     <a href="{% url 'health_detail' health.id %}" class="procedure-link">{{ health }}</a>
+                    {% if user.is_authenticated %}
                     <div class="procedure-controls">
-                        {% if perms.viewer.change_health %}
+                        {% if perms.viewer.change_zdravi %}
                             <a href="{% url 'health_update' health.id %}?next={% url 'health' %}" class="btn btn-edit" title="Upravit">
                                 <i class="fas fa-edit"></i>
                             </a>
                         {% endif %}
-                        {% if perms.viewer.delete_health %}
+                        {% if perms.viewer.delete_zdravi %}
                             <a href="{% url 'health_delete' health.id %}?next={% url 'health' %}" class="btn btn-delete" title="Smazat"
                                onclick="return confirm('Opravdu chcete smazat tuto proceduru?')">
                                 <i class="fas fa-trash"></i>
                             </a>
                         {% endif %}
                     </div>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

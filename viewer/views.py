@@ -575,6 +575,14 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Order
+    success_url = reverse_lazy('viewer:order-list')  # předpokládám, že máte URL s name='order-list'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+
 class ImageListView(ListView):
     template_name = 'images.html'
     model = Image
@@ -979,3 +987,21 @@ class ContactReviewDeleteView(BaseReviewDeleteView):
 
     def get_success_url(self):
         return reverse_lazy('contact_detail', kwargs={'pk': self.object.contact.pk})
+
+
+def index(request):
+    # Kontrola, jestli uživatel již navštívil stránku
+    visits = request.COOKIES.get('visits', '0')
+
+    # Převedení na číslo a zvýšení počtu návštěv
+    visits_count = int(visits) + 1
+
+    # Vytvoření response
+    response = render(request, 'index.html', {
+        'visits': visits_count
+    })
+
+    # Nastavení cookie
+    response.set_cookie('visits', str(visits_count), max_age=3600)
+
+    return response

@@ -32,26 +32,12 @@
                 <li class="nav-item">
                     <a class="nav-link hover-underline" href="{% url 'images' %}">Obrázky</a>
                 </li>
-                {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link hover-underline" href="{% url 'order_list' %}">Objednávky</a>
+                    <a class="nav-link hover-underline" href="{% url 'seznam_novinek' %}">Novinky</a>
+
                 </li>
-                {% endif %}
             </ul>
 
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        další
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <a class="dropdown-item" href="{% url 'seznam_novinek' %}">Novinky</a>
-                        <a class="dropdown-item" href="{% url 'nameday' %}">Svátek</a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
                     <form method="post" action="/search/" class="d-flex">
                         {% csrf_token %}
                         <div class="input-group">
@@ -62,9 +48,7 @@
                             </button>
                         </div>
                     </form>
-                </li>
 
-                <li class="nav-item dropdown ms-2">
                     {% if user.is_authenticated %}
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         <span>{{ user.username }}</span>
