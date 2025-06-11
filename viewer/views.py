@@ -130,47 +130,46 @@ class PedicureDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reviews'] = self.object.reviews.all()
-        if self.request.user.is_authenticated:
-            context['review_form'] = PedikuraReviewForm()
-        else:
-            context['registration_form'] = CustomUserCreationForm()
+        # Formulář pro recenzi dostupný všem
+        context['review_form'] = PedikuraReviewForm()
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-
-        if not request.user.is_authenticated:
-            form = CustomUserCreationForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                login(request, user)
-                messages.success(request, 'Registrace proběhla úspěšně!')
-                return redirect('pedicure_detail', pk=self.object.pk)
-            else:
-                context = self.get_context_data(registration_form=form)
-                return self.render_to_response(context)
-
-        # Existující logika pro hodnocení
         form = PedikuraReviewForm(request.POST)
+
         try:
-            existing_review = self.object.reviews.filter(user=request.user).first()
-            if existing_review:
-                if form.is_valid():
-                    existing_review.rating = form.cleaned_data['rating']
-                    existing_review.comment = form.cleaned_data['comment']
-                    existing_review.save()
-                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+            if request.user.is_authenticated:
+                # Pro přihlášené uživatele - možnost editace existující recenze
+                existing_review = self.object.reviews.filter(user=request.user).first()
+                if existing_review:
+                    if form.is_valid():
+                        existing_review.rating = form.cleaned_data['rating']
+                        existing_review.comment = form.cleaned_data['comment']
+                        existing_review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
                 else:
-                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+                    if form.is_valid():
+                        review = form.save(commit=False)
+                        review.pedikura = self.object
+                        review.user = request.user
+                        review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
+                # Pro nepřihlášené uživatele - vytvoření anonymní recenze
                 if form.is_valid():
                     review = form.save(commit=False)
                     review.pedikura = self.object
-                    review.user = request.user
+                    # user zůstane None pro anonymní recenze
                     review.save()
                     messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
                 else:
                     messages.error(request, 'Prosím opravte chyby ve formuláři.')
+
         except Exception as e:
             messages.error(request, 'Při ukládání hodnocení nastala chyba.')
 
@@ -227,42 +226,47 @@ class EyelashDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Recenze zobrazujeme všem
         context['reviews'] = self.object.reviews.all()
-        # Formulář pouze přihlášeným
-        if self.request.user.is_authenticated:
-            context['review_form'] = RasyReviewForm()
-        else:
-            context['registration_form'] = CustomUserCreationForm()
+        # Formulář pro recenzi dostupný všem
+        context['review_form'] = RasyReviewForm()
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-
         self.object = self.get_object()
         form = RasyReviewForm(request.POST)
 
         try:
-            existing_review = self.object.reviews.filter(user=request.user).first()
-            if existing_review:
-                # Aktualizace existující recenze
-                if form.is_valid():
-                    existing_review.rating = form.cleaned_data['rating']
-                    existing_review.comment = form.cleaned_data['comment']
-                    existing_review.save()
-                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+            if request.user.is_authenticated:
+                # Pro přihlášené uživatele - možnost editace existující recenze
+                existing_review = self.object.reviews.filter(user=request.user).first()
+                if existing_review:
+                    if form.is_valid():
+                        existing_review.rating = form.cleaned_data['rating']
+                        existing_review.comment = form.cleaned_data['comment']
+                        existing_review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
                 else:
-                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+                    if form.is_valid():
+                        review = form.save(commit=False)
+                        review.rasy = self.object
+                        review.user = request.user
+                        review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
+                # Pro nepřihlášené uživatele - vytvoření anonymní recenze
                 if form.is_valid():
                     review = form.save(commit=False)
                     review.rasy = self.object
-                    review.user = request.user
+                    # user zůstane None pro anonymní recenze
                     review.save()
                     messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
                 else:
                     messages.error(request, 'Prosím opravte chyby ve formuláři.')
+
         except Exception as e:
             messages.error(request, 'Při ukládání hodnocení nastala chyba.')
 
@@ -319,41 +323,47 @@ class HealthDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Přidáme recenze pro všechny uživatele
         context['reviews'] = self.object.reviews.all()
-        # Formulář pro recenze pouze pro přihlášené
-        if self.request.user.is_authenticated:
-            context['review_form'] = ZdraviReviewForm()
-        else:
-            context['registration_form'] = CustomUserCreationForm()
+        # Formulář pro recenzi dostupný všem
+        context['review_form'] = ZdraviReviewForm()
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-
         self.object = self.get_object()
         form = ZdraviReviewForm(request.POST)
 
         try:
-            existing_review = self.object.reviews.filter(user=request.user).first()
-            if existing_review:
-                if form.is_valid():
-                    existing_review.rating = form.cleaned_data['rating']
-                    existing_review.comment = form.cleaned_data['comment']
-                    existing_review.save()
-                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+            if request.user.is_authenticated:
+                # Pro přihlášené uživatele - možnost editace existující recenze
+                existing_review = self.object.reviews.filter(user=request.user).first()
+                if existing_review:
+                    if form.is_valid():
+                        existing_review.rating = form.cleaned_data['rating']
+                        existing_review.comment = form.cleaned_data['comment']
+                        existing_review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
                 else:
-                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+                    if form.is_valid():
+                        review = form.save(commit=False)
+                        review.zdravi = self.object
+                        review.user = request.user
+                        review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
+                # Pro nepřihlášené uživatele - vytvoření anonymní recenze
                 if form.is_valid():
                     review = form.save(commit=False)
                     review.zdravi = self.object
-                    review.user = request.user
+                    # user zůstane None pro anonymní recenze
                     review.save()
                     messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
                 else:
                     messages.error(request, 'Prosím opravte chyby ve formuláři.')
+
         except Exception as e:
             messages.error(request, 'Při ukládání hodnocení nastala chyba.')
 
@@ -410,41 +420,47 @@ class ContactDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Recenze pro všechny, seřazené od nejnovější
         context['reviews'] = self.object.reviews.all().order_by('-created')
-        # Formulář pouze pro přihlášené
-        if self.request.user.is_authenticated:
-            context['review_form'] = ContactReviewForm()
-        else:
-            context['registration_form'] = CustomUserCreationForm()
+        # Formulář pro recenzi dostupný všem
+        context['review_form'] = ContactReviewForm()
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-
         self.object = self.get_object()
         form = ContactReviewForm(request.POST)
 
         try:
-            existing_review = self.object.reviews.filter(user=request.user).first()
-            if existing_review:
-                if form.is_valid():
-                    existing_review.rating = form.cleaned_data['rating']
-                    existing_review.comment = form.cleaned_data['comment']
-                    existing_review.save()
-                    messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+            if request.user.is_authenticated:
+                # Pro přihlášené uživatele - možnost editace existující recenze
+                existing_review = self.object.reviews.filter(user=request.user).first()
+                if existing_review:
+                    if form.is_valid():
+                        existing_review.rating = form.cleaned_data['rating']
+                        existing_review.comment = form.cleaned_data['comment']
+                        existing_review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně aktualizováno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
                 else:
-                    messages.error(request, 'Prosím opravte chyby ve formuláři.')
+                    if form.is_valid():
+                        review = form.save(commit=False)
+                        review.contact = self.object
+                        review.user = request.user
+                        review.save()
+                        messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
+                    else:
+                        messages.error(request, 'Prosím opravte chyby ve formuláři.')
             else:
+                # Pro nepřihlášené uživatele - vytvoření anonymní recenze
                 if form.is_valid():
                     review = form.save(commit=False)
                     review.contact = self.object
-                    review.user = request.user
+                    # user zůstane None pro anonymní recenze
                     review.save()
                     messages.success(request, 'Vaše hodnocení bylo úspěšně přidáno.')
                 else:
                     messages.error(request, 'Prosím opravte chyby ve formuláři.')
+
         except Exception as e:
             messages.error(request, 'Při ukládání hodnocení nastala chyba.')
 

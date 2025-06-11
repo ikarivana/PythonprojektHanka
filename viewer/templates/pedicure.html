@@ -61,63 +61,61 @@
 
 <h4>Hodnocení a komentáře:</h4>
 {% if reviews %}
-{% for review in reviews %}
-<div class="review-item bg-light rounded mt-2 p-3 position-relative">
-    <div class="review-header d-flex justify-content-between align-items-start">
-        <div class="review-meta">
-            <strong>{{ review.user.username }}</strong>
-            {% if review.rating %}
-            <div class="rating">
-                {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+    {% for review in reviews %}
+    <div class="review-item bg-light rounded mt-2 p-3 position-relative">
+        <div class="review-header d-flex justify-content-between align-items-start">
+            <div class="review-meta">
+                <strong>{{ review.user.username|default:"Anonymní uživatel" }}</strong>
+                {% if review.rating %}
+                <div class="rating">
+                    {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if user.is_authenticated and user == review.user or user.is_superuser or perms.viewer.change_review %}
+            <div class="action-buttons">
+                <a href="{% url 'pedicure_review_edit' review.id %}"
+                   class="btn btn-sm btn-outline-primary me-1"
+                   data-bs-toggle="tooltip"
+                   title="Upravit recenzi">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                {% if user == review.user or user.is_superuser or perms.viewer.delete_review %}
+                <a href="{% url 'pedicure_review_delete' review.id %}"
+                   class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('Opravdu chcete smazat tuto recenzi?')"
+                   title="Smazat recenzi">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
 
-        {% if user == review.user or user.is_superuser or perms.viewer.change_review %}
-        <div class="action-buttons">
-            <a href="{% url 'pedicure_review_edit' review.id %}"
-               class="btn btn-sm btn-outline-primary me-1"
-               data-bs-toggle="tooltip"
-               title="Upravit recenzi">
-                <i class="bi bi-pencil"></i>
-            </a>
-            {% if user == review.user or user.is_superuser or perms.viewer.delete_review %}
-            <a href="{% url 'pedicure_review_delete' review.id %}"
-               class="btn btn-sm btn-outline-danger"
-               onclick="return confirm('Opravdu chcete smazat tuto recenzi?')"
-               title="Smazat recenzi">
-                <i class="bi bi-trash"></i>
-            </a>
-            {% endif %}
-
+        {% if review.comment %}
+        <div class="review-content mt-2">
+            {{ review.comment|linebreaks }}
         </div>
         {% endif %}
-    </div>
 
-    {% if review.comment %}
-    <div class="review-content mt-2">
-        {{ review.comment|linebreaks }}
+        <div class="review-footer mt-2">
+            <small class="text-muted">
+                {% if review.updated != review.created %}
+                Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
+                {% else %}
+                Přidáno: {{ review.created|date:"j.n.Y G:i" }}
+                {% endif %}
+            </small>
+        </div>
     </div>
-    {% endif %}
-
-    <div class="review-footer mt-2">
-        <small class="text-muted">
-            {% if review.updated != review.created %}
-            Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
-            {% else %}
-            Přidáno: {{ review.created|date:"j.n.Y G:i" }}
-            {% endif %}
-        </small>
-    </div>
-</div>
-{% endfor %}
+    {% endfor %}
 {% else %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
-</div>
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
+    </div>
 {% endif %}
 
-{% if request.user.is_authenticated %}
 <div class="review-form-container mt-4 mb-4">
     <h5>Přidat hodnocení</h5>
     <form action="" method="post" class="mt-3">
@@ -139,7 +137,9 @@
         </div>
     </form>
 </div>
-{% else %}
+
+
+{% comment %} {% else %}
 <div class="alert alert-secondary mt-3">
     <i class="bi bi-person-lock"></i>
     Pro přidání hodnocení se prosím
@@ -147,7 +147,7 @@
     nebo se
     <a href="{% url 'signup' %}" class="alert-link">zaregistrujte</a>.
 </div>
-{% endif %}
+{% endif %}{% endcomment %}
 
 
 <div class="mt-4">

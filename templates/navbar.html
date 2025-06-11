@@ -61,7 +61,7 @@
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Nepřihlášený uživatel</a>
                     <div class="dropdown-menu dropdown-menu-end shadow-sm">
                         <a class="dropdown-item" href="{% url 'login' %}">Přihlásit</a>
-                        <a class="dropdown-item" href="{% url 'signup' %}">Registrovat</a>
+                        {% comment %}<a class="dropdown-item" href="{% url 'signup' %}">Registrovat</a>{% endcomment %}
                         <a class="dropdown-item" href="{% url 'password_reset' %}">Reset hesla</a>
                     </div>
                     {% endif %}
