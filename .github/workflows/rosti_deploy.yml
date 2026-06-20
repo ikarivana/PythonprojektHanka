@@ -1,0 +1,21 @@
+name: Deploy to Rosti
+
+on:
+  push:
+    branches: [master]  # Zde musí být název vaší větve (máte 'master')
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.ROSTI_DEPLOY_SSH_KEY }}
+      
+      - name: Deploy to Rosti
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 11972 ssh.rosti.cz >> ~/.ssh/known_hosts
+          rsync -avz -e "ssh -p 11972" --delete-after --exclude=.git --exclude=.venv --exclude=db.sqlite3 ./ app@ssh.rosti.cz:/srv/app/
+          ssh -p 11972 app@ssh.rosti.cz "cd /srv/app && touch tmp/restart.txt"
