@@ -157,16 +157,9 @@ class NovinkyForm(forms.ModelForm):
             }
         }
 
+from django import forms
+
 class ContactMessageForm(forms.Form):
-    name = forms.CharField(
-        label="Vaše jméno",
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jan Novák'})
-    )
-    email = forms.EmailField(
-        label="Váš e-mail",
-        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'jan@example.cz'})
-    )
-    message = forms.CharField(
-        label="Zpráva",
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Jak vám mohu pomoci?'})
-    )
+    name = forms.CharField(label="Vaše jméno", widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'display: block !important;'}))
+    email = forms.EmailField(label="E-mailová adresa", widget=forms.EmailInput(attrs={'class': 'form-control', 'style': 'display: block !important;'}))
+    message = forms.CharField(label="Vaše zpráva", widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'style': 'display: block !important;'}))

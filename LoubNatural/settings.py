@@ -62,11 +62,6 @@ ROOT_URLCONF = 'LoubNatural.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),  # pro base.html na úrovni projektu
-        ],
-
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -78,7 +73,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'LoubNatural.wsgi.application'
 
 

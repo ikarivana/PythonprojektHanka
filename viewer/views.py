@@ -409,9 +409,8 @@ class ContactListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['contact1_images'] = Image.objects.filter(contact1=True)
-        # Pokud formulář v kontextu není (např. při prvním načtení), vytvoříme ho
-        if 'form' not in context:
-            context['form'] = ContactMessageForm()
+        # TADY JE TA DŮLEŽITÁ ČÁST:
+        context['form'] = ContactMessageForm()
         return context
 
     def post(self, request, *args, **kwargs):
