@@ -1,90 +1,100 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load widget_tweaks %}
 
-{% block title %}
-Kontakt
-{% endblock %}
+{% block title %}Kontakt | Loub-Natural{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <a href="javascript:history.back()" class="btn btn-link text-decoration-none text-muted p-0">
+            <i class="fas fa-arrow-left me-2"></i>Zpět
+        </a>
+    </div>
+
+    <div class="text-center mb-5">
+        <h2 class="display-6 fw-bold text-primary">Kontaktujte nás</h2>
+        <p class="text-muted">Máte dotaz nebo si chcete domluvit termín? Ozvěte se mi.</p>
+    </div>
+
     {% if messages %}
-    <div class="messages">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill mb-5 text-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row g-5">
+        <div class="col-lg-5">
+            <div class="card h-100 border-0 shadow-sm p-4 rounded-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <h4 class="mb-4 text-primary"><i class="fas fa-user-circle me-2"></i>Hana Loubalová</h4>
+
+                <div class="mb-4">
+                    <h6 class="text-uppercase text-muted small fw-bold">Kde nás najdete</h6>
+                    <p class="mb-0 fs-5"><i class="fas fa-map-marker-alt me-2 text-primary"></i> Vodní 453, 760 01 Zlín</p>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-uppercase text-muted small fw-bold">Identifikace</h6>
+                    <p class="mb-0 fs-5"><i class="fas fa-id-card me-2 text-primary"></i> IČO: 09076247</p>
+                </div>
+
+                <div class="mt-auto">
+                    <div class="alert alert-white border-0 shadow-sm rounded-3">
+                        <small class="text-muted">Těším se na vaši návštěvu. Ráda zodpovím jakékoliv dotazy telefonicky či osobně.</small>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 p-4 p-md-5 rounded-4">
+                <h4 class="mb-4">Pošlete mi zprávu</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ field.label }}</label>
+                            {% render_field field class="form-control form-control-lg rounded-3" placeholder=field.label %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm">
+                        <i class="fas fa-paper-plane me-2"></i>Odeslat zprávu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 g-4 align-items-center">
+        {% for img in contact1_images %}
+            <div class="col-md-4">
+                <a href="{% url 'image' pk=img.id %}">
+                    <img src="{{ img.image.url }}" alt="kontakt" class="img-fluid rounded-4 shadow-sm hover-zoom">
+                </a>
+            </div>
         {% endfor %}
     </div>
-    {% endif %}
 
-    <h1>Kontaktní údaje</h1>
-
-    {% if user.is_authenticated %}
-        {% if is_staff %}
-            <div class="admin-panel">
-                <p class="admin-label">Administrátorský přístup</p>
-                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
-            </div>
-        {% endif %}
-    {% endif %}
-
-    <div class="container-fluid"></div>
-    <div class="home-container">
-        {% for img in contact1_images %}
-            <div class="image-item">
-                <a href="{% url 'image' pk=img.id %}">
-                    <img src="{{ img.image.url }}" alt="kontakt">
+    <div class="card mt-5 border-0 shadow-sm rounded-4">
+        <div class="list-group list-group-flush">
+            {% for contact in contacts %}
+            <div class="list-group-item d-flex justify-content-between align-items-center py-4 px-4">
+                <a href="{% url 'contact_detail' contact.id %}" class="text-decoration-none text-dark fs-5 fw-bold hover-primary">
+                    {{ contact }}
                 </a>
-
-                {% if user.is_authenticated and perms.viewer.change_image %}
-                    <div class="image-controls">
-                        <a href="{% url 'image_update' pk=img.id %}?next={% url 'contact' %}" class="btn btn-edit" title="Upravit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        {% if perms.viewer.delete_image %}
-                            <a href="{% url 'image_delete' pk=img.id %}?next={% url 'contact' %}" class="btn btn-delete" title="Smazat"
-                               onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        {% endif %}
-                    </div>
+                {% if user.is_authenticated and perms.viewer.change_contact %}
+                    <a href="{% url 'contact_update' contact.id %}?next={% url 'contact' %}" class="btn btn-outline-warning btn-sm rounded-pill">Upravit</a>
                 {% endif %}
             </div>
-        {% empty %}
-            <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
-        {% endfor %}
-
-        {% if user.is_authenticated and perms.viewer.add_image %}
-            <a href="{% url 'image_create' %}?next={% url 'contact' %}" class="btn btn-primary">Přidat nový obrázek</a>
-        {% endif %}
-    </div>
-
-    <div class="contact-container">
-        {% if perms.viewer.add_contact %}
-            <a href="{% url 'contact_create' %}?next={% url 'contact' %}" class="btn btn-primary">Přidat kontakt</a>
-        {% endif %}
-
-        <ul class="procedure-list">
-            {% for contact in contacts %}
-            <li class="procedure-item">
-                <a href="{% url 'contact_detail' contact.id %}" class="procedure-link">{{ contact }}</a>
-                <div class="procedure-controls">
-                    {% if perms.viewer.change_contact %}
-                    <a href="{% url 'contact_update' contact.id %}?next={% url 'contact' %}" class="btn btn-edit" title="Upravit">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    {% endif %}
-                    {% if perms.viewer.delete_contact %}
-                    <a href="{% url 'contact_delete' contact.id %}?next={% url 'contact' %}" class="btn btn-delete" title="Smazat"
-                       onclick="return confirm('Opravdu chcete smazat tento kontakt?')">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                    {% endif %}
-                </div>
-            </li>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 </div>
-{% endblock %}
 
+<style>
+    .hover-zoom { transition: transform 0.3s ease; }
+    .hover-zoom:hover { transform: scale(1.03); }
+    .hover-primary:hover { color: #0d6efd !important; }
+</style>
+{% endblock %}

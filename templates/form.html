@@ -1,34 +1,41 @@
 {% extends 'base.html' %}
-{%load static%}
+{% load widget_tweaks %}
+
+{% block title %}Aktualizace{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card login-card">
-                <div class="card-header">
-                    <h2 class="text-center mb-0">Přihlášení</h2>
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Aktualizace údajů</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <form method="post">
                         {% csrf_token %}
+
                         {% if form.errors %}
-                            <div class="alert alert-danger">
-                                Prosím zadejte správné uživatelské jméno a heslo.
-                                Pozor na velká a malá písmena.
-                            </div>
+                        <div class="alert alert-danger mb-3 p-2 small">
+                            <i class="fas fa-exclamation-triangle"></i> Prosím opravte chyby ve formuláři.
+                        </div>
                         {% endif %}
-                        {{ form.as_p }}
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Aktualizovat</button>
+
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {% render_field field class="form-control" %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Uložit změny
+                            </button>
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary">Zpět</a>
                         </div>
                     </form>
                 </div>

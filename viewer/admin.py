@@ -42,9 +42,18 @@ class RasyReviewAdmin(admin.ModelAdmin):
     list_filter = ['rating', 'created', 'updated']
     search_fields = ['rasy__name', 'review__user__username', 'comment']
 
+
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ['image', 'pedikura', 'rasy', 'zdravi']
+    # Přidáme i checkboxy, abyste viděla, co je kam zařazeno
+    list_display = ['image', 'pedikura', 'rasy', 'zdravi', 'is_home', 'pedikura1', 'rasy1', 'zdravi1', 'contact1']
+
+    # Umožníme rychlé filtrování vpravo v adminu
+    list_filter = ['is_home', 'pedikura1', 'rasy1', 'zdravi1', 'contact1']
+
+    # Umožníme rychlou editaci checkboxů přímo v seznamu (velmi užitečné!)
+    list_editable = ['is_home', 'pedikura1', 'rasy1', 'zdravi1', 'contact1']
+
     search_fields = ['image', 'pedikura__name', 'rasy__name', 'zdravi__name']
 
 @admin.register(Novinky)

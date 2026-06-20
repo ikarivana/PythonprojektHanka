@@ -7,6 +7,12 @@ Pedikúra
 
 {% block content %}
 <div class="container">
+    <div class="navigation-back" style="margin: 20px 0;">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Zpět
+        </a>
+    </div>
+
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -17,32 +23,32 @@ Pedikúra
     </div>
     {% endif %}
 
-    <h1>Výběr procedůry</h1>
-
+    <h1>Výběr procedury</h1>
 
     {% if user.is_authenticated and is_staff %}
-        <div class="admin-panel">
+        <div class="admin-panel" style="margin-bottom: 20px;">
             <p class="admin-label">Administrátorský přístup</p>
             <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
         </div>
     {% endif %}
 
-    <div class="container-fluid"></div>
     <div class="home-container">
         {% for img in pedikura1_images %}
-        <div class="image-item">
+        <div class="image-item" style="margin-bottom: 20px;">
             <a href="{% url 'image' pk=img.id %}">
-                <img src="{{ img.image.url }}" alt="pedikúra">
+                <img src="{{ img.image.url }}" alt="pedikúra" class="img-fluid">
             </a>
 
             {% if user.is_authenticated and perms.viewer.change_image %}
-            <div class="image-controls">
-                <a href="{% url 'image_update' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-edit"
-                   title="Upravit">🖋️</a>
+            <div class="image-controls mt-2">
+                <a href="{% url 'image_update' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-edit" title="Upravit">
+                    <i class="fas fa-edit"></i>
+                </a>
                 {% if perms.viewer.delete_image %}
-                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-delete"
-                   title="Smazat"
-                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-delete" title="Smazat"
+                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+                    <i class="fas fa-trash"></i>
+                </a>
                 {% endif %}
             </div>
             {% endif %}
@@ -52,30 +58,30 @@ Pedikúra
         {% endfor %}
 
         {% if user.is_authenticated and perms.viewer.add_image %}
-        <a href="{% url 'image_create' %}?next={% url 'pedicure' %}" class="btn btn-primary">Přidat nový obrázek</a>
+        <div class="mt-3">
+            <a href="{% url 'image_create' %}?next={% url 'pedicure' %}" class="btn btn-primary">Přidat nový obrázek</a>
+        </div>
         {% endif %}
     </div>
 
-    <div class="pedikura-container">
+    <div class="pedikura-container mt-4">
         {% if user.is_authenticated and perms.viewer.add_pedikura %}
-        <a href="{% url 'pedicure_create' %}?next={% url 'pedicure' %}" class="btn btn-primary">Přidat proceduru</a>
+        <a href="{% url 'pedicure_create' %}?next={% url 'pedicure' %}" class="btn btn-primary mb-3">Přidat proceduru</a>
         {% endif %}
 
-        <ul class="procedure-list">
+        <ul class="procedure-list list-unstyled">
             {% for pedicure in pedicures %}
-            <li class="procedure-item">
-                <a href="{% url 'pedicure_detail' pedicure.id %}" class="procedure-link">{{ pedicure }}</a>
+            <li class="procedure-item border-bottom py-2">
+                <a href="{% url 'pedicure_detail' pedicure.id %}" class="procedure-link text-decoration-none">{{ pedicure }}</a>
                 {% if user.is_authenticated %}
-                <div class="procedure-controls">
+                <div class="procedure-controls d-inline-block ml-3">
                     {% if perms.viewer.change_pedikura %}
-                    <a href="{% url 'pedicure_update' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-edit"
-                       title="Upravit">
+                    <a href="{% url 'pedicure_update' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-edit" title="Upravit">
                         <i class="fas fa-edit"></i>
                     </a>
                     {% endif %}
                     {% if perms.viewer.delete_pedikura %}
-                    <a href="{% url 'pedicure_delete' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-delete"
-                       title="Smazat"
+                    <a href="{% url 'pedicure_delete' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-delete" title="Smazat"
                        onclick="return confirm('Opravdu chcete smazat tuto proceduru?')">
                         <i class="fas fa-trash"></i>
                     </a>

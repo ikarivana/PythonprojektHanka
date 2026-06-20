@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 from LoubNatural import settings
 from accounts.views import (
@@ -114,6 +115,6 @@ urlpatterns = [
 
                   path('', include(('viewer.urls', 'viewer'), namespace='viewer')),
                   path('', views.index, name='index'),
-
+                  path('gdpr/', TemplateView.as_view(template_name='gdpr.html'), name='gdpr'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

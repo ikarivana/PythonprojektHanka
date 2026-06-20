@@ -1,163 +1,124 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}
-{{ eyelash_detail.name }}
-{% endblock %}
+{% block title %}{{ eyelash_detail.name }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="home-container">
-        {% for image in eyelash_detail.images.all %}
-        <div class="image-item">
-            <a href="{% url 'image' pk=image.id %}">
-                <img src="{{ image.image.url }}" alt="{{ image.name }}">
-            </a>
-
-            {% if user.is_authenticated and perms.viewer.change_image %}
-            <div class="image-controls">
-                <a href="{% url 'image_update' pk=image.id %}?next={% url 'eyelash_detail' eyelash_detail.id %}"
-                   class="btn btn-edit"
-                   title="Upravit">🖋️</a>
-                {% if perms.viewer.delete_image %}
-                <a href="{% url 'image_delete' pk=image.id %}?next={% url 'eyelash_detail' eyelash_detail.id %}"
-                   class="btn btn-delete delete-review"
-                   title="Smazat"
-                   data-bs-toggle="tooltip">🗑️</a>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
-        {% empty %}
-        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
-        {% endfor %}
-
-        {% if user.is_authenticated and perms.viewer.add_image %}
-        <a href="{% url 'image_create' %}?next={% url 'eyelash_detail' eyelash_detail.id %}" class="btn btn-primary">Přidat
-            nový obrázek</a>
-        {% endif %}
+<div class="container py-4">
+    <div class="mb-4">
+        <a href="{% url 'eyelash' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Zpět na seznam
+        </a>
     </div>
-</div>
 
-<h1 class="display-5">{{ eyelash_detail.name }}</h1>
-<hr class="row">
-<div class="col-md-16">
-    <p><strong>Čas procedůry: </strong> {{ eyelash_detail.procedure_time }} min.</p>
-    <p><strong>Cena: </strong> {{ eyelash_detail.price }}kč</p>
-    <hr class="row">
-    <div>{{ eyelash_detail.description }}</div>
-</div>
-
-<div>
-    {% if perms.viewer.change_rasy %}
-    <a href="{% url 'eyelash_update' eyelash_detail.id %}" class="btn">🖋️</a>
-    {% endif %}
-    {% if perms.viewer.delete_rasy %}
-    <a href="{% url 'eyelash_delete' eyelash_detail.id %}" class="btn delete-review">🗑️</a>
-    {% endif %}
-</div>
-
-<h4>Hodnocení a komentáře:</h4>
-{% if reviews %}
-    {% for review in reviews %}
-    <div class="review-item bg-light rounded mt-2 p-3 position-relative">
-        <div class="review-header d-flex justify-content-between align-items-start">
-            <div class="review-meta">
-                <strong>{{ review.user.username }}</strong>
-                {% if review.rating %}
-                <div class="rating">
-                    {% for i in ""|ljust:review.rating %}⭐{% endfor %}
+    <div class="row g-3 mb-4">
+        {% for image in eyelash_detail.images.all %}
+        <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <a href="{% url 'image' pk=image.id %}">
+                    <img src="{{ image.image.url }}" alt="{{ image.name }}" class="card-img-top img-fluid rounded">
+                </a>
+                {% if user.is_authenticated and perms.viewer.change_image %}
+                <div class="card-body p-2 d-flex justify-content-between">
+                    <a href="{% url 'image_update' pk=image.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                    {% if perms.viewer.delete_image %}
+                    <a href="{% url 'image_delete' pk=image.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Zatím zde nejsou žádné obrázky.</p>
+        {% endfor %}
+    </div>
 
-            {% if user == review.user or user.is_superuser or perms.viewer.change_review %}
-            <div class="action-buttons">
-                <a href="{% url 'eyelash_review_edit' review.id %}"
-                   class="btn btn-sm btn-outline-primary me-1"
-                   data-bs-toggle="tooltip"
-                   title="Upravit recenzi">
-                    <i class="bi bi-pencil"></i>
-                </a>
-                {% if user == review.user or user.is_superuser or perms.viewer.delete_review %}
-<a href="{% url 'eyelash_review_delete' review.id %}"
-   class="btn btn-sm btn-outline-danger"
-   onclick="return confirm('Opravdu chcete smazat tuto recenzi?')"
-   title="Smazat recenzi">
-    <i class="bi bi-trash"></i>
-</a>
-{% endif %}
+    {% if user.is_authenticated and perms.viewer.add_image %}
+    <div class="mb-4">
+        <a href="{% url 'image_create' %}?next={{ request.path }}" class="btn btn-primary"><i class="fas fa-plus"></i> Přidat obrázek</a>
+    </div>
+    {% endif %}
 
+    <h1 class="display-5">{{ eyelash_detail.name }}</h1>
+    <hr>
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <p><strong>Čas procedury:</strong> {{ eyelash_detail.procedure_time }} min.</p>
+            <p><strong>Cena:</strong> {{ eyelash_detail.price }} Kč</p>
+            <div class="mt-3">{{ eyelash_detail.description|linebreaks }}</div>
+        </div>
+
+        <div class="col-md-3 text-md-end">
+            {% if perms.viewer.change_rasy or perms.viewer.delete_rasy %}
+            <div class="btn-group">
+                {% if perms.viewer.change_rasy %}
+                <a href="{% url 'eyelash_update' eyelash_detail.id %}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                {% endif %}
+                {% if perms.viewer.delete_rasy %}
+                <a href="{% url 'eyelash_delete' eyelash_detail.id %}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
-
-        {% if review.comment %}
-        <div class="review-content mt-2">
-            {{ review.comment|linebreaks }}
-        </div>
-        {% endif %}
-
-        <div class="review-footer mt-2">
-            <small class="text-muted">
-                {% if review.updated != review.created %}
-                Upraveno: {{ review.updated|date:"j.n.Y G:i" }}
-                {% else %}
-                Přidáno: {{ review.created|date:"j.n.Y G:i" }}
-                {% endif %}
-            </small>
-        </div>
     </div>
-    {% endfor %}
-{% else %}
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Zatím nikdo nehodnotil
-    </div>
-{% endif %}
 
-{% if request.user.is_authenticated %}
-<div class="review-form-container mt-4 mb-4">
-    <h5>Přidat hodnocení</h5>
-    <form action="" method="post" class="mt-3">
-        {% csrf_token %}
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Hodnocení</label>
-                {% render_field review_form.rating class="form-select" %}
-            </div>
-            <div class="col-md-12">
-                <label class="form-label">Komentář</label>
-                {% render_field review_form.comment class="form-control" %}
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-send"></i> Odeslat hodnocení
-                </button>
+    <hr class="my-4">
+
+    <h4>Hodnocení a komentáře:</h4>
+    {% if reviews %}
+        {% for review in reviews %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ review.user.username|default:"Anonymní uživatel" }}</strong>
+                    {% if user.is_authenticated and user == review.user or user.is_superuser or perms.viewer.change_review %}
+                    <div>
+                        <a href="{% url 'eyelash_review_edit' review.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'eyelash_review_delete' review.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Smazat recenzi?')"><i class="fas fa-trash"></i></a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="text-warning small my-1">
+                    {% for i in ""|ljust:review.rating %}★{% endfor %}
+                </div>
+                <p class="card-text">{{ review.comment|linebreaks }}</p>
+                <small class="text-muted">Přidáno: {{ review.created|date:"j.n.Y G:i" }}</small>
             </div>
         </div>
-    </form>
-</div>
-{% else %}
-<div class="alert alert-secondary mt-3">
-    <i class="bi bi-person-lock"></i>
-    Pro přidání hodnocení se prosím
-    <a href="{% url 'login' %}" class="alert-link">přihlaste</a>
-    nebo se
-    <a href="{% url 'signup' %}" class="alert-link">zaregistrujte</a>.
-</div>
-{% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">Zatím nikdo nehodnotil.</div>
+    {% endif %}
 
-<div class="mt-4">
     {% if request.user.is_authenticated %}
-    <div class="metadata mt-3">
-        <small class="text-muted d-block">
-            <i class="bi bi-clock"></i> Přidáno do databáze: {{ eyelash_detail.created|date:"j.n.Y G:i"}}
-        </small>
-        <small class="text-muted d-block mt-1">
-            <i class="bi bi-pencil"></i> Poslední úprava: {{ eyelash_detail.updated|date:"j.n.Y G:i" }}
-        </small>
+    <div class="card bg-light mt-4 p-3">
+        <h5>Přidat hodnocení</h5>
+        <form method="post" class="mt-2">
+            {% csrf_token %}
+            <div class="row g-2">
+                <div class="col-md-2">
+                    {% render_field review_form.rating class="form-select" %}
+                </div>
+                <div class="col-md-10">
+                    {% render_field review_form.comment class="form-control" placeholder="Váš komentář..." %}
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Odeslat</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary mt-3">
+        Pro přidání hodnocení se prosím <a href="{% url 'login' %}">přihlaste</a> nebo <a href="{% url 'signup' %}">zaregistrujte</a>.
+    </div>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+    <div class="mt-4 text-muted small">
+        <p><i class="fas fa-clock"></i> Přidáno: {{ eyelash_detail.created|date:"j.n.Y G:i" }}</p>
+        <p><i class="fas fa-pencil-alt"></i> Poslední úprava: {{ eyelash_detail.updated|date:"j.n.Y G:i" }}</p>
     </div>
     {% endif %}
 </div>
-
 {% endblock %}

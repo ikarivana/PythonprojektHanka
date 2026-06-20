@@ -1,51 +1,81 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html> {% if LANGUAGE_CODE %}
-      lang="{{ LANGUAGE_CODE }}"
-      {% endif %}
+<html lang="{{ LANGUAGE_CODE|default:'cs' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
-    {% block extra_head %}
-    <!-- Google Fonts -->
+    <title>{% block title %}Loub-Natural{% endblock %}</title>
+
+    <!-- CSS a Fonty -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    {% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/uprava.css' %}">
+
+    <!-- Cookie Consent CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v3.0.0/dist/cookieconsent.css">
 
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-    <link rel="stylesheet" href="{% static 'css/uprava.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
+
     {% include 'navbar.html' %}
-    <div class="container">
-        <div class="jumbotron">
+
+    <main class="flex-shrink-0">
+        <div class="container py-4">
             {% block content %}{% endblock %}
         </div>
-    </div>
+    </main>
 
-    <footer class="footer text-center text-dark p-4">
-        <a class="text-reset fw-bold" href="https://www.facebook.com/loub.natural/">≪•◦Facebook◦•≫</a>&nbsp;&nbsp;
-        <a class="text-reset fw-bold" href="https://www.instagram.com/loub.natural/">≪•◦Instagram◦•≫</a>
-        <p style="text-align: right;"><small>© Vytvořeno Eliv 2025</small></p>
+    <footer class="footer mt-auto py-4 text-center text-dark bg-light">
+        <div class="container">
+            <a class="text-reset fw-bold mx-2" href="https://www.facebook.com/loub.natural/">≪•◦Facebook◦•≫</a>
+            <a class="text-reset fw-bold mx-2" href="https://www.instagram.com/loub.natural/">≪•◦Instagram◦•≫</a>
+            <div class="mt-2">
+                <a href="{% url 'gdpr' %}" class="text-muted text-decoration-none"><small>GDPR a zásady ochrany osobních údajů</small></a>
+            </div>
+            <p class="mt-2 mb-0 text-muted"><small>© Vytvořeno Eliv 2026</small></p>
+        </div>
     </footer>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializace všech dropdownů
-    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-        return new bootstrap.Dropdown(dropdownToggleEl)
-    })
-});
-</script>
 
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Cookie Consent JS -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v3.0.0/dist/cookieconsent.umd.js"></script>
+    <script>
+        window.addEventListener('load', function(){
+            CookieConsent.run({
+                categories: {
+                    necessary: { enabled: true, readOnly: true },
+                    analytics: { enabled: false }
+                },
+                language: {
+                    default: 'cs',
+                    translations: {
+                        cs: {
+                            consentModal: {
+                                title: 'Používáme cookies',
+                                description: 'Pro zajištění správného fungování webu a analýzu návštěvnosti využíváme soubory cookies.',
+                                acceptAllBtn: 'Přijmout vše',
+                                acceptNecessaryBtn: 'Odmítnout vše', // Tlačítko pro odmítnutí
+                                showSettingsBtn: 'Nastavení'
+                            },
+                            preferencesModal: {
+                                title: 'Nastavení cookies',
+                                acceptAllBtn: 'Přijmout vše',
+                                acceptNecessaryBtn: 'Odmítnout vše', // Tlačítko pro odmítnutí v nastavení
+                                savePreferencesBtn: 'Uložit nastavení',
+                                sections: [
+                                    { title: 'Nezbytné cookies', description: 'Tyto soubory jsou nutné pro fungování webu.', linkedCategory: 'necessary' },
+                                    { title: 'Analytické cookies', description: 'Pomáhají nám vylepšovat web.', linkedCategory: 'analytics' }
+                                ]
+                            }
+                        }
+                    }
+                }
+            });
+        })
+    </script>
 </body>
 </html>

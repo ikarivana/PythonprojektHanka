@@ -22,7 +22,7 @@ from django.views.generic import (
 )
 
 from accounts.forms import CustomUserCreationForm
-from .forms import OrderForm, NovinkyForm
+from .forms import OrderForm, NovinkyForm, ContactMessageForm
 
 from accounts.models import Profile
 from viewer.forms import (
@@ -409,8 +409,30 @@ class ContactListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['contact1_images'] = Image.objects.filter(contact1=True)
+        # Pokud formulář v kontextu není (např. při prvním načtení), vytvoříme ho
+        if 'form' not in context:
+            context['form'] = ContactMessageForm()
         return context
 
+    def post(self, request, *args, **kwargs):
+        # Vytvoříme instanci formuláře s daty z POST požadavku
+        form = ContactMessageForm(request.POST)
+
+        if form.is_valid():
+            # Zpracování dat z formuláře
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+
+            # Zde proběhne odeslání e-mailu (zatím jen výpis do konzole nebo logu)
+            # send_mail('Nová zpráva z webu', f'Od: {name} ({email})\n\n{message}',
+            #           'vas-email@domena.cz', ['prijemce@domena.cz'])
+
+            messages.success(request, 'Vaše zpráva byla úspěšně odeslána. Děkujeme!')
+            return redirect('contact')  # Přesměrování po úspěchu
+
+        # Pokud formulář není validní, znovu vykreslíme stránku s chybami
+        return self.render_to_response(self.get_context_data(form=form))
 
 class ContactDetailView(DetailView):
     template_name = 'contacte.html'
@@ -1021,3 +1043,12 @@ def index(request):
     response.set_cookie('visits', str(visits_count), max_age=3600)
 
     return response
+
+def gdpr_view(request):
+    """
+    Zobrazí stránku se zásadami ochrany osobních údajů.
+    """
+    context = {
+        'page_title': 'GDPR a zásady ochrany osobních údajů',
+    }
+    return render(request, 'gdpr.html', context)

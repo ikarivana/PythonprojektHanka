@@ -1,31 +1,36 @@
-<div class="pagination">
-    <span class="step-links">
+<nav aria-label="Stránkování" class="mt-4">
+    <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
-            <a href="?page=1" title="První strana">&laquo;&laquo;</a>
-            <a href="?page={{ page_obj.previous_page_number }}" title="Předchozí strana">&laquo;</a>
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo;&laquo;</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
         {% endif %}
 
-        <span class="current-page">
-            {% for i in page_obj.paginator.page_range %}
-                {% if page_obj.number == i %}
-                    <span class="current">{{ i }}</span>
-                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                    <a href="?page={{ i }}">{{ i }}</a>
-                {% elif i == 1 or i == page_obj.paginator.num_pages %}
-                    <a href="?page={{ i }}">{{ i }}</a>
-                {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
-                    ...
-                {% endif %}
-            {% endfor %}
-        </span>
+        {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% elif i == 1 or i == page_obj.paginator.num_pages %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endfor %}
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" title="Další strana">&raquo;</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" title="Poslední strana">&raquo;&raquo;</a>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;&raquo;</a>
+            </li>
         {% endif %}
-    </span>
-
-    <div class="page-info">
+    </ul>
+    <div class="text-center text-muted small">
         Strana {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
     </div>
-</div>
+</nav>

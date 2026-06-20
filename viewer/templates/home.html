@@ -1,84 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Domů{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="container py-4">
     {% if messages %}
-    <div class="messages">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
             {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endfor %}
-    </div>
     {% endif %}
 
-    <h1>{{ welcome_message }}</h1>
+    <h1 class="text-center mb-4">{{ welcome_message }}</h1>
 
-    {% if user.is_authenticated %}
-    {% if is_staff %}
-    <div class="admin-panel">
-        <p class="admin-label">Administrátorský přístup</p>
-        <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
-    </div>
+    {% if user.is_authenticated and is_staff %}
+        <div class="card bg-light mb-4 text-center">
+            <div class="card-body py-2">
+                <small class="text-muted">Administrátorský přístup | Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</small>
+            </div>
+        </div>
     {% endif %}
-    {% endif %}
 
-    <div class="container-fluid"></div>
-    <div class="home-container">
-    {% for img in home_images %}
-        <div class="image-item">
-            <a href="{% url 'image' pk=img.id %}?next={% url 'home' %}">
-                <img src="{{ img.image.url }}" alt="jak to u nás vypadá">
-            </a>
-
-            {% if user.is_authenticated and perms.viewer.change_image %}
-                <div class="image-controls">
-                    <a href="{% url 'image_update' pk=img.id %}?next={% url 'home' %}" class="btn btn-edit" title="Upravit">
-                        <i class="fas fa-edit"></i>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        {% for img in home_images %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <a href="{% url 'image' pk=img.id %}?next={% url 'home' %}">
+                        <img src="{{ img.image.url }}" alt="Loub-Natural" class="card-img-top img-fluid rounded" style="height: 250px; object-fit: cover;">
                     </a>
-                    {% if perms.viewer.delete_image %}
-                        <a href="{% url 'image_delete' pk=img.id %}?next={% url 'home' %}" class="btn btn-delete" title="Smazat"
-                           onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+
+                    {% if user.is_authenticated and perms.viewer.change_image %}
+                        <div class="card-body p-2 d-flex justify-content-between">
+                            <a href="{% url 'image_update' pk=img.id %}?next={% url 'home' %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                            {% if perms.viewer.delete_image %}
+                                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'home' %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Opravdu smazat?')"><i class="fas fa-trash"></i></a>
+                            {% endif %}
+                        </div>
                     {% endif %}
                 </div>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
-    {% endfor %}
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Zatím zde nejsou žádné obrázky.</p>
+            </div>
+        {% endfor %}
+    </div>
 
     {% if user.is_authenticated and perms.viewer.add_image %}
-        <a href="{% url 'image_create' %}?next={% url 'home' %}" class="btn btn-primary">Přidat nový obrázek</a>
+        <div class="text-center mb-5">
+            <a href="{% url 'image_create' %}?next={% url 'home' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Přidat nový obrázek</a>
+        </div>
     {% endif %}
-</div>
 
-    <p>
-        Hana Loubalová je podnikatelka působící ve Zlíně, která provozuje pod značkou Loub-Natural saln zaměřený na
-        pedikúru a přírodní doplňky pro podporu lidského zdraví. Její provozovna se nachází na adrese Vodní 453, 760
-        01
-        Zlín, kde nabízí nejen odborné ošetření nohou, ale také prodej přírodních produktů, které mají napomáhat
-        harmonizaci těla a celkovému zdraví. Kromě klasické pedikúry se specializuje i na řešení specifických
-        problémů,
-        jako jsou otlaky či kuří oka, s důrazem na prevenci ortopedických komplikací.<br>
-
-        LoubNatural pod vedením Hany Loubalové klade důraz na individuální přístup ke klientům a využívání
-        přírodních
-        metod a přípravků. Nabídka služeb je rozšířena o konzultace a doporučení vhodných kosmetických či
-        zdravotních
-        produktů pro domácí péči. Klienti oceňují nejen profesionální přístup, ale i možnost zakoupit si přírodní
-        doplňky přímo v salonu, což podtrhuje komplexnost poskytovaných služeb.<br>
-
-        Podnikání Hany Loubalové je oficiálně registrováno od roku 2020 a zahrnuje dvě hlavní živnosti – volnou
-        živnost
-        v oblasti výroby, obchodu a služeb a řemeslnou živnost v oboru pedikúra. Její činnost je evidována u
-        Magistrátu
-        města Zlína a zaměřuje se především na pedikúru a podobné činnosti s tím spojené. LoubNatural tak
-        představuje
-        místo, kde se spojuje péče o zdraví nohou s přírodní filozofií a osobním přístupem ke každému klientovi.
-    </p>
-
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <h3 class="mb-3">O nás</h3>
+                <p>Hana Loubalová je podnikatelka působící ve Zlíně, která provozuje pod značkou Loub-Natural salon zaměřený na pedikúru a přírodní doplňky pro podporu lidského zdraví. Její provozovna se nachází na adrese Vodní 453, 760 01 Zlín...</p>
+                <p>Loub-Natural pod vedením Hany Loubalové klade důraz na individuální přístup ke klientům a využívání přírodních metod a přípravků.</p>
+                <p>Podnikání Hany Loubalové je oficiálně registrováno od roku 2020 a zahrnuje dvě hlavní živnosti – volnou živnost v oblasti výroby, obchodu a služeb a řemeslnou živnost v oboru pedikúra.</p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

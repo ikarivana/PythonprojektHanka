@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cookie Počítadlo</title>
-</head>
-<body>
+{% block title %}Cookie Počítadlo{% endblock %}
+
+{% block content %}
+<div class="container py-4 text-center">
     <h1>Vítejte na stránce</h1>
-    <p>Navštívili jste tuto stránku {{ visits }}x</p>
-</body>
-</html>
+    <p class="lead">Navštívili jste tuto stránku celkem <strong>{{ visits }}x</strong></p>
+</div>
+{% endblock %}

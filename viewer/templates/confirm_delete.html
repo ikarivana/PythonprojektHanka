@@ -1,14 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}
-     Mazání
-{% endblock %}
+{% block title %}Potvrzení smazání{% endblock %}
 
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        <p>Opravdu chcete smazat záznam "{{ object }}" z databáze?</p>
-        <input type="submit" class="btn btn-danger" value="Smazat">
-        <input type="button" value="Zpět" class="btn btn-primary" onclick="history.back()">
-    </form>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Potvrzení smazání</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Opravdu chcete nenávratně smazat záznam: <strong>"{{ object }}"</strong>?</p>
+                    <p class="text-muted small">Tuto akci nelze vzít zpět.</p>
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fas fa-trash"></i> Smazat
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary px-4" onclick="history.back()">
+                                Zpět
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

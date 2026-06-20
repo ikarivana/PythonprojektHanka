@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}
-     403 Forbidden
-{% endblock %}
-
+{% block title %}403 Forbidden{% endblock %}
 
 {% block content %}
-   <div class="alter alter-denger" role="alert">
-       Chyba 403: Neoprávněný přístup
-   </div>
+<div class="container py-5 text-center">
+    <div class="alert alert-danger shadow" role="alert">
+        <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Chyba 403</h4>
+        <p>Litujeme, ale k této stránce nemáte dostatečná oprávnění.</p>
+        <hr>
+        <a href="{% url 'home' %}" class="btn btn-outline-danger">Zpět na hlavní stránku</a>
+    </div>
+</div>
 {% endblock %}

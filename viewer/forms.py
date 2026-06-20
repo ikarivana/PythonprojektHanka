@@ -156,3 +156,17 @@ class NovinkyForm(forms.ModelForm):
                 'required': 'Obsah je povinný.'
             }
         }
+
+class ContactMessageForm(forms.Form):
+    name = forms.CharField(
+        label="Vaše jméno",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jan Novák'})
+    )
+    email = forms.EmailField(
+        label="Váš e-mail",
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'jan@example.cz'})
+    )
+    message = forms.CharField(
+        label="Zpráva",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Jak vám mohu pomoci?'})
+    )

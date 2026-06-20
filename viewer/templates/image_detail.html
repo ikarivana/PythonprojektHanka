@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detail obrázku{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Detail obrázku</h2>
-    <div class="image-detail">
-        <img src="{{ image.image.url }}" alt="Detail obrázku">
+<div class="container py-4">
+    <div class="navigation-back mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Zpět
+        </a>
     </div>
-    <a href="{% url 'home' %}" class="btn btn-primary">Zpět na hlavní stránku</a>
+
+    <h2>Detail obrázku</h2>
+
+    <div class="image-detail text-center my-4">
+        <img src="{{ image.image.url }}" alt="Detail obrázku" class="img-fluid rounded shadow">
+    </div>
+
+    <div class="card p-3 shadow-sm text-center">
+        <h5>Tento obrázek patří k:</h5>
+        <div class="mt-2">
+            {% if image.pedikura %}
+                <p>Pedikúra: <a href="{% url 'pedicure_detail' image.pedikura.id %}">{{ image.pedikura.name }}</a></p>
+            {% endif %}
+
+            {% if image.rasy %}
+                <p>Řasy: <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.rasy.name }}</a></p>
+            {% endif %}
+
+            {% if image.zdravi %}
+                <p>Zdraví: <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.zdravi.name }}</a></p>
+            {% endif %}
+
+            {% if image.pedikura1 %}
+                <p>Stránka: Pedikúra</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if user.is_authenticated and perms.viewer.change_image %}
+    <div class="text-center mt-3">
+        <a href="{% url 'image_update' image.id %}" class="btn btn-warning">Upravit</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

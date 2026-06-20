@@ -8,6 +8,7 @@
 
 {% block content %}
 <div class="container py-4">
+    <!-- Breadcrumb navigace -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'seznam_novinek' %}">Novinky</a></li>
@@ -21,7 +22,7 @@
                 <h1 class="display-5 mb-0">{{ novinka.titulek }}</h1>
                 {% if user.is_authenticated and perms.viewer.change_novinky %}
                 <a href="?edit=true" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-pencil"></i>
+                    <i class="bi bi-pencil"></i> Upravit
                 </a>
                 {% endif %}
             </div>
@@ -32,35 +33,37 @@
 
             {% if novinka.obrazek %}
             <div class="mb-4">
-                <img src="{{ novinka.obrazek.url }}" alt="{{ novinka.titulek }}" class="img-fluid rounded">
+                <img src="{{ novinka.obrazek.url }}" alt="{{ novinka.titulek }}" class="img-fluid rounded shadow-sm">
             </div>
             {% endif %}
 
-            <div class="news-content mb-4">
+            <div class="news-content mb-4" style="font-size: 1.1rem; line-height: 1.6;">
                 {{ novinka.obsah|linebreaks }}
             </div>
 
+            <!-- Galerie dalších obrázků -->
             {% if novinka.images.all %}
             <div class="row g-3 mb-4">
                 {% for image in novinka.images.all %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ image.image.url }}" alt="{{ novinka.titulek }}" class="card-img-top">
+                <div class="col-6 col-md-4">
+                    <div class="card h-100">
+                        <img src="{{ image.image.url }}" alt="Galerie novinky" class="card-img-top img-fluid">
                     </div>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
-            <div class="d-flex gap-2 mt-4">
-                <a href="{% url 'seznam_novinek' %}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i>Zpět
+            <!-- Akční tlačítka -->
+            <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top">
+                <a href="{% url 'seznam_novinek' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Zpět na seznam
                 </a>
 
                 {% if user.is_authenticated and perms.viewer.delete_novinky %}
                 <form method="post" class="d-inline">
                     {% csrf_token %}
-                    <button type="submit" name="delete" class="btn btn-danger btn-sm"
+                    <button type="submit" name="delete" class="btn btn-danger"
                             onclick="return confirm('Opravdu chcete smazat tuto novinku?')">
                         <i class="bi bi-trash me-1"></i>Smazat
                     </button>
@@ -70,33 +73,26 @@
         </div>
     </div>
 
+    <!-- Editace novinky -->
     {% if user.is_authenticated and perms.viewer.change_novinky and request.GET.edit %}
-    <div class="card shadow-sm mt-4">
+    <div class="card shadow-sm mt-4 border-primary">
         <div class="card-body">
-            <h3 class="card-title mb-4">Upravit novinku</h3>
+            <h3 class="card-title mb-4 text-primary">Upravit novinku</h3>
             <form method="post" enctype="multipart/form-data" action="{% url 'detail_novinky' novinka.id %}">
                 {% csrf_token %}
                 {% for field in form %}
                 <div class="mb-3">
                     {% if field.name == 'publikovano' %}
-                    <div class="mt-3">
-                        <div class="form-check form-switch">
-                           {{ field|add_class:"form-check-input" }}
-                            <label class="form-check-label" for="{{ field.id_for_label }}">
-                                {{ field.label }}
-                            </label>
-                        </div>
+                    <div class="form-check form-switch mt-3">
+                        {{ field|add_class:"form-check-input" }}
+                        <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                     </div>
                     {% else %}
-
-
                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field }}
+                    {{ field|add_class:"form-control" }}
                     {% endif %}
                     {% if field.errors %}
-                    <div class="alert alert-danger mt-2">
-                        {{ field.errors }}
-                    </div>
+                    <div class="alert alert-danger mt-2">{{ field.errors }}</div>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -104,14 +100,11 @@
                 <div class="mb-3">
                     <label for="images" class="form-label">Přidat další obrázky</label>
                     <input type="file" name="images" id="images" multiple class="form-control">
-                    <div class="form-text">Maximální velikost obrázku je 5MB.</div>
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" name="update" class="btn btn-primary btn-sm">
-                        <i class="bi bi-save me-1"></i>Uložit změny
-                    </button>
-                    <a href="{% url 'detail_novinky' novinka.id %}" class="btn btn-outline-secondary btn-sm">Zrušit</a>
+                    <button type="submit" name="update" class="btn btn-primary">Uložit změny</button>
+                    <a href="{% url 'detail_novinky' novinka.id %}" class="btn btn-outline-secondary">Zrušit</a>
                 </div>
             </form>
         </div>

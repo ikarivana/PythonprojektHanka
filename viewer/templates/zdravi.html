@@ -7,6 +7,13 @@ Zdraví
 
 {% block content %}
 <div class="container">
+
+    <div class="back-link" style="margin: 20px 0;">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Zpět
+        </a>
+    </div>
+
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -20,18 +27,17 @@ Zdraví
     <h1>Čistíme tělo</h1>
 
     {% if user.is_authenticated and is_staff %}
-            <div class="admin-panel">
-                <p class="admin-label">Administrátorský přístup</p>
-                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
-            </div>
+        <div class="admin-panel" style="margin-bottom: 20px;">
+            <p class="admin-label">Administrátorský přístup</p>
+            <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+        </div>
     {% endif %}
 
-    <div class="container-fluid"></div>
     <div class="home-container">
         {% for img in zdravi1_images %}
             <div class="image-item">
                 <a href="{% url 'image' pk=img.id %}">
-                    <img src="{{ img.image.url }}" alt="zdraví">
+                    <img src="{{ img.image.url }}" alt="zdraví" class="img-fluid">
                 </a>
 
                 {% if user.is_authenticated and perms.viewer.change_image %}
@@ -53,21 +59,23 @@ Zdraví
         {% endfor %}
 
         {% if user.is_authenticated and perms.viewer.add_image %}
-            <a href="{% url 'image_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat nový obrázek</a>
+            <div class="w-100 mt-3">
+                <a href="{% url 'image_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat nový obrázek</a>
+            </div>
         {% endif %}
     </div>
 
-    <div class="health-container">
+    <div class="health-container mt-4">
          {% if user.is_authenticated and perms.viewer.add_zdravi %}
-            <a href="{% url 'health_create' %}?next={% url 'health' %}" class="btn btn-primary">Přidat proceduru</a>
+            <a href="{% url 'health_create' %}?next={% url 'health' %}" class="btn btn-primary mb-3">Přidat proceduru</a>
         {% endif %}
 
-        <ul class="procedure-list">
+        <ul class="procedure-list list-unstyled">
             {% for health in healths %}
-                <li class="procedure-item">
-                    <a href="{% url 'health_detail' health.id %}" class="procedure-link">{{ health }}</a>
+                <li class="procedure-item border-bottom py-2">
+                    <a href="{% url 'health_detail' health.id %}" class="procedure-link text-decoration-none">{{ health }}</a>
                     {% if user.is_authenticated %}
-                    <div class="procedure-controls">
+                    <div class="procedure-controls d-inline-block ml-3">
                         {% if perms.viewer.change_zdravi %}
                             <a href="{% url 'health_update' health.id %}?next={% url 'health' %}" class="btn btn-edit" title="Upravit">
                                 <i class="fas fa-edit"></i>

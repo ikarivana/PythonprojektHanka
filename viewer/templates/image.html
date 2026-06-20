@@ -2,11 +2,19 @@
 {% load static %}
 
 {% block title %}
-Obrázky
+Obrázek
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
+
+    <!-- Šipka zpět -->
+    <div class="navigation-back mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Zpět
+        </a>
+    </div>
+
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -17,82 +25,62 @@ Obrázky
     </div>
     {% endif %}
 
-    {% if user.is_authenticated %}
-        {% if is_staff %}
-            <div class="admin-panel text-center">
-                <p class="admin-label">Administrátorský přístup</p>
-                <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
-            </div>
-        {% endif %}
+    {% if user.is_authenticated and is_staff %}
+        <div class="admin-panel text-center mb-4">
+            <p class="admin-label">Administrátorský přístup</p>
+            <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+        </div>
     {% endif %}
 
-    <div class="image-controls-top text-center mb-3">
-        {% if perms.viewer.add_image %}
-        <a href="{% url 'image_update' image.id %}" class="btn btn-primary mx-2">🖋️</a>
+    <!-- Ovládací tlačítka -->
+    <div class="image-controls-top text-center mb-4">
+        {% if perms.viewer.change_image %}
+        <a href="{% url 'image_update' image.id %}" class="btn btn-outline-primary mx-2">
+            <i class="fas fa-edit"></i> Upravit
+        </a>
         {% endif %}
 
         {% if perms.viewer.delete_image %}
-        <a href="{% url 'image_delete' image.id %}" class="btn btn-primary mx-2"
-           onclick="return confirm('Opravdu chcete smazat tento obrázek?')">🗑️</a>
+        <a href="{% url 'image_delete' image.id %}" class="btn btn-outline-danger mx-2"
+           onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+            <i class="fas fa-trash"></i> Smazat
+        </a>
         {% endif %}
     </div>
 
-    <div class="image-display text-center mb-4">
+    <!-- Hlavní obrázek -->
+    <div class="image-display text-center mb-5">
         <img src="{{ image.image.url }}"
              alt="{{ image.name }}"
-             class="main-image img-fluid mx-auto d-block"
-             style="max-width: 500px;">
+             class="img-fluid rounded shadow"
+             style="max-width: 100%; height: auto;">
     </div>
 
-    <div class="image-details text-center">
-        {% if image.padikura %}
-        <div class="detail-item pedikura-image mb-2">
-            <span class="detail-label">Pedikúra:</span>
-            <a href="{% url 'pedikura' image.pedikura.id %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+    <!-- Detaily/Odkazy -->
+    <div class="image-details text-center card p-3 shadow-sm">
+        <h5 class="mb-3">Tento obrázek patří k:</h5>
 
-        {% if image.rasy %}
-        <div class="detail-item rasy-image mb-2">
-            <span class="detail-label">Řasy:</span>
-            <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+        <ul class="list-unstyled">
+            {% if image.padikura %}
+            <li class="mb-2"><a href="{% url 'pedikura' image.pedikura.id %}" class="btn btn-link">Pedikúra</a></li>
+            {% endif %}
 
-        {% if image.zdravi %}
-        <div class="detail-item zdravi-image mb-2">
-            <span class="detail-label">Zdraví:</span>
-            <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+            {% if image.rasy %}
+            <li class="mb-2"><a href="{% url 'eyelash_detail' image.rasy.id %}" class="btn btn-link">Řasy</a></li>
+            {% endif %}
 
-        {% if image.contact %}
-        <div class="detail-item contact-image mb-2">
-            <span class="detail-label">Kontakt:</span>
-            <a href="{% url 'contact_detail' image.contact.id %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+            {% if image.zdravi %}
+            <li class="mb-2"><a href="{% url 'health_detail' image.zdravi.id %}" class="btn btn-link">Zdraví</a></li>
+            {% endif %}
 
-        {% if image.is_home %}
-        <div class="detail-item is_home-image mb-2">
-            <span class="detail-label">Domovská:</span>
-            <a href="{% url 'home' %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+            {% if image.contact %}
+            <li class="mb-2"><a href="{% url 'contact_detail' image.contact.id %}" class="btn btn-link">Kontakt</a></li>
+            {% endif %}
 
-        {% if image.order %}
-        <div class="detail-item order-image mb-2">
-            <span class="detail-label">Objednávky:</span>
-            <a href="{% url 'order_list' %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
-
-        {% if image.pedikura1 %}
-        <div class="detail-item pedikura-image mb-2">
-            <span class="detail-label">Pedikúra:</span>
-            <a href="{% url 'pedicure' %}">{{ image.name }}</a>
-        </div>
-        {% endif %}
+            {% if image.is_home %}
+            <li class="mb-2"><a href="{% url 'home' %}" class="btn btn-link">Domovská stránka</a></li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 {% endblock %}
