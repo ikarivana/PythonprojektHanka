@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY' , default='django-insecure-gl-)z0l8z+q-3!l7l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['loubnatural.cz', 'loubnatural.rosti.cz', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['loubnatural-9058.rostiapp.cz', 'loubnatural.cz', 'localhost', '127.0.0.1']
 
 
 # Application definition
