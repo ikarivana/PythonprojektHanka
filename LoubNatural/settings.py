@@ -121,14 +121,18 @@ USE_TZ = True
 # Static zaloha (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Pokud máte statické soubory i ve složce 'static' v kořenu projektu
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-# Images
-MEDIA_ROOT = BASE_DIR
-MEDIA_URL = 'images/'
+
+# Media files
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
