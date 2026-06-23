@@ -99,8 +99,7 @@ urlpatterns = [
                   path('accounts/', include('django.contrib.auth.urls')),
                   path('accounts/signup/', SignUpView.as_view(), name="signup"),
 
-
-                  path('images/', ImageListView.as_view(), name='images'),
+                  path('galerie/', ImageListView.as_view(), name='images'),
                   path('image/<int:pk>/', ImageDetailView.as_view(), name='image'),
                   path('image/create/', ImageCreateView.as_view(), name='image_create'),
                   path('image/update/<int:pk>/', ImageUpdateView.as_view(), name='image_update'),
@@ -117,4 +116,8 @@ urlpatterns = [
                   path('', views.index, name='index'),
                   path('gdpr/', TemplateView.as_view(template_name='gdpr.html'), name='gdpr'),
 
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

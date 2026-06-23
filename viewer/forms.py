@@ -107,9 +107,29 @@ class ContactModelForm(forms.ModelForm):
 
 
 class ImageModelForm(ModelForm):
+    # Přidáme validaci pro obrázek, stejně jako u novinek
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            # Kontrola velikosti (5MB)
+            if image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Obrázek je příliš velký. Maximální velikost je 5MB.")
+
+            # Kontrola typu souboru
+            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+            if image.content_type not in allowed_types:
+                raise forms.ValidationError("Povolené formáty jsou pouze JPEG, PNG, WEBP a GIF.")
+        return image
+
     class Meta:
         model = Image
-        fields = '__all__'
+        fields = '__all__'  # Nebo specifikujte pole, např. ['image', 'is_home', ...]
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+            # Pokud máte checkbox pole, přidejte pro ně 'class': 'form-check-input'
+        }
 
 
 class NovinkyForm(forms.ModelForm):

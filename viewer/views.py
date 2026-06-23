@@ -760,7 +760,7 @@ def seznam_novinek(request):
 
 def detail_novinky(request, novinka_id):
     novinka = get_object_or_404(Novinky, pk=novinka_id)
-    images = novinka.images.all()  # Získání všech obrázků
+    images = novinka.images.all()
     form = None
     if request.user.is_authenticated:
         form = NovinkyForm(instance=novinka)

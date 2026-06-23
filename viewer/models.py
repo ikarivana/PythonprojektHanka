@@ -178,7 +178,7 @@ class Order(Model):
 
 
 class Image(Model):
-    image = ImageField(upload_to='images/')
+    image = ImageField(upload_to='')
     pedikura = ForeignKey(Pedikura, on_delete=SET_NULL, null=True, blank=True, related_name='images')
     rasy = ForeignKey(Rasy, on_delete=SET_NULL, null=True, blank=True, related_name='images')
     zdravi = ForeignKey(Zdravi, on_delete=SET_NULL, null=True, blank=True, related_name='images')
