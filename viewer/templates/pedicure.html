@@ -1,117 +1,168 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}{{ pedicure_detail.name }}{% endblock %}
+{% block title %}
+{{ pedicure_detail.name }}
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-4">
-    <!-- Navigační tlačítko zpět -->
+
     <div class="mb-4">
-        <a href="javascript:history.back()" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Zpět
+        <a href="javascript:history.back()" class="btn btn-natural-outline">
+            <i class="fas fa-arrow-left me-2"></i>
+            Zpět
         </a>
     </div>
 
-    <!-- Sekce obrázků (Grid) -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-5">
+
         {% for image in pedicure_detail.images.all %}
-        <div class="col-6 col-md-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <a href="{% url 'image' pk=image.id %}">
-                    <img src="{{ image.image.url }}" alt="{{ image.name }}" class="card-img-top img-fluid rounded">
-                </a>
-                {% if user.is_authenticated and perms.viewer.change_image %}
-                <div class="card-body p-2 d-flex justify-content-between">
-                    <a href="{% url 'image_update' pk=image.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                    {% if perms.viewer.delete_image %}
-                    <a href="{% url 'image_delete' pk=image.id %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+
+                <div class="gallery-card">
+
+                    <a href="{% url 'image' pk=image.id %}">
+
+                        <img src="{{ image.image.url }}"
+                             alt="{{ image.name }}"
+                             class="gallery-image img-fluid">
+
+                    </a>
+
+                    {% if user.is_authenticated and perms.viewer.change_image %}
+
+                        <div class="gallery-admin">
+
+                            <a href="{% url 'image_update' pk=image.id %}?next={{ request.path }}"
+                               class="btn btn-sm btn-natural-outline">
+
+                                <i class="fas fa-edit"></i>
+
+                            </a>
+
+                            {% if perms.viewer.delete_image %}
+
+                                <a href="{% url 'image_delete' pk=image.id %}?next={{ request.path }}"
+                                   class="btn btn-sm btn-outline-danger">
+
+                                    <i class="fas fa-trash"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
                     {% endif %}
+
                 </div>
-                {% endif %}
+
             </div>
-        </div>
+
         {% empty %}
-        <p class="text-muted">Zatím zde nejsou žádné obrázky.</p>
+
+            <div class="col-12">
+
+                <div class="empty-state text-center">
+                    Zatím zde nejsou žádné obrázky.
+                </div>
+
+            </div>
+
         {% endfor %}
+
     </div>
 
     {% if user.is_authenticated and perms.viewer.add_image %}
-    <div class="mb-4">
-        <a href="{% url 'image_create' %}?next={{ request.path }}" class="btn btn-primary">Přidat nový obrázek</a>
-    </div>
-    {% endif %}
 
-    <!-- Info o proceduře -->
-    <h1 class="display-5">{{ pedicure_detail.name }}</h1>
-    <hr>
-    <div class="row">
-        <div class="col-md-8">
-            <p><strong>Čas procedury: </strong> {{ pedicure_detail.procedure_time }} min.</p>
-            <p><strong>Cena: </strong> {{ pedicure_detail.price }} Kč</p>
-            <div class="mt-3">{{ pedicure_detail.description|linebreaks }}</div>
+        <div class="text-center mb-5">
+
+            <a href="{% url 'image_create' %}?next={{ request.path }}"
+               class="btn btn-natural">
+
+                <i class="fas fa-plus me-2"></i>
+                Přidat nový obrázek
+
+            </a>
+
         </div>
 
-        <!-- Ovládání procedury (Edit/Delete) -->
-        <div class="col-md-4 mt-3 mt-md-0">
-            {% if perms.viewer.change_pedikura or perms.viewer.delete_pedikura %}
-            <div class="btn-group">
+    {% endif %}
+
+    <div class="natural-card">
+
+        <h1 class="page-title text-center mb-4">
+
+            {{ pedicure_detail.name }}
+
+        </h1>
+
+        <div class="row text-center mb-4">
+
+            <div class="col-md-6">
+
+                <h5>Délka procedury</h5>
+
+                <p>{{ pedicure_detail.procedure_time }} minut</p>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <h5>Cena</h5>
+
+                <p>{{ pedicure_detail.price }} Kč</p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="mt-4">
+
+            {{ pedicure_detail.description|linebreaks }}
+
+        </div>
+
+        {% if perms.viewer.change_pedikura or perms.viewer.delete_pedikura %}
+
+            <div class="text-center mt-5">
+
                 {% if perms.viewer.change_pedikura %}
-                <a href="{% url 'pedicure_update' pedicure_detail.id %}" class="btn btn-warning"><i class="fas fa-edit"></i> Upravit</a>
+
+                    <a href="{% url 'pedicure_update' pedicure_detail.id %}"
+                       class="btn btn-natural me-2">
+
+                        <i class="fas fa-edit me-2"></i>
+                        Upravit
+
+                    </a>
+
                 {% endif %}
+
                 {% if perms.viewer.delete_pedikura %}
-                <a href="{% url 'pedicure_delete' pedicure_detail.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Smazat</a>
+
+                    <a href="{% url 'pedicure_delete' pedicure_detail.id %}"
+                       class="btn btn-outline-danger">
+
+                        <i class="fas fa-trash me-2"></i>
+                        Smazat
+
+                    </a>
+
                 {% endif %}
+
             </div>
-            {% endif %}
-        </div>
+
+        {% endif %}
+
     </div>
 
-    <hr class="my-4">
-
-    <!-- Hodnocení -->
-    <h4>Hodnocení a komentáře:</h4>
-    {% if reviews %}
-        {% for review in reviews %}
-        <div class="card mb-3 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <strong>{{ review.user.username|default:"Anonymní uživatel" }}</strong>
-                    {% if user.is_authenticated and user == review.user or user.is_superuser or perms.viewer.change_review %}
-                    <div>
-                        <a href="{% url 'pedicure_review_edit' review.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                        <a href="{% url 'pedicure_review_delete' review.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Smazat?')"><i class="fas fa-trash"></i></a>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="text-warning small my-1">
-                    {% for i in ""|ljust:review.rating %}★{% endfor %}
-                </div>
-                <p class="card-text">{{ review.comment|linebreaks }}</p>
-                <small class="text-muted">Přidáno: {{ review.created|date:"j.n.Y G:i" }}</small>
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="alert alert-info">Zatím nikdo nehodnotil.</div>
-    {% endif %}
-
-    <!-- Formulář hodnocení -->
-    <div class="card bg-light mt-4 p-3">
-        <h5>Přidat hodnocení</h5>
-        <form method="post" class="mt-2">
-            {% csrf_token %}
-            <div class="row g-2">
-                <div class="col-md-2">
-                    {% render_field review_form.rating class="form-select" %}
-                </div>
-                <div class="col-md-10">
-                    {% render_field review_form.comment class="form-control" placeholder="Váš komentář..." %}
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Odeslat</button>
-                </div>
-            </div>
-        </form>
-    </div>
 </div>
+
 {% endblock %}
+

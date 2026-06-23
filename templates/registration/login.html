@@ -1,48 +1,97 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}Přihlášení{% endblock %}
+{% block title %}
+Přihlášení
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-5">
+
     <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white text-center py-3">
-                    <h4 class="mb-0"><i class="fas fa-lock me-2"></i>Přihlášení</h4>
+
+        <div class="col-md-6 col-lg-5">
+
+            <div class="natural-card">
+
+                <div class="text-center mb-5">
+
+                    <h1 class="page-title">
+
+                        <i class="fas fa-lock me-2"></i>
+
+                        Přihlášení
+
+                    </h1>
+
                 </div>
-                <div class="card-body p-4">
-                    <form method="post">
-                        {% csrf_token %}
 
-                        {% if form.errors %}
-                        <div class="alert alert-danger mb-3 p-2 small">
-                            <i class="fas fa-exclamation-triangle"></i> Uživatelské jméno nebo heslo není správné.
-                        </div>
-                        {% endif %}
+                <form method="post">
 
-                        {% for field in form %}
-                        <div class="form-floating mb-3">
-                            {% render_field field class="form-control" placeholder=field.label %}
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        </div>
-                        {% endfor %}
+                    {% csrf_token %}
 
-                        <div class="d-grid gap-2 mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt"></i> Přihlásit
-                            </button>
+                    {% if form.errors %}
+
+                        <div class="alert alert-danger">
+
+                            <i class="fas fa-circle-exclamation me-2"></i>
+
+                            Uživatelské jméno nebo heslo není správné.
+
                         </div>
 
-                        <div class="text-center">
-                            <a href="{% url 'password_reset' %}" class="text-muted text-decoration-none small">
-                                <i class="fas fa-key"></i> Zapomenuté heslo?
-                            </a>
+                    {% endif %}
+
+                    {% for field in form %}
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                {{ field.label }}
+
+                            </label>
+
+                            {% render_field field class="form-control natural-input" %}
+
                         </div>
-                    </form>
-                </div>
+
+                    {% endfor %}
+
+                    <div class="d-grid gap-3 mt-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-natural btn-lg">
+
+                            <i class="fas fa-sign-in-alt me-2"></i>
+
+                            Přihlásit
+
+                        </button>
+
+                        <a href="{% url 'password_reset' %}"
+                           class="btn btn-natural-outline">
+
+                            <i class="fas fa-key me-2"></i>
+
+                            Zapomenuté heslo
+
+                        </a>
+
+                    </div>
+
+                </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}

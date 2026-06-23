@@ -1,57 +1,135 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Seznam obrázků{% endblock %}
+{% block title %}
+Galerie
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-4">
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
 
-    <h1 class="text-center mb-4">Seznam obrázků</h1>
+{% if messages %}
 
-    {% if user.is_staff %}
-        <div class="alert alert-info text-center">
-            Administrátorský přístup | Poslední přihlášení: {{ user.last_login|date:"d.m.Y H:i" }}
+    {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+
         </div>
-    {% endif %}
 
-    {% if perms.viewer.add_image %}
-        <div class="text-center mb-4">
-            <a href="{% url 'image_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Přidat nový obrázek</a>
-        </div>
-    {% endif %}
+    {% endfor %}
 
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for image in images %}
-            <div class="col">
-                <div class="card h-100 shadow-sm border-0">
-                    <a href="{% url 'image' image.id %}" class="text-decoration-none">
-                        <img src="{{ image.image.url }}"
-                             alt="{{ image.name|default:'Obrázek' }}"
-                             class="card-img-top img-fluid"
-                             style="height: 200px; object-fit: cover;"
-                             loading="lazy">
-                        {% if image.name %}
-                            <div class="card-body text-center p-2">
-                                <span class="text-dark">{{ image.name }}</span>
-                            </div>
-                        {% endif %}
-                    </a>
-                </div>
-            </div>
-        {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">Žádné obrázky k zobrazení</p>
-            </div>
-        {% endfor %}
-    </div>
+{% endif %}
 
-    <div class="mt-4">
-        {% include 'paginator.html' %}
-    </div>
+<div class="hero-section text-center mb-5">
+
+    <h1 class="page-title">
+        Galerie
+    </h1>
+
+    <p class="page-subtitle">
+        Ukázky prostředí, procedur a péče v salonu Loub-Natural.
+    </p>
+
 </div>
+
+{% if user.is_staff %}
+
+    <div class="admin-card text-center mb-5">
+
+        <h5>Administrátorský přístup</h5>
+
+        <p>
+
+            Poslední přihlášení:
+            {{ user.last_login|date:"d.m.Y H:i" }}
+
+        </p>
+
+    </div>
+
+{% endif %}
+
+{% if perms.viewer.add_image %}
+
+    <div class="text-center mb-5">
+
+        <a href="{% url 'image_create' %}"
+           class="btn btn-natural">
+
+            <i class="fas fa-plus me-2"></i>
+            Přidat nový obrázek
+
+        </a>
+
+    </div>
+
+{% endif %}
+
+<div class="row g-4">
+
+    {% for image in images %}
+
+        <div class="col-6 col-md-4 col-lg-3">
+
+            <div class="gallery-card">
+
+                <a href="{% url 'image' image.id %}"
+                   class="text-decoration-none">
+
+                    <img src="{{ image.image.url }}"
+                         alt="{{ image.name|default:'Obrázek' }}"
+                         class="gallery-image img-fluid"
+                         loading="lazy">
+
+                    {% if image.name %}
+
+                        <div class="gallery-caption text-center p-3">
+
+                            {{ image.name }}
+
+                        </div>
+
+                    {% endif %}
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="col-12">
+
+            <div class="natural-card text-center">
+
+                <p class="mb-0">
+
+                    Zatím zde nejsou žádné obrázky.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+<div class="mt-5">
+
+    {% include 'paginator.html' %}
+
+</div>
+
+</div>
+
 {% endblock %}

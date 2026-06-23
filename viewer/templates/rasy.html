@@ -1,84 +1,240 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Řasy{% endblock %}
+{% block title %}
+Řasy
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-4">
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-    {% endif %}
 
-    <h1 class="mb-4 text-center">Výběr procedury</h1>
+<div class="mb-4">
 
-    {% if user.is_authenticated and is_staff %}
-        <div class="card bg-light mb-4 text-center">
-            <div class="card-body py-2">
-                <small class="text-muted">Administrátorský přístup | Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</small>
-            </div>
-        </div>
-    {% endif %}
+    <a href="javascript:history.back()"
+       class="btn btn-natural-outline">
 
-    <div class="row g-3 mb-5">
-        {% for img in rasy1_images %}
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="card h-100 shadow-sm border-0">
-                    <a href="{% url 'image' pk=img.id %}">
-                        <img src="{{ img.image.url }}" alt="Řasy" class="card-img-top img-fluid rounded">
-                    </a>
-                    {% if user.is_authenticated and perms.viewer.change_image %}
-                        <div class="card-body p-2 d-flex justify-content-between">
-                            <a href="{% url 'image_update' pk=img.id %}?next={% url 'eyelash' %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            {% if perms.viewer.delete_image %}
-                                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'eyelash' %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Smazat?')"><i class="fas fa-trash"></i></a>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        {% empty %}
-            <p class="text-center text-muted">Zatím zde nejsou žádné obrázky.</p>
-        {% endfor %}
-    </div>
+        <i class="fas fa-arrow-left me-2"></i>
+        Zpět
 
-    {% if user.is_authenticated and perms.viewer.add_image %}
-        <div class="text-center mb-5">
-            <a href="{% url 'image_create' %}?next={% url 'eyelash' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Přidat obrázek</a>
-        </div>
-    {% endif %}
+    </a>
 
-    <div class="rasy-container border-top pt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Nabídka procedur</h3>
-            {% if perms.viewer.add_eyelash %}
-                <a href="{% url 'eyelash_create' %}?next={% url 'eyelash' %}" class="btn btn-sm btn-success">Přidat proceduru</a>
-            {% endif %}
-        </div>
-
-        <ul class="list-group list-group-flush">
-            {% for eyelash in eyelashs %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'eyelash_detail' eyelash.id %}" class="text-decoration-none fw-bold">{{ eyelash }}</a>
-
-                {% if perms.viewer.change_eyelash or perms.viewer.delete_eyelash %}
-                <div class="btn-group">
-                    {% if perms.viewer.change_eyelash %}
-                        <a href="{% url 'eyelash_update' eyelash.id %}?next={% url 'eyelash' %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                    {% endif %}
-                    {% if perms.viewer.delete_eyelash %}
-                        <a href="{% url 'eyelash_delete' eyelash.id %}?next={% url 'eyelash' %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Smazat proceduru?')"><i class="fas fa-trash"></i></a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
 </div>
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+<div class="hero-section text-center mb-5">
+
+    <h1 class="page-title">
+        Řasy
+    </h1>
+
+    <p class="page-subtitle">
+        Profesionální péče o řasy pro přirozený a elegantní vzhled.
+    </p>
+
+</div>
+
+{% if user.is_authenticated and is_staff %}
+
+    <div class="admin-card text-center mb-5">
+
+        <h5>Administrátorský přístup</h5>
+
+        <p>
+            Poslední přihlášení:
+            {{ last_login|date:"d.m.Y H:i" }}
+        </p>
+
+    </div>
+
+{% endif %}
+
+<div class="row g-4 mb-5">
+
+    {% for img in rasy1_images %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <div class="gallery-card">
+
+                <a href="{% url 'image' pk=img.id %}">
+
+                    <img src="{{ img.image.url }}"
+                         alt="Řasy"
+                         class="gallery-image img-fluid">
+
+                </a>
+
+                {% if user.is_authenticated and perms.viewer.change_image %}
+
+                    <div class="gallery-admin">
+
+                        <a href="{% url 'image_update' pk=img.id %}?next={% url 'eyelash' %}"
+                           class="btn btn-sm btn-natural-outline">
+
+                            <i class="fas fa-edit"></i>
+
+                        </a>
+
+                        {% if perms.viewer.delete_image %}
+
+                            <a href="{% url 'image_delete' pk=img.id %}?next={% url 'eyelash' %}"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+
+                                <i class="fas fa-trash"></i>
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="col-12">
+
+            <div class="empty-state text-center">
+
+                Zatím zde nejsou žádné obrázky.
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% if user.is_authenticated and perms.viewer.add_image %}
+
+    <div class="text-center mb-5">
+
+        <a href="{% url 'image_create' %}?next={% url 'eyelash' %}"
+           class="btn btn-natural">
+
+            <i class="fas fa-plus me-2"></i>
+            Přidat nový obrázek
+
+        </a>
+
+    </div>
+
+{% endif %}
+
+<div class="natural-card">
+
+    <h2 class="text-center mb-4">
+
+        Nabídka procedur
+
+    </h2>
+
+    {% if eyelashs %}
+
+        <div class="list-group list-group-flush">
+
+            {% for eyelash in eyelashs %}
+
+                <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+                    <a href="{% url 'eyelash_detail' eyelash.id %}"
+                       class="text-decoration-none fw-semibold">
+
+                        {{ eyelash }}
+
+                    </a>
+
+                    {% if user.is_authenticated %}
+
+                        <div class="d-flex gap-2">
+
+                            {% if perms.viewer.change_eyelash %}
+
+                                <a href="{% url 'eyelash_update' eyelash.id %}?next={% url 'eyelash' %}"
+                                   class="btn btn-sm btn-natural-outline">
+
+                                    <i class="fas fa-edit"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                            {% if perms.viewer.delete_eyelash %}
+
+                                <a href="{% url 'eyelash_delete' eyelash.id %}?next={% url 'eyelash' %}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Opravdu chcete smazat proceduru?')">
+
+                                    <i class="fas fa-trash"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-4">
+
+            Zatím zde nejsou žádné procedury.
+
+        </div>
+
+    {% endif %}
+
+    {% if perms.viewer.add_eyelash %}
+
+        <div class="text-center mt-5">
+
+            <a href="{% url 'eyelash_create' %}?next={% url 'eyelash' %}"
+               class="btn btn-natural">
+
+                <i class="fas fa-plus me-2"></i>
+                Přidat proceduru
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
 {% endblock %}
+
 

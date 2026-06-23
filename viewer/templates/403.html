@@ -1,14 +1,60 @@
 {% extends 'base.html' %}
 
-{% block title %}403 Forbidden{% endblock %}
+{% block title %}
+Přístup odepřen
+{% endblock %}
 
 {% block content %}
-<div class="container py-5 text-center">
-    <div class="alert alert-danger shadow" role="alert">
-        <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Chyba 403</h4>
-        <p>Litujeme, ale k této stránce nemáte dostatečná oprávnění.</p>
-        <hr>
-        <a href="{% url 'home' %}" class="btn btn-outline-danger">Zpět na hlavní stránku</a>
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <div class="natural-card text-center">
+
+                <div class="mb-4">
+
+                    <i class="fas fa-lock fa-3x text-warning"></i>
+
+                </div>
+
+                <h1 class="page-title mb-3">
+
+                    Přístup odepřen
+
+                </h1>
+
+                <p class="mb-4">
+
+                    Litujeme, ale k této stránce nemáte dostatečná oprávnění.
+
+                </p>
+
+                <p class="text-muted mb-5">
+
+                    Pokud se domníváte, že jde o chybu,
+                    kontaktujte správce webu.
+
+                </p>
+
+                <a href="{% url 'home' %}"
+                   class="btn btn-natural">
+
+                    <i class="fas fa-home me-2"></i>
+
+                    Zpět na hlavní stránku
+
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
+
 </div>
+
 {% endblock %}
+

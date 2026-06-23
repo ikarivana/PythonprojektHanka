@@ -1,10 +1,62 @@
 {% extends 'base.html' %}
 
-{% block title %}Cookie Počítadlo{% endblock %}
+{% block title %}
+Návštěvnost
+{% endblock %}
 
 {% block content %}
-<div class="container py-4 text-center">
-    <h1>Vítejte na stránce</h1>
-    <p class="lead">Navštívili jste tuto stránku celkem <strong>{{ visits }}x</strong></p>
+
+<div class="container py-5">
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="natural-card text-center">
+
+            <h1 class="page-title mb-4">
+
+                Vítejte na stránkách
+                <br>
+                Loub-Natural
+
+            </h1>
+
+            <p class="page-subtitle mb-5">
+
+                Děkujeme za Vaši návštěvu.
+
+            </p>
+
+            <div class="visit-counter mb-5">
+
+                <div class="visit-number">
+
+                    {{ visits }}
+
+                </div>
+
+                <div class="visit-label">
+
+                    návštěv
+
+                </div>
+
+            </div>
+
+            <p class="lead">
+
+                Těší nás Váš zájem o naše služby,
+                zdraví a péči o krásu.
+
+            </p>
+
+        </div>
+
+    </div>
+
 </div>
+
+</div>
+
 {% endblock %}

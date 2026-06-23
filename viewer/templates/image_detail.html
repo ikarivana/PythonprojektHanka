@@ -1,46 +1,139 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Detail obrázku{% endblock %}
+{% block title %}
+Detail obrázku
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-4">
-    <div class="navigation-back mb-4">
-        <a href="javascript:history.back()" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Zpět
-        </a>
-    </div>
 
-    <h2>Detail obrázku</h2>
+<div class="mb-4">
 
-    <div class="image-detail text-center my-4">
-        <img src="{{ image.image.url }}" alt="Detail obrázku" class="img-fluid rounded shadow">
-    </div>
+    <a href="javascript:history.back()"
+       class="btn btn-natural-outline">
 
-    <div class="card p-3 shadow-sm text-center">
-        <h5>Tento obrázek patří k:</h5>
-        <div class="mt-2">
-            {% if image.pedikura %}
-                <p>Pedikúra: <a href="{% url 'pedicure_detail' image.pedikura.id %}">{{ image.pedikura.name }}</a></p>
-            {% endif %}
+        <i class="fas fa-arrow-left me-2"></i>
+        Zpět
 
-            {% if image.rasy %}
-                <p>Řasy: <a href="{% url 'eyelash_detail' image.rasy.id %}">{{ image.rasy.name }}</a></p>
-            {% endif %}
+    </a>
 
-            {% if image.zdravi %}
-                <p>Zdraví: <a href="{% url 'health_detail' image.zdravi.id %}">{{ image.zdravi.name }}</a></p>
-            {% endif %}
-
-            {% if image.pedikura1 %}
-                <p>Stránka: Pedikúra</p>
-            {% endif %}
-        </div>
-    </div>
-    {% if user.is_authenticated and perms.viewer.change_image %}
-    <div class="text-center mt-3">
-        <a href="{% url 'image_update' image.id %}" class="btn btn-warning">Upravit</a>
-    </div>
-    {% endif %}
 </div>
+
+<div class="hero-section text-center mb-5">
+
+    <h1 class="page-title">
+        Detail fotografie
+    </h1>
+
+    <p class="page-subtitle">
+        Náhled fotografie z galerie Loub-Natural
+    </p>
+
+</div>
+
+<div class="text-center mb-5">
+
+    <img src="{{ image.image.url }}"
+         alt="Detail obrázku"
+         class="detail-image img-fluid rounded shadow">
+
+</div>
+
+<div class="natural-card">
+
+    <h2 class="text-center mb-4">
+
+        Zařazení fotografie
+
+    </h2>
+
+    {% if image.pedikura %}
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+            <strong>Pedikúra</strong>
+
+            <a href="{% url 'pedicure_detail' image.pedikura.id %}"
+               class="text-decoration-none">
+
+                {{ image.pedikura.name }}
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+    {% if image.rasy %}
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+            <strong>Řasy</strong>
+
+            <a href="{% url 'eyelash_detail' image.rasy.id %}"
+               class="text-decoration-none">
+
+                {{ image.rasy.name }}
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+    {% if image.zdravi %}
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+            <strong>Zdraví</strong>
+
+            <a href="{% url 'health_detail' image.zdravi.id %}"
+               class="text-decoration-none">
+
+                {{ image.zdravi.name }}
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+    {% if image.pedikura1 %}
+
+        <div class="d-flex justify-content-between align-items-center py-3">
+
+            <strong>Stránka</strong>
+
+            <span>
+
+                Pedikúra
+
+            </span>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% if user.is_authenticated and perms.viewer.change_image %}
+
+    <div class="text-center mt-5">
+
+        <a href="{% url 'image_update' image.id %}"
+           class="btn btn-natural">
+
+            <i class="fas fa-edit me-2"></i>
+            Upravit obrázek
+
+        </a>
+
+    </div>
+
+{% endif %}
+
+</div>
+
 {% endblock %}

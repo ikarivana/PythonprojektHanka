@@ -1,73 +1,263 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Vyhledávání {% if search %}'{{ search }}'{% endif %}
+Vyhledávání{% if search %} – {{ search }}{% endif %}
 {% endblock %}
 
 {% block content %}
-    <h1>Výsledky vyhledávání '{{ search }}'</h1>
 
-    <h2>Pedikúra</h2>
-    <ul>
-        {% for pedicure in pedicures %}
-            <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure.name }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
+<div class="container py-4">
 
-    <h2>Pedikúra - popis</h2>
-    <ul>
-        {% for pedicure in pedicures_description %}
-            <li><a href="{% url 'pedicure_detail' pedicure.id %}">{{ pedicure.name }} - {{ pedicure.description|truncatewords:30 }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
+<div class="mb-4">
 
-    <h2>Řasy</h2>
-    <ul>
-        {% for eyelash in eyelashes %}
-            <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash.name }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
+    <a href="javascript:history.back()"
+       class="btn btn-natural-outline">
 
-    <h2>Řasy - popis</h2>
-    <ul>
-        {% for eyelash in eyelashes_description %}
-            <li><a href="{% url 'eyelash_detail' eyelash.id %}">{{ eyelash.name }} - {{ eyelash.description|truncatewords:30 }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
+        <i class="fas fa-arrow-left me-2"></i>
+        Zpět
 
-    <h2>Zdraví</h2>
-    <ul>
-        {% for health in healths %}
-            <li><a href="{% url 'health_detail' health.id %}">{{ health.name }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
-    <h2>Zdraví - popis</h2>
-    <ul>
-        {% for health in healths_description %}
-            <li><a href="{% url 'health_detail' health.id %}">{{ health.name }} - {{ health.description|truncatewords:30 }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
+    </a>
 
-    <h2>Kontakty</h2>
-    <ul>
-        {% for contact in contacts %}
-            <li><a href="{% url 'contact_detail' contact.id %}">{{ contact.name }}</a></li>
-        {% empty %}
-            <li>Žádné výsledky</li>
-        {% endfor %}
-    </ul>
-    <hr>
+</div>
+
+<div class="hero-section text-center mb-5">
+
+    <h1 class="page-title">
+        Výsledky vyhledávání
+    </h1>
+
+    <p class="page-subtitle">
+        Hledaný výraz:
+        <strong>{{ search }}</strong>
+    </p>
+
+</div>
+
+<!-- PEDIKÚRA -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Pedikúra
+    </h2>
+
+    {% for pedicure in pedicures %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'pedicure_detail' pedicure.id %}"
+               class="fw-semibold text-decoration-none">
+
+                {{ pedicure.name }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- PEDIKÚRA POPIS -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Pedikúra – popis
+    </h2>
+
+    {% for pedicure in pedicures_description %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'pedicure_detail' pedicure.id %}"
+               class="text-decoration-none">
+
+                <strong>{{ pedicure.name }}</strong><br>
+
+                {{ pedicure.description|truncatewords:20 }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- ŘASY -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Řasy
+    </h2>
+
+    {% for eyelash in eyelashes %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'eyelash_detail' eyelash.id %}"
+               class="fw-semibold text-decoration-none">
+
+                {{ eyelash.name }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- ŘASY POPIS -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Řasy – popis
+    </h2>
+
+    {% for eyelash in eyelashes_description %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'eyelash_detail' eyelash.id %}"
+               class="text-decoration-none">
+
+                <strong>{{ eyelash.name }}</strong><br>
+
+                {{ eyelash.description|truncatewords:20 }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- ZDRAVÍ -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Zdraví
+    </h2>
+
+    {% for health in healths %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'health_detail' health.id %}"
+               class="fw-semibold text-decoration-none">
+
+                {{ health.name }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- ZDRAVÍ POPIS -->
+
+<div class="natural-card mb-4">
+
+    <h2 class="mb-4">
+        Zdraví – popis
+    </h2>
+
+    {% for health in healths_description %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'health_detail' health.id %}"
+               class="text-decoration-none">
+
+                <strong>{{ health.name }}</strong><br>
+
+                {{ health.description|truncatewords:20 }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<!-- KONTAKT -->
+
+<div class="natural-card">
+
+    <h2 class="mb-4">
+        Kontakt
+    </h2>
+
+    {% for contact in contacts %}
+
+        <div class="border-bottom py-3">
+
+            <a href="{% url 'contact_detail' contact.id %}"
+               class="fw-semibold text-decoration-none">
+
+                {{ contact.name }}
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p class="mb-0 text-muted">
+            Žádné výsledky.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+</div>
 
 {% endblock %}
+
+

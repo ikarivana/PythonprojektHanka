@@ -1,47 +1,100 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}Nová objednávka{% endblock %}
+{% block title %}
+Nová objednávka
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-5">
+
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white text-center py-3">
-                    <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Nová objednávka</h4>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post">
-                        {% csrf_token %}
 
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                                {% render_field field class="form-control" %}
+        <div class="col-lg-6 col-md-8">
 
-                                {% if field.help_text %}
-                                    <div class="form-text small">{{ field.help_text }}</div>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="text-danger small mt-1">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
+            <div class="natural-card">
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save me-2"></i>Uložit objednávku
-                            </button>
-                            <!-- Oprava odkazu pro zrušení (směřuje zpět na seznam nebo domů) -->
-                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Zrušit
-                            </a>
+                <h2 class="page-title text-center mb-4">
+
+                    <i class="fas fa-shopping-basket me-2"></i>
+
+                    Nová objednávka
+
+                </h2>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    {% for field in form %}
+
+                        <div class="mb-4">
+
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label fw-semibold">
+
+                                {{ field.label }}
+
+                            </label>
+
+                            {% render_field field class="form-control natural-input" %}
+
+                            {% if field.help_text %}
+
+                                <div class="form-text">
+
+                                    {{ field.help_text }}
+
+                                </div>
+
+                            {% endif %}
+
+                            {% for error in field.errors %}
+
+                                <div class="text-danger small mt-2">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
                         </div>
-                    </form>
-                </div>
+
+                    {% endfor %}
+
+                    <div class="d-grid gap-3 mt-5">
+
+                        <button type="submit"
+                                class="btn btn-natural">
+
+                            <i class="fas fa-save me-2"></i>
+
+                            Uložit objednávku
+
+                        </button>
+
+                        <a href="{% url 'home' %}"
+                           class="btn btn-natural-outline">
+
+                            <i class="fas fa-arrow-left me-2"></i>
+
+                            Zrušit
+
+                        </a>
+
+                    </div>
+
+                </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}
+

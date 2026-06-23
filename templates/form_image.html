@@ -1,75 +1,171 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}Formulář{% endblock %}
+{% block title %}
+Formulář
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white text-center py-3">
-                    <h4 class="mb-0">
-                        {% if 'login' in request.path %}Přihlášení{% else %}Formulář{% endif %}
-                    </h4>
-                </div>
 
-                <div class="card-body p-4">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6 col-md-8">
+
+            <div class="natural-card">
+
+                <h2 class="page-title text-center mb-4">
+
+                    {% if 'login' in request.path %}
+
+                        Přihlášení
+
+                    {% else %}
+
+                        Formulář
+
                     {% endif %}
 
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
+                </h2>
 
-                        {% for field in form %}
-                            {% if "Zobrazit" not in field.label %}
-                                <div class="mb-3">
-                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                                    {% render_field field class="form-control" %}
-                                    {% if field.help_text %}
-                                        <div class="form-text small">{{ field.help_text }}</div>
-                                    {% endif %}
-                                    {% for error in field.errors %}
-                                        <div class="text-danger small mt-1">{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+                {% if messages %}
 
-                        <h6 class="mt-4 mb-3 pb-2 border-bottom text-muted">Nastavení viditelnosti</h6>
-                        <div class="row">
-                            {% for field in form %}
-                                {% if "Zobrazit" in field.label %}
-                                    <div class="col-md-6 mb-2">
-                                        <div class="form-check form-switch">
-                                            {% render_field field class="form-check-input" role="switch" %}
-                                            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
+                    {% for message in messages %}
+
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                            {{ message }}
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"></button>
+
                         </div>
 
-                        {% if request.GET.next %}
-                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endfor %}
+
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    {% for field in form %}
+
+                        {% if "Zobrazit" not in field.label %}
+
+                            <div class="mb-4">
+
+                                <label for="{{ field.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    {{ field.label }}
+
+                                </label>
+
+                                {% render_field field class="form-control natural-input" %}
+
+                                {% if field.help_text %}
+
+                                    <div class="form-text">
+
+                                        {{ field.help_text }}
+
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in field.errors %}
+
+                                    <div class="text-danger small mt-2">
+
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
                         {% endif %}
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-save me-2"></i>Uložit
-                            </button>
-                            <a href="javascript:history.back()" class="btn btn-outline-secondary">Zpět</a>
-                        </div>
-                    </form>
-                </div>
+                    {% endfor %}
+
+                    <h4 class="mt-5 mb-3">
+
+                        Nastavení viditelnosti
+
+                    </h4>
+
+                    <div class="row">
+
+                        {% for field in form %}
+
+                            {% if "Zobrazit" in field.label %}
+
+                                <div class="col-md-6 mb-3">
+
+                                    <div class="form-check form-switch">
+
+                                        {% render_field field class="form-check-input" role="switch" %}
+
+                                        <label class="form-check-label"
+                                               for="{{ field.id_for_label }}">
+
+                                            {{ field.label }}
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% if request.GET.next %}
+
+                        <input type="hidden"
+                               name="next"
+                               value="{{ request.GET.next }}">
+
+                    {% endif %}
+
+                    <div class="d-grid gap-3 mt-5">
+
+                        <button type="submit"
+                                class="btn btn-natural">
+
+                            <i class="fas fa-save me-2"></i>
+
+                            Uložit
+
+                        </button>
+
+                        <a href="javascript:history.back()"
+                           class="btn btn-natural-outline">
+
+                            <i class="fas fa-arrow-left me-2"></i>
+
+                            Zpět
+
+                        </a>
+
+                    </div>
+
+                </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}
+

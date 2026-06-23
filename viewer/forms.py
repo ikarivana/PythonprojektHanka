@@ -123,12 +123,12 @@ class ImageModelForm(ModelForm):
 
     class Meta:
         model = Image
-        fields = '__all__'  # Nebo specifikujte pole, např. ['image', 'is_home', ...]
+        exclude = ['rasy', 'rasy1']
+
         widgets = {
             'image': forms.ClearableFileInput(attrs={
                 'class': 'form-control'
             }),
-            # Pokud máte checkbox pole, přidejte pro ně 'class': 'form-check-input'
         }
 
 

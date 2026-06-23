@@ -1,67 +1,206 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
-{% block title %}Kontakt | Loub-Natural{% endblock %}
+{% block title %}
+Kontakt | Loub-Natural
+{% endblock %}
 
 {% block content %}
+
 <div class="container py-5">
+
     <div class="mb-4">
-        <a href="javascript:history.back()" class="btn btn-link text-decoration-none text-muted p-0">
-            <i class="fas fa-arrow-left me-2"></i>Zpět
+
+        <a href="javascript:history.back()"
+           class="btn btn-natural-outline">
+
+            <i class="fas fa-arrow-left me-2"></i>
+            Zpět
+
         </a>
+
+    </div>
+
+    <div class="hero-section text-center mb-5">
+
+        <h1 class="page-title">
+
+            Kontaktujte mě
+
+        </h1>
+
+        <p class="page-subtitle">
+
+            Ráda Vám odpovím na dotazy ohledně pedikúry,
+            zdraví nebo objednání termínu.
+
+        </p>
+
     </div>
 
     <div class="row g-5">
-        <div class="col-lg-5">
-            <div class="card h-100 border-0 shadow-sm p-4 rounded-4" style="background: #f8f9fa;">
-                <h4 class="mb-4 text-dark"><i class="fas fa-user-circle me-2"></i>Hana Loubalová</h4>
-                <p><i class="fas fa-map-marker-alt me-2 text-dark"></i> Vodní 453, 760 01 Zlín</p>
-                <p><i class="fas fa-id-card me-2 text-dark"></i> IČO: 09076247</p>
+
+        <!-- Kontaktní údaje -->
+
+        <div class="col-lg-6">
+
+            <div class="natural-card h-100">
+
+                <h3 class="mb-4">
+
+                    <i class="fas fa-user-circle me-2"></i>
+
+                    Hana Loubalová
+
+                </h3>
+
+                <div class="contact-info">
+
+                    <p>
+
+                        <i class="fas fa-map-marker-alt"></i>
+
+                        Vodní 453, 760 01 Zlín
+
+                    </p>
+
+                    <p>
+
+                        <i class="fas fa-phone"></i>
+
+                        +420 605 423 734
+
+                    </p>
+
+                    <p>
+
+                        <i class="fas fa-envelope"></i>
+
+                        loub.natural@gmail.com
+
+                    </p>
+
+                    <p>
+
+                        <i class="fas fa-id-card"></i>
+
+                        IČO: 09076247
+
+                    </p>
+
+                </div>
 
                 {% if contact1_images %}
-                    <div class="mt-4">
-                        <h6 class="text-muted small text-uppercase">Naše prostory</h6>
-                        <div class="row g-2">
+
+                    <div class="mt-5">
+
+                        <h5 class="mb-4">
+
+                            Naše prostory
+
+                        </h5>
+
+                        <div class="row g-3">
+
                             {% for img in contact1_images %}
+
                                 <div class="col-6">
-                                    <img src="{{ img.image.url }}" class="img-fluid rounded-3 shadow-sm" alt="Prostory">
+
+                                    <img
+                                        src="{{ img.image.url }}"
+                                        alt="Prostory"
+                                        class="contact-image img-fluid"
+                                        loading="lazy">
+
                                 </div>
+
                             {% endfor %}
+
                         </div>
+
                     </div>
+
                 {% endif %}
+
             </div>
+
         </div>
 
-        <div class="col-lg-7">
-            <div class="card shadow-lg border-0 p-4 p-md-5 rounded-4">
-                <h4 class="mb-4">Pošlete mi zprávu</h4>
+        <!-- Formulář -->
 
-                <style>
-                    /* Zde vynutíme vzhled bez modré barvy */
-                    .form-control { border: 1px solid #ced4da !important; background: #fff !important; color: #333 !important; }
-                    .btn-primary { background-color: #28a745 !important; border-color: #28a745 !important; } /* Zelená barva tlačítka */
-                </style>
+        <div class="col-lg-6">
+
+            <div class="natural-card h-100">
+
+                <h3 class="mb-4">
+
+                    <i class="fas fa-envelope me-2"></i>
+
+                    Pošlete mi zprávu
+
+                </h3>
 
                 <form method="post">
+
                     {% csrf_token %}
+
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Vaše jméno</label>
-                        {{ form.name }}
+
+                        <label class="form-label fw-semibold">
+
+                            Vaše jméno
+
+                        </label>
+
+                        {{ form.name|add_class:"form-control natural-input" }}
+
                     </div>
+
                     <div class="mb-4">
-                        <label class="form-label fw-bold">E-mailová adresa</label>
-                        {{ form.email }}
+
+                        <label class="form-label fw-semibold">
+
+                            E-mailová adresa
+
+                        </label>
+
+                        {{ form.email|add_class:"form-control natural-input" }}
+
                     </div>
+
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Vaše zpráva</label>
-                        {{ form.message }}
+
+                        <label class="form-label fw-semibold">
+
+                            Vaše zpráva
+
+                        </label>
+
+                        {{ form.message|add_class:"form-control natural-input" }}
+
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3">
-                        <i class="fas fa-paper-plane me-2"></i>Odeslat zprávu
+
+                    <button
+                        type="submit"
+                        class="btn btn-natural w-100">
+
+                        <i class="fas fa-paper-plane me-2"></i>
+
+                        Odeslat zprávu
+
                     </button>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}
+
+

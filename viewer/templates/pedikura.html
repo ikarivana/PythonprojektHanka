@@ -6,91 +6,217 @@ Pedikúra
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="navigation-back" style="margin: 20px 0;">
-        <a href="javascript:history.back()" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Zpět
-        </a>
-    </div>
+
+<div class="container py-4">
 
     {% if messages %}
-    <div class="messages">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
+
+            </div>
         {% endfor %}
-    </div>
     {% endif %}
 
-    <h1>Výběr procedury</h1>
+    <div class="hero-section text-center mb-5">
+
+        <h1 class="page-title">
+            Pedikúra
+        </h1>
+
+        <p class="page-subtitle">
+            Profesionální péče o chodidla, pohodlí a zdravý vzhled vašich nohou.
+        </p>
+
+    </div>
 
     {% if user.is_authenticated and is_staff %}
-        <div class="admin-panel" style="margin-bottom: 20px;">
-            <p class="admin-label">Administrátorský přístup</p>
-            <p class="last-login">Poslední přihlášení: {{ last_login|date:"d.m.Y H:i" }}</p>
+
+        <div class="admin-card text-center mb-5">
+
+            <h5>Administrátorský přístup</h5>
+
+            <p>
+                Poslední přihlášení:
+                {{ last_login|date:"d.m.Y H:i" }}
+            </p>
+
         </div>
+
     {% endif %}
 
-    <div class="home-container">
-        {% for img in pedikura1_images %}
-        <div class="image-item" style="margin-bottom: 20px;">
-            <a href="{% url 'image' pk=img.id %}">
-                <img src="{{ img.image.url }}" alt="pedikúra" class="img-fluid">
-            </a>
+    <div class="row g-4 mb-5">
 
-            {% if user.is_authenticated and perms.viewer.change_image %}
-            <div class="image-controls mt-2">
-                <a href="{% url 'image_update' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-edit" title="Upravit">
-                    <i class="fas fa-edit"></i>
-                </a>
-                {% if perms.viewer.delete_image %}
-                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'pedicure' %}" class="btn btn-delete" title="Smazat"
-                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
-                    <i class="fas fa-trash"></i>
-                </a>
-                {% endif %}
+        {% for img in pedikura1_images %}
+
+            <div class="col-12 col-md-6 col-lg-4">
+
+                <div class="gallery-card">
+
+                    <a href="{% url 'image' pk=img.id %}">
+
+                        <img src="{{ img.image.url }}"
+                             alt="Pedikúra"
+                             class="gallery-image img-fluid">
+
+                    </a>
+
+                    {% if user.is_authenticated and perms.viewer.change_image %}
+
+                        <div class="gallery-admin">
+
+                            <a href="{% url 'image_update' pk=img.id %}?next={% url 'pedicure' %}"
+                               class="btn btn-sm btn-natural-outline">
+
+                                <i class="fas fa-edit"></i>
+
+                            </a>
+
+                            {% if perms.viewer.delete_image %}
+
+                                <a href="{% url 'image_delete' pk=img.id %}?next={% url 'pedicure' %}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Opravdu chcete smazat tento obrázek?')">
+
+                                    <i class="fas fa-trash"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
             </div>
-            {% endif %}
-        </div>
+
         {% empty %}
-        <p class="no-images">Zatím zde nejsou žádné obrázky.</p>
+
+            <div class="col-12">
+
+                <div class="empty-state text-center">
+
+                    Zatím zde nejsou žádné obrázky.
+
+                </div>
+
+            </div>
+
         {% endfor %}
 
-        {% if user.is_authenticated and perms.viewer.add_image %}
-        <div class="mt-3">
-            <a href="{% url 'image_create' %}?next={% url 'pedicure' %}" class="btn btn-primary">Přidat nový obrázek</a>
+    </div>
+
+    {% if user.is_authenticated and perms.viewer.add_image %}
+
+        <div class="text-center mb-5">
+
+            <a href="{% url 'image_create' %}?next={% url 'pedicure' %}"
+               class="btn btn-natural">
+
+                <i class="fas fa-plus me-2"></i>
+                Přidat nový obrázek
+
+            </a>
+
         </div>
+
+    {% endif %}
+
+    <div class="natural-card">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+            <h2 class="mb-0">
+                Nabídka procedur
+            </h2>
+
+            {% if user.is_authenticated and perms.viewer.add_pedikura %}
+
+                <a href="{% url 'pedicure_create' %}?next={% url 'pedicure' %}"
+                   class="btn btn-natural">
+
+                    <i class="fas fa-plus me-2"></i>
+                    Přidat proceduru
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        {% if pedicures %}
+
+            <div class="list-group list-group-flush">
+
+                {% for pedicure in pedicures %}
+
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+                        <a href="{% url 'pedicure_detail' pedicure.id %}"
+                           class="text-decoration-none fw-semibold">
+
+                            {{ pedicure }}
+
+                        </a>
+
+                        {% if user.is_authenticated %}
+
+                            <div class="d-flex gap-2">
+
+                                {% if perms.viewer.change_pedikura %}
+
+                                    <a href="{% url 'pedicure_update' pedicure.id %}?next={% url 'pedicure' %}"
+                                       class="btn btn-sm btn-natural-outline">
+
+                                        <i class="fas fa-edit"></i>
+
+                                    </a>
+
+                                {% endif %}
+
+                                {% if perms.viewer.delete_pedikura %}
+
+                                    <a href="{% url 'pedicure_delete' pedicure.id %}?next={% url 'pedicure' %}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Opravdu chcete smazat tuto proceduru?')">
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+
+                <p class="mb-0">
+                    Zatím zde nejsou žádné procedury.
+                </p>
+
+            </div>
+
         {% endif %}
+
     </div>
 
-    <div class="pedikura-container mt-4">
-        {% if user.is_authenticated and perms.viewer.add_pedikura %}
-        <a href="{% url 'pedicure_create' %}?next={% url 'pedicure' %}" class="btn btn-primary mb-3">Přidat proceduru</a>
-        {% endif %}
-
-        <ul class="procedure-list list-unstyled">
-            {% for pedicure in pedicures %}
-            <li class="procedure-item border-bottom py-2">
-                <a href="{% url 'pedicure_detail' pedicure.id %}" class="procedure-link text-decoration-none">{{ pedicure }}</a>
-                {% if user.is_authenticated %}
-                <div class="procedure-controls d-inline-block ml-3">
-                    {% if perms.viewer.change_pedikura %}
-                    <a href="{% url 'pedicure_update' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-edit" title="Upravit">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    {% endif %}
-                    {% if perms.viewer.delete_pedikura %}
-                    <a href="{% url 'pedicure_delete' pedicure.id %}?next={% url 'pedicure' %}" class="btn btn-delete" title="Smazat"
-                       onclick="return confirm('Opravdu chcete smazat tuto proceduru?')">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
 </div>
+
 {% endblock %}
