@@ -26,7 +26,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY' , default='django-insecure-gl-)z0l8z+q-3!l7l0&g*e!n6z7hk@@7u1e2x04&#4a!r3=2l^7p72)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['loubnatural-9058.rostiapp.cz', 'loubnatural.cz', 'localhost', '127.0.0.1']
 
