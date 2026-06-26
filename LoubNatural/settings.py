@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_ckeditor_5',
     'accounts',
     'django_dump_load_utf8',
     'viewer.apps.ViewerConfig',
@@ -146,3 +147,23 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading',
+            '|',
+            'bold', 'italic', 'underline',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'insertTable',
+            'insertImage',
+            'blockQuote',
+            '|',
+            'undo',
+            'redo',
+        ],
+    },
+}

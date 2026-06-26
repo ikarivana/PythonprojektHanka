@@ -14,11 +14,12 @@ from django.db.models import (
 )
 from django.contrib.auth.models import User
 from accounts.models import Profile
+from django_ckeditor_5.fields import CKEditor5Field
 
 class Pedikura(Model):
     name = CharField(max_length=30, null=False, blank=False, unique=True)
     procedure_time = IntegerField(null=False, blank=False)
-    description = TextField(max_length=5000, null=True, blank=True)
+    description = CKEditor5Field("Popis", config_name="default", blank=True, null=True)
     price = IntegerField(null=False, blank=False)
     created = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
@@ -53,7 +54,7 @@ class Rasy(Model):
 
 class Zdravi(Model):
     name = CharField(max_length=30, null=False, blank=False, unique=True)
-    description = TextField(max_length=5000, null=True, blank=True)
+    description = CKEditor5Field("Popis", config_name="default", blank=True, null=True)
     created = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
 
@@ -199,7 +200,7 @@ class Image(Model):
 
 class Novinky(models.Model):
     titulek = models.CharField(max_length=200)
-    obsah = models.TextField()
+    obsah = CKEditor5Field("Obsah", config_name="default")
     datum_vytvoreni = models.DateTimeField(auto_now_add=True)
     obrazek = models.ImageField(upload_to='novinky/', null=True, blank=True)
     publikovano = models.BooleanField(default=True)

@@ -33,7 +33,7 @@ from viewer.views import (
     HealthListView, HealthDetailView, HealthCreateView, HealthUpdateView, HealthDeleteView,
     ContactListView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView,
     ImageCreateView, ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView,
-    OrderListView, OrderCreateView, OrderDeleteView
+    OrderListView, OrderCreateView, OrderDeleteView, ContactSuccessView
 )
 
 urlpatterns = [
@@ -115,6 +115,8 @@ urlpatterns = [
                   path('', include(('viewer.urls', 'viewer'), namespace='viewer')),
                   path('', views.index, name='index'),
                   path('gdpr/', TemplateView.as_view(template_name='gdpr.html'), name='gdpr'),
+                  path("kontakt/dekujeme/",ContactSuccessView.as_view(),name="contact_success"),
+                  path("ckeditor5/", include("django_ckeditor_5.urls")),
 
               ]
 

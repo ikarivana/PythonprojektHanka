@@ -69,7 +69,12 @@ Kontakt | Loub-Natural
 
                         <i class="fas fa-phone"></i>
 
-                        +420 605 423 734
+                        <a href="tel:+420605423734"
+                           class="text-decoration-none text-dark">
+
+                            +420 605 423 734
+
+                        </a>
 
                     </p>
 
@@ -77,7 +82,12 @@ Kontakt | Loub-Natural
 
                         <i class="fas fa-envelope"></i>
 
-                        loub.natural@gmail.com
+                        <a href="mailto:loub.natural@gmail.com"
+                           class="text-decoration-none text-dark">
+
+                            loub.natural@gmail.com
+
+                        </a>
 
                     </p>
 
@@ -141,6 +151,34 @@ Kontakt | Loub-Natural
 
                 </h3>
 
+                {% if messages %}
+                    {% for message in messages %}
+
+                        <div class="alert alert-success alert-dismissible fade show"
+                             role="alert">
+
+                            {{ message }}
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+
+                        </div>
+
+                        {% if message.tags == 'success' %}
+                        <script>
+                            if (typeof gtag === 'function') {
+                                gtag('event', 'generate_lead', {
+                                    form_name: 'contact_form'
+                                });
+                            }
+                        </script>
+                        {% endif %}
+
+                    {% endfor %}
+                {% endif %}
+
                 <form method="post">
 
                     {% csrf_token %}
@@ -202,5 +240,4 @@ Kontakt | Loub-Natural
 </div>
 
 {% endblock %}
-
 

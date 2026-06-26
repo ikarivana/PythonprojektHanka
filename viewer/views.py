@@ -51,6 +51,7 @@ from viewer.models import (
     ContactReview
 )
 from .mixins import StaffRequiredMixin
+from django.views.generic import TemplateView
 
 
 def home(request):
@@ -427,11 +428,16 @@ class ContactListView(ListView):
             # send_mail('Nová zpráva z webu', f'Od: {name} ({email})\n\n{message}',
             #           'vas-email@domena.cz', ['prijemce@domena.cz'])
 
-            messages.success(request, 'Vaše zpráva byla úspěšně odeslána. Děkujeme!')
+            return redirect('contact_success')
             return redirect('contact')  # Přesměrování po úspěchu
 
         # Pokud formulář není validní, znovu vykreslíme stránku s chybami
         return self.render_to_response(self.get_context_data(form=form))
+
+
+
+class ContactSuccessView(TemplateView):
+    template_name = "contact_success.html"
 
 class ContactDetailView(DetailView):
     template_name = 'contacte.html'
