@@ -20,57 +20,57 @@
 
         {% for image in pedicure_detail.images.all %}
 
-            <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-12 col-sm-6 col-lg-3">
 
-                <div class="gallery-card">
+            <div class="gallery-card">
 
-                    <a href="{% url 'image' pk=image.id %}">
+                <a href="{% url 'image' pk=image.id %}">
 
-                        <img src="{{ image.image.url }}"
-                             alt="{{ image.name }}"
-                             class="gallery-image img-fluid">
+                    <img src="{{ image.image.url }}"
+                         alt="{{ image.name }}"
+                         class="gallery-image img-fluid">
+
+                </a>
+
+                {% if user.is_authenticated and perms.viewer.change_image %}
+
+                <div class="gallery-admin">
+
+                    <a href="{% url 'image_update' pk=image.id %}?next={{ request.path }}"
+                       class="btn btn-sm btn-natural-outline">
+
+                        <i class="fas fa-edit"></i>
 
                     </a>
 
-                    {% if user.is_authenticated and perms.viewer.change_image %}
+                    {% if perms.viewer.delete_image %}
 
-                        <div class="gallery-admin">
+                    <a href="{% url 'image_delete' pk=image.id %}?next={{ request.path }}"
+                       class="btn btn-sm btn-outline-danger">
 
-                            <a href="{% url 'image_update' pk=image.id %}?next={{ request.path }}"
-                               class="btn btn-sm btn-natural-outline">
+                        <i class="fas fa-trash"></i>
 
-                                <i class="fas fa-edit"></i>
-
-                            </a>
-
-                            {% if perms.viewer.delete_image %}
-
-                                <a href="{% url 'image_delete' pk=image.id %}?next={{ request.path }}"
-                                   class="btn btn-sm btn-outline-danger">
-
-                                    <i class="fas fa-trash"></i>
-
-                                </a>
-
-                            {% endif %}
-
-                        </div>
+                    </a>
 
                     {% endif %}
 
                 </div>
 
+                {% endif %}
+
             </div>
+
+        </div>
 
         {% empty %}
 
-            <div class="col-12">
+        <div class="col-12">
 
-                <div class="empty-state text-center">
-                    Zatím zde nejsou žádné obrázky.
-                </div>
-
+            <div class="empty-state text-center">
+                Zatím zde nejsou žádné obrázky.
             </div>
+
+        </div>
 
         {% endfor %}
 
@@ -78,17 +78,17 @@
 
     {% if user.is_authenticated and perms.viewer.add_image %}
 
-        <div class="text-center mb-5">
+    <div class="text-center mb-5">
 
-            <a href="{% url 'image_create' %}?next={{ request.path }}"
-               class="btn btn-natural">
+        <a href="{% url 'image_create' %}?next={{ request.path }}"
+           class="btn btn-natural">
 
-                <i class="fas fa-plus me-2"></i>
-                Přidat nový obrázek
+            <i class="fas fa-plus me-2"></i>
+            Přidat nový obrázek
 
-            </a>
+        </a>
 
-        </div>
+    </div>
 
     {% endif %}
 
@@ -122,41 +122,39 @@
 
         <hr>
 
-        <div class="mt-4">
-
-            {{ pedicure_detail.description|linebreaks }}
-
+        <div class="mt-4 ck-content">
+            {{ pedicure_detail.description|safe }}
         </div>
 
         {% if perms.viewer.change_pedikura or perms.viewer.delete_pedikura %}
 
-            <div class="text-center mt-5">
+        <div class="text-center mt-5">
 
-                {% if perms.viewer.change_pedikura %}
+            {% if perms.viewer.change_pedikura %}
 
-                    <a href="{% url 'pedicure_update' pedicure_detail.id %}"
-                       class="btn btn-natural me-2">
+            <a href="{% url 'pedicure_update' pedicure_detail.id %}"
+               class="btn btn-natural me-2">
 
-                        <i class="fas fa-edit me-2"></i>
-                        Upravit
+                <i class="fas fa-edit me-2"></i>
+                Upravit
 
-                    </a>
+            </a>
 
-                {% endif %}
+            {% endif %}
 
-                {% if perms.viewer.delete_pedikura %}
+            {% if perms.viewer.delete_pedikura %}
 
-                    <a href="{% url 'pedicure_delete' pedicure_detail.id %}"
-                       class="btn btn-outline-danger">
+            <a href="{% url 'pedicure_delete' pedicure_detail.id %}"
+               class="btn btn-outline-danger">
 
-                        <i class="fas fa-trash me-2"></i>
-                        Smazat
+                <i class="fas fa-trash me-2"></i>
+                Smazat
 
-                    </a>
+            </a>
 
-                {% endif %}
+            {% endif %}
 
-            </div>
+        </div>
 
         {% endif %}
 

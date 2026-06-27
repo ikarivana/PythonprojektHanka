@@ -17,15 +17,14 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.generic import TemplateView
-
 from LoubNatural import settings
 from accounts.views import (
     user_logout,
     SignUpView,
 )
-from viewer import views
 from viewer.views import (
     search_view, name_day,
     PedicureListView, PedicureDetailView, PedicureCreateView, PedicureUpdateView, PedicureDeleteView,
@@ -35,6 +34,12 @@ from viewer.views import (
     ImageCreateView, ImageListView, ImageDetailView, ImageUpdateView, ImageDeleteView,
     OrderListView, OrderCreateView, OrderDeleteView, ContactSuccessView
 )
+from viewer import views
+from viewer.sitemaps import StaticViewSitemap
+
+sitemaps = {
+    "static": StaticViewSitemap,
+}
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
@@ -117,8 +122,18 @@ urlpatterns = [
                   path('gdpr/', TemplateView.as_view(template_name='gdpr.html'), name='gdpr'),
                   path("kontakt/dekujeme/",ContactSuccessView.as_view(),name="contact_success"),
                   path("ckeditor5/", include("django_ckeditor_5.urls")),
+                  path("robots.txt", views.robots_txt, name="robots_txt"),
 
-              ]
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain",
+        ),
+    ),
+]
+
+
 
 urlpatterns += static(
     settings.MEDIA_URL,
