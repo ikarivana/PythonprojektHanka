@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from django.forms.widgets import ClearableFileInput
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from .models import Order, Novinky
 from viewer.models import (
@@ -85,7 +85,14 @@ class ContactReviewForm(BaseReviewForm):
 class PedikuraModelForm(forms.ModelForm):
     class Meta:
         model = Pedikura
-        fields = '__all__'
+        fields = "__all__"
+
+        widgets = {
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"},
+                config_name="default",
+            )
+        }
 
 
 class RasyModelForm(forms.ModelForm):
@@ -97,7 +104,14 @@ class RasyModelForm(forms.ModelForm):
 class ZdraviModelForm(forms.ModelForm):
     class Meta:
         model = Zdravi
-        fields = '__all__'
+        fields = "__all__"
+
+        widgets = {
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"},
+                config_name="default",
+            )
+        }
 
 
 class ContactModelForm(forms.ModelForm):
@@ -152,11 +166,10 @@ class NovinkyForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Zadejte titulek novinky'
             }),
-            'obsah': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 5,
-                'placeholder': 'Zadejte obsah novinky'
-            }),
+            'obsah': CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"},
+                config_name="default",
+            ),
             'obrazek': forms.ClearableFileInput(attrs={
                 'class': 'form-control'
             }),
