@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{% block title %}Loub Natural{% endblock %}</title>
+    <title>{% block title %}LoubNatural{% endblock %}</title>
 
     <meta name="description"
           content="{% block description %}Profesionální pedikúra, péče o nohy a přírodní kosmetika Loub Natural.{% endblock %}">
@@ -16,7 +16,7 @@
 
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
-    <meta name="msvalidate.01" content="335334681C7DCB402663C85BBBC15799" />
+    <meta name="msvalidate.01" content="335334681C7DCB402663C85BBBC15799"/>
 
     <link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
 
@@ -63,6 +63,8 @@
     <link rel="stylesheet"
           href="{% static 'css/uprava.css' %}">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -77,53 +79,45 @@
 </main>
 
 <footer class="footer-custom">
-
     <div class="container">
-
         <div class="footer-content">
+            <h5>LoubNatural</h5>
+            <p>Pedikúra • Zdraví • Péče o tělo</p>
+            <small>© 2026 LoubNatural</small>
 
-            <h5>Loub Natural</h5>
+            <div style="margin-top: 10px;">
+                <a href="#" id="openCookieSettings"
+                   style="cursor: pointer; font-size: 0.85rem; color: #555; text-decoration: underline;">
+                    Nastavení cookies
+                </a>
+            </div>
 
-            <p>
-                Pedikúra • Zdraví • Péče o tělo
-            </p>
-
-            <small>
-                © 2026 Loub Natural
-            </small>
-
+            <!-- ZDE PŘIDEJTE IKONY SOCIÁLNÍCH SÍTÍ -->
+            <div class="social-links" style="margin-top: 15px;">
+                <a href="https://www.facebook.com/loub.natural" target="_blank" rel="noopener noreferrer" style="margin-right: 15px; color: #333;">
+                    <i class="fab fa-facebook fa-lg"></i>
+                </a>
+                <a href="https://www.instagram.com/loub.natural?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" style="color: #333;">
+                    <i class="fab fa-instagram fa-lg"></i>
+                </a>
+            </div>
         </div>
-
     </div>
-
 </footer>
-
 
 <!-- COOKIE BANNER -->
 
-<div id="cookie-banner" class="cookie-banner">
+<div id="cookie-banner" class="cookie-banner" style="display: none;">
 
     <div class="cookie-content">
-
         <p>
-
             Tento web používá nezbytné cookies a se souhlasem také analytické
             cookies pro měření návštěvnosti.
-
         </p>
-
         <div class="cookie-buttons">
-
-            <button id="acceptCookies" class="btn btn-success">
-                Přijmout vše
-            </button>
-
-            <button id="rejectCookies" class="btn btn-outline-secondary">
-                Pouze nezbytné
-            </button>
-
+            <button id="acceptCookies" class="btn btn-success">Přijmout vše</button>
+            <button id="rejectCookies" class="btn btn-outline-secondary">Pouze nezbytné</button>
         </div>
-
     </div>
 
 </div>
@@ -133,49 +127,60 @@
 
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const banner = document.getElementById("cookie-banner");
+        const acceptBtn = document.getElementById("acceptCookies");
+        const rejectBtn = document.getElementById("rejectCookies");
+        const settingsLink = document.getElementById("openCookieSettings");
 
-const banner = document.getElementById("cookie-banner");
+        // Funkce pro zjištění souhlasu
+        function hasConsent() {
+            return document.cookie.split(';').some((item) => item.trim().startsWith('cookieConsent='));
+        }
 
-const consent = localStorage.getItem("cookieConsent");
+        // 1. Při načtení: Zobrazit banner, pokud není udělen souhlas
+        if (!hasConsent() && banner) {
+            banner.style.removeProperty('display');
+        }
 
-if (!consent) {
-    banner.style.display = "block";
-}
+        // 2. Akce pro "Přijmout vše"
+        if (acceptBtn) {
+            acceptBtn.addEventListener("click", function () {
+                document.cookie = "cookieConsent=accepted; path=/; max-age=31536000";
+                if (banner) banner.style.display = "none";
+                gtag('consent', 'update', {
+                    'analytics_storage': 'granted',
+                    'ad_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted'
+                });
+            });
+        }
 
-if (consent === "accepted") {
+        // 3. Akce pro "Pouze nezbytné"
+        if (rejectBtn) {
+            rejectBtn.addEventListener("click", function () {
+                document.cookie = "cookieConsent=rejected; path=/; max-age=31536000";
+                if (banner) banner.style.display = "none";
+            });
+        }
 
-    gtag('consent', 'update', {
-        analytics_storage: 'granted',
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'granted'
+        // 4. Akce pro odkaz v patičce: zobrazit banner a posunout stránku
+        if (settingsLink && banner) {
+            settingsLink.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                // Zobrazit banner
+                banner.style.removeProperty('display');
+
+                // Plynulé posunutí k patičce
+                document.querySelector('.footer-custom').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
     });
-
-}
-
-document.getElementById("acceptCookies").addEventListener("click", function () {
-
-    localStorage.setItem("cookieConsent", "accepted");
-
-    gtag('consent', 'update', {
-        analytics_storage: 'granted',
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'granted'
-    });
-
-    banner.style.display = "none";
-
-});
-
-document.getElementById("rejectCookies").addEventListener("click", function () {
-
-    localStorage.setItem("cookieConsent", "rejected");
-
-    banner.style.display = "none";
-
-});
-
 </script>
 
 </body>
